@@ -8,6 +8,7 @@ namespace HW1
 {
     class Node
     {
+        static public int counter;
         private int data;
 
         public int Data
@@ -62,6 +63,28 @@ namespace HW1
             }
         }
 
+        public bool Find(int val)
+        {
+            Node curNode = this;
+
+            while (curNode != null)
+            {
+                if (val == curNode.data)
+                {
+                    return true;
+                }
+                else if (val > curNode.data)
+                {
+                    curNode = curNode.rightNode;
+                }
+                else
+                {
+                    curNode = curNode.leftNode;
+                }
+            }
+            return false;
+        }
+
         public void PrintTree()
         {
             if (leftNode != null)
@@ -81,7 +104,7 @@ namespace HW1
         {
             if (this.leftNode == null && this.rightNode == null)
             {
-                return 1;
+                return 0;
             }
 
             int rightHeight = 0, leftHeight = 0;

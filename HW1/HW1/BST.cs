@@ -26,6 +26,18 @@ namespace HW1
             }
         }
 
+        public bool Find(int data)
+        {
+            if (root != null)
+            {
+                return root.Find(data);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public void PrintTree()
         {
             if (root != null)
