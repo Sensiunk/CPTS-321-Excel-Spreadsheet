@@ -59,9 +59,12 @@ namespace HW1
 
             Console.WriteLine();
 
+            // #4.1
+            Console.WriteLine(" Number of Nodes is: " + binaryTree.countNode());
+
             // #4.2
             Console.WriteLine(" Minimum number of levels that a tree with 7 nodes could have = " + binaryTree.Height());
-            Console.WriteLine(" Number of Nodes is" + binaryTree.countNode());
+            
 
             Console.WriteLine("Done");
         }
