@@ -12,14 +12,18 @@ namespace HW1
         {
             BST binaryTree = new BST();
 
+            Console.WriteLine("Enter a collection of number in the range [0, 100], separated by spaces:");
+
             // #1.1
             string numbers = Console.ReadLine();
 
             // #1.2
             foreach (var num in numbers.Split(' '))
             {
+                // #2.2
                 if (Convert.ToInt32(num) < 100)
                 {
+                    // #2.1
                     if (binaryTree.Find(Convert.ToInt32(num)) == false)
                         binaryTree.Insert(Convert.ToInt32(num));
                 }
@@ -50,13 +54,16 @@ namespace HW1
             binaryTree.Insert(e);*/
 
             // #3
-            Console.WriteLine("The tree in order is: ");
+            Console.Write("Tree contents: ");
             binaryTree.PrintTree();
 
-            // #4.2
-            Console.WriteLine(binaryTree.Height());
+            Console.WriteLine();
 
-            Console.ReadKey();
+            // #4.2
+            Console.WriteLine(" Minimum number of levels that a tree with 7 nodes could have = " + binaryTree.Height());
+            Console.WriteLine(" Number of Nodes is" + binaryTree.countNode());
+
+            Console.WriteLine("Done");
         }
     }
 }

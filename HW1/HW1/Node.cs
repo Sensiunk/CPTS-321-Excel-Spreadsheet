@@ -9,6 +9,7 @@ namespace HW1
     class Node
     {
         static public int counter;
+        
         private int data;
 
         public int Data
@@ -126,6 +127,20 @@ namespace HW1
             {
                 return (rightHeight + 1);
             }
+        }
+
+        public int countNode()
+        {
+            if (leftNode != null)
+            {
+                leftNode.countNode();
+            }
+            counter++;
+            if (rightNode != null)
+            {
+                rightNode.countNode();
+            }
+            return counter;
         }
     }
 }

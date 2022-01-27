@@ -8,6 +8,7 @@ namespace HW1
 {
     class BST
     {
+        
         private Node root;
         public Node Root
         {
@@ -53,6 +54,15 @@ namespace HW1
                 return 0;
             }
             return root.Height();
+        }
+
+        public int countNode()
+        {
+            if (root == null)
+            {
+                return 0;
+            }
+            return root.countNode();
         }
     }
 }
