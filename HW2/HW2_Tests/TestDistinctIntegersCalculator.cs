@@ -107,14 +107,14 @@ namespace HW2.DistinctIntegersCalculator.Tests
         // TEST CASES FOR DOUBLE FOR LOOPS
 
         /// <summary>
-        /// Test case to test if the normal case is working for the DoubleForLoop implementation.
+        /// Test case to test if the normal case is working for the LastIndex implementation.
         /// </summary>
         /// <param name="inputHashNums"> Takes input of a array with user generated numbers. </param>
         /// <returns>
-        /// The value should return the number of distinct numbers using a DoubleForLoop.
+        /// The value should return the number of distinct numbers using a LastIndex.
         /// </returns>
         [TestCase(new[] { 5, 3, 1, 2, 4 }, ExpectedResult = 5)]
-        public int TestNormalCaseDoubleForLoop(int[] inputHashNums)
+        public int TestNormalCaseLastIndex(int[] inputHashNums)
         {
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
@@ -124,18 +124,18 @@ namespace HW2.DistinctIntegersCalculator.Tests
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
 
-            return DistinctIntegersCalculator.UniqueNumbersUsingForLoops(testList); // Return the value that was generated using the UniqueNumbersUsingForLoops
+            return DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(testList); // Return the value that was generated using the UniqueNumbersUsingLastIndex
         }
 
         /// <summary>
-        /// Test case to test if the edge case max value is working for the DoubleForLoop implementation.
+        /// Test case to test if the edge case max value is working for the LastIndex implementation.
         /// </summary>
         /// <param name="inputHashNums"> Takes input of a array with user generated numbers. </param>
         /// <returns>
-        /// This value should return the number of distinct numbers using a DoubleForLoop.
+        /// This value should return the number of distinct numbers using a LastIndex.
         /// </returns>
         [TestCase(new[] { 20000, 20000, 20000 }, ExpectedResult = 1)]
-        public int TestEdgeCaseDoubleForLoopMax(int[] inputHashNums)
+        public int TestEdgeCaseLastIndexMax(int[] inputHashNums)
         {
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
@@ -145,18 +145,18 @@ namespace HW2.DistinctIntegersCalculator.Tests
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
 
-            return DistinctIntegersCalculator.UniqueNumbersUsingForLoops(testList); // Return the value that was generated using the UniqueNumbersUsingForLoops
+            return DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(testList); // Return the value that was generated using the UniqueNumbersUsingLastIndex
         }
 
         /// <summary>
-        /// Test case to test if the edge case min value is working for the DoubleForLoop implementation.
+        /// Test case to test if the edge case min value is working for the LastIndex implementation.
         /// </summary>
         /// <param name="inputHashNums"> Takes input of a array with user generated numbers. </param>
         /// <returns>
-        /// This value should return the number of distinct numbers using a DoubleForLoop.
+        /// This value should return the number of distinct numbers using a LastIndex.
         /// </returns>
         [TestCase(new[] { 0, 0, 0 }, ExpectedResult = 1)]
-        public int TestEdgeCaseDoubleForLoopMin(int[] inputHashNums)
+        public int TestEdgeCaseLastIndexpMin(int[] inputHashNums)
         {
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
@@ -166,25 +166,25 @@ namespace HW2.DistinctIntegersCalculator.Tests
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
 
-            return DistinctIntegersCalculator.UniqueNumbersUsingForLoops(testList); // Return the value that was generated using the UniqueNumbersUsingForLoops
+            return DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(testList); // Return the value that was generated using the UniqueNumbersUsingLastIndex
         }
 
         /// <summary>
-        /// Test case to test if the exception case max values is working for the DoubleForLoop implementation.
+        /// Test case to test if the exception case max values is working for the LastIndex implementation.
         /// </summary>
         [Test]
-        public void TestExceptionCaseDoubleForLoopMax()
+        public void TestExceptionCaseLastIndexMax()
         {
-            Assert.Throws<System.OverflowException>(() => DistinctIntegersCalculator.UniqueNumbersUsingForLoops(new List<int> { int.MaxValue - 1, int.MaxValue - 1 })); // Exception case to test if the numbers being passed does not conform to the criteia
+            Assert.Throws<System.OverflowException>(() => DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(new List<int> { int.MaxValue - 1, int.MaxValue - 1 })); // Exception case to test if the numbers being passed does not conform to the criteia
         }
 
         /// <summary>
-        /// Test case to test if the exception case min values is working for the DoubleForLoop implementation.
+        /// Test case to test if the exception case min values is working for the LastIndex implementation.
         /// </summary>
         [Test]
-        public void TestExceptionCaseDoubleForLoopMin()
+        public void TestExceptionCaseLastIndexMin()
         {
-            Assert.Throws<System.OverflowException>(() => DistinctIntegersCalculator.UniqueNumbersUsingForLoops(new List<int> { int.MinValue + 1, int.MinValue + 1 })); // Exception case to test if the numbers being passed does not conform to the criteia
+            Assert.Throws<System.OverflowException>(() => DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(new List<int> { int.MinValue + 1, int.MinValue + 1 })); // Exception case to test if the numbers being passed does not conform to the criteia
         }
 
         // TEST CASES FOR THE SORTED FOR LOOP

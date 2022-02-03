@@ -22,24 +22,37 @@ namespace HW2.DistinctIntegersCalculator
         /// <returns> Returns the number of unique numbers found in the random list. </returns>
         public static int UniqueNumbersUsingHashSet(List<int> hashUtilizedList)
         {
-            HashSet<int> hashSetForUniqueness = new HashSet<int>();
+            HashSet<int> hashSetForUniqueness = new HashSet<int>(); // Create and allocate space for a new hash set.
 
-            foreach (int values in hashUtilizedList)
+            // Iterate through the list and grab each value and place it in the retreivedValues variable.
+            foreach (int retreivedValues in hashUtilizedList)
             {
-                hashSetForUniqueness.Add(values);
+                hashSetForUniqueness.Add(retreivedValues); // Add the retreivedValues into the hash set.
             }
 
-            return hashSetForUniqueness.Count();
+            return hashSetForUniqueness.Count(); // Return the value we got from hash set count.
         }
 
         /// <summary>
-        /// Calculate the number of unique numbers within a list using double for loops.
+        /// Calculate the number of unique numbers within a list using last index.
         /// </summary>
         /// <param name="forUtilizedList"> Pass in a random list generated such that it can sort and return the unique numbers. </param>
         /// <returns> Returns the number of unique numbers found in the random list. </returns>
-        public static int UniqueNumbersUsingForLoops(List<int> forUtilizedList)
+        public static int UniqueNumbersUsingLastIndex(List<int> forUtilizedList)
         {
-            return 0;
+            int uniqueNumbers = 0; // Declare a variable we are going to increment with each unique number
+
+            // Making a for loop that we are going to iterate through the count of the list
+            for (int index = 0; index < forUtilizedList.Count(); index++)
+            {
+                // We check to see if the value found at the last index is where our index incrementer is
+                if (forUtilizedList.FindLastIndex(indexLastChecker => indexLastChecker == forUtilizedList[index]) == index)
+                {
+                    uniqueNumbers++; // Increment the counter if the statement is true
+                }
+            }
+
+            return uniqueNumbers; // Return the value we got from the for loop
         }
 
         /// <summary>
