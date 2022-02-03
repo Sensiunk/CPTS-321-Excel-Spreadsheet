@@ -62,7 +62,19 @@ namespace HW2.DistinctIntegersCalculator
         /// <returns> Returns the number of unique numbers found in the random list. </returns>
         public static int UniqueNumbersUsingSortedForLoops(List<int> sortedForUtilizedList)
         {
-            return 0;
+            sortedForUtilizedList.Sort();
+            int uniqueNumbers = 1;
+
+
+            for (int i = 1; i < sortedForUtilizedList.Count(); i++)
+            {
+                if (sortedForUtilizedList[i - 1] != sortedForUtilizedList[i])
+                {
+                    uniqueNumbers++;
+                }
+            }
+
+            return uniqueNumbers;
         }
     }
 }
