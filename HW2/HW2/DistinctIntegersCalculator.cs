@@ -18,11 +18,18 @@ namespace HW2.DistinctIntegersCalculator
         /// <summary>
         /// Calculate the number of unique numbers within a list using a hash set.
         /// </summary>
-        /// <param name="hasUtilizedList"> Pass in a random list generated such that it can sort and return the unique numbers. </param>
+        /// <param name="hashUtilizedList"> Pass in a random list generated such that it can sort and return the unique numbers. </param>
         /// <returns> Returns the number of unique numbers found in the random list. </returns>
-        public static int UniqueNumbersUsingHashSet(List<int> hasUtilizedList)
+        public static int UniqueNumbersUsingHashSet(List<int> hashUtilizedList)
         {
-            return 0;
+            HashSet<int> hashSetForUniqueness = new HashSet<int>();
+
+            foreach (int values in hashUtilizedList)
+            {
+                hashSetForUniqueness.Add(values);
+            }
+
+            return hashSetForUniqueness.Count();
         }
 
         /// <summary>

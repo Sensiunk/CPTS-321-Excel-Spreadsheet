@@ -33,10 +33,10 @@ namespace HW2.DistinctIntegersCalculator.Tests
         [TestCase(new[] { 5, 3, 1, 2, 4 }, ExpectedResult = 5)]
         public int TestNormalCaseHashSet(int[] inputHashNums)
         {
-            List<int> testList = new List<int>(); // Create new list for testing purposes
+            List<int> testList = new List<int>(5); // Create new list for testing purposes
 
             // Iterate through the array and set the inputForListNumbers to each value in order
-            foreach (var inputForListNumbers in testList)
+            foreach (var inputForListNumbers in inputHashNums)
             {
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
@@ -57,7 +57,7 @@ namespace HW2.DistinctIntegersCalculator.Tests
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
             // Iterate through the array and set the inputForListNumbers to each value in order
-            foreach (var inputForListNumbers in testList)
+            foreach (var inputForListNumbers in inputHashNums)
             {
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
@@ -78,7 +78,7 @@ namespace HW2.DistinctIntegersCalculator.Tests
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
             // Iterate through the array and set the inputForListNumbers to each value in order
-            foreach (var inputForListNumbers in testList)
+            foreach (var inputForListNumbers in inputHashNums)
             {
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
@@ -119,7 +119,7 @@ namespace HW2.DistinctIntegersCalculator.Tests
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
             // Iterate through the array and set the inputForListNumbers to each value in order
-            foreach (var inputForListNumbers in testList)
+            foreach (var inputForListNumbers in inputHashNums)
             {
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
@@ -140,7 +140,7 @@ namespace HW2.DistinctIntegersCalculator.Tests
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
             // Iterate through the array and set the inputForListNumbers to each value in order
-            foreach (var inputForListNumbers in testList)
+            foreach (var inputForListNumbers in inputHashNums)
             {
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
@@ -161,7 +161,7 @@ namespace HW2.DistinctIntegersCalculator.Tests
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
             // Iterate through the array and set the inputForListNumbers to each value in order
-            foreach (var inputForListNumbers in testList)
+            foreach (var inputForListNumbers in inputHashNums)
             {
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
@@ -173,7 +173,7 @@ namespace HW2.DistinctIntegersCalculator.Tests
         /// Test case to test if the exception case max values is working for the DoubleForLoop implementation.
         /// </summary>
         [Test]
-        public void TestExceptionCaseDoubleForLoop()
+        public void TestExceptionCaseDoubleForLoopMax()
         {
             Assert.Throws<System.OverflowException>(() => DistinctIntegersCalculator.UniqueNumbersUsingForLoops(new List<int> { int.MaxValue - 1, int.MaxValue - 1 })); // Exception case to test if the numbers being passed does not conform to the criteia
         }
@@ -202,7 +202,7 @@ namespace HW2.DistinctIntegersCalculator.Tests
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
             // Iterate through the array and set the inputForListNumbers to each value in order
-            foreach (var inputForListNumbers in testList)
+            foreach (var inputForListNumbers in inputHashNums)
             {
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
@@ -223,7 +223,7 @@ namespace HW2.DistinctIntegersCalculator.Tests
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
             // Iterate through the array and set the inputForListNumbers to each value in order
-            foreach (var inputForListNumbers in testList)
+            foreach (var inputForListNumbers in inputHashNums)
             {
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
@@ -244,7 +244,7 @@ namespace HW2.DistinctIntegersCalculator.Tests
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
             // Iterate through the array and set the inputForListNumbers to each value in order
-            foreach (var inputForListNumbers in testList)
+            foreach (var inputForListNumbers in inputHashNums)
             {
                 testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
             }
