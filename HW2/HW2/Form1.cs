@@ -29,6 +29,24 @@ namespace HW2
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            List<int> masterList = new List<int>(10000);
+            Random randValue = new Random();
+
+            for (int counter = 1; counter <= 10000; counter++)
+            {
+                masterList.Add(randValue.Next(20001));
+            }
+
+            int hashNum = DistinctIntegersCalculator.DistinctIntegersCalculator.UniqueNumbersUsingHashSet(masterList);
+            int lastNum = DistinctIntegersCalculator.DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(masterList);
+            int sortNum = DistinctIntegersCalculator.DistinctIntegersCalculator.UniqueNumbersUsingSortedForLoops(masterList);
+
+            this.finalTextBox.Text = hashNum.ToString() + Environment.NewLine;
+
+            this.finalTextBox.Text = lastNum.ToString() + Environment.NewLine;
+
+            this.finalTextBox.Text = sortNum.ToString() + Environment.NewLine;
+
         }
     }
 }
