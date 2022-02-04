@@ -27,7 +27,14 @@ namespace HW2.DistinctIntegersCalculator
             // Iterate through the list and grab each value and place it in the retreivedValues variable.
             foreach (int retreivedValues in hashUtilizedList)
             {
-                hashSetForUniqueness.Add(retreivedValues); // Add the retreivedValues into the hash set.
+                if (retreivedValues <= -1 || retreivedValues >= 20001)
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(retreivedValues)} must be greater than or equal to zero.");
+                }
+                else
+                {
+                    hashSetForUniqueness.Add(retreivedValues); // Add the retreivedValues into the hash set.
+                }
             }
 
             return hashSetForUniqueness.Count(); // Return the value we got from hash set count.

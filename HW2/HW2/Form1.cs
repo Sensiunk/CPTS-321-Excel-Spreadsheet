@@ -41,12 +41,13 @@ namespace HW2
             int lastNum = DistinctIntegersCalculator.DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(masterList);
             int sortNum = DistinctIntegersCalculator.DistinctIntegersCalculator.UniqueNumbersUsingSortedForLoops(masterList);
 
-            this.finalTextBox.Text = hashNum.ToString() + Environment.NewLine;
+            string test = string.Format("{0} This is a test", hashNum);
+            string test1 = string.Format("{0} This is a test", lastNum);
+            string test2 = string.Format("{0} This is a test", sortNum);
 
-            this.finalTextBox.Text = lastNum.ToString() + Environment.NewLine;
-
-            this.finalTextBox.Text = sortNum.ToString() + Environment.NewLine;
-
+            this.finalTextBox.Text = test + Environment.NewLine;
+            this.finalTextBox.AppendText(test1 + Environment.NewLine);
+            this.finalTextBox.AppendText(test2 + Environment.NewLine);
         }
     }
 }
