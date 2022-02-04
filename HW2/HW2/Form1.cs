@@ -50,6 +50,7 @@ namespace HW2
             string firstMethodStats = string.Format("1. HashSet Method: {0} unique numbers", hashNum);
             this.finalTextBox.AppendText(firstMethodStats + Environment.NewLine);
 
+            // This is the code block that shows why we recieved a O(1) time complexity when we use a hashset
             string timeComplexityExplination = string.Format("   In our scenario, a HashSet uses a O(1) time complexity for adding into a hashset. The reason for this is because we take the input and make that into a hash and stores into that location. If we get another value that happens to be the same, the hash will be the same and therefore it will just write over the prior hash and it allows for no instances of duplicates.", hashNum);
             this.finalTextBox.AppendText(timeComplexityExplination + Environment.NewLine);
 
