@@ -1,6 +1,14 @@
-﻿
+﻿// <copyright file="Form1.Designer.cs" company="Manjesh Reddy Puram 11716685">
+// Copyright (c) Manjesh Reddy Puram 11716685. All rights reserved.
+// </copyright>
+
+using System.Windows.Forms;
+
 namespace HW2
 {
+    /// <summary>
+    /// Class to access the form and run it.
+    /// </summary>
     partial class Form1
     {
         /// <summary>
@@ -58,6 +66,14 @@ namespace HW2
         #endregion
 
         private System.Windows.Forms.TextBox finalTextBox;
+
+        /// <summary>
+        /// Creates the textbox
+        /// </summary>
+        /// <param name="finalTextBox"> Takes in the input of finalTextBox </param>
+        public Form1(TextBox finalTextBox)
+        {
+            this.finalTextBox = finalTextBox;
+        }
     }
 }
-

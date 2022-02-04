@@ -9,7 +9,7 @@ namespace HW2.DistinctIntegersCalculator.Tests
     using NUnit.Framework;
 
     /// <summary>
-    /// Implementation of Test Cases to check for the validatity of methods.
+    /// Implementation of Test Cases to check for the validity of methods.
     /// </summary>
     public class TestDistinctIntegersCalculator
     {
