@@ -92,7 +92,8 @@ namespace HW2.DistinctIntegersCalculator.Tests
         [Test]
         public void TestExceptionCaseHashSetMax()
         {
-            int[] inputHashNums = new[] { -1, 0, 1 };
+            int[] inputHashNums = new[] { 0, 1, 20001 }; // Values to test with number out of bounds
+
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
             // Iterate through the array and set the inputForListNumbers to each value in order
@@ -110,7 +111,8 @@ namespace HW2.DistinctIntegersCalculator.Tests
         [Test]
         public void TestExceptionCaseHashSetMin()
         {
-            int[] inputHashNums = new[] { 0, 1, 20001 };
+            int[] inputHashNums = new[] { -1, 0, 1 }; // Values to test with number out of bounds
+
             List<int> testList = new List<int>(); // Create new list for testing purposes
 
             // Iterate through the array and set the inputForListNumbers to each value in order
@@ -193,7 +195,17 @@ namespace HW2.DistinctIntegersCalculator.Tests
         [Test]
         public void TestExceptionCaseLastIndexMax()
         {
-            Assert.Throws<System.OverflowException>(() => DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(new List<int> { int.MaxValue - 1, int.MaxValue - 1 })); // Exception case to test if the numbers being passed does not conform to the criteia
+            int[] inputHashNums = new[] { 0, 1, 20001 }; // Values to test with number out of bounds
+
+            List<int> testList = new List<int>(); // Create new list for testing purposes
+
+            // Iterate through the array and set the inputForListNumbers to each value in order
+            foreach (var inputForListNumbers in inputHashNums)
+            {
+                testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
+            }
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(testList)); // Exception case to test if the numbers being passed does not conform to the criteia
         }
 
         /// <summary>
@@ -202,7 +214,17 @@ namespace HW2.DistinctIntegersCalculator.Tests
         [Test]
         public void TestExceptionCaseLastIndexMin()
         {
-            Assert.Throws<System.OverflowException>(() => DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(new List<int> { int.MinValue + 1, int.MinValue + 1 })); // Exception case to test if the numbers being passed does not conform to the criteia
+            int[] inputHashNums = new[] { -1, 0, 0, 0, 1 }; // Values to test with number out of bounds
+
+            List<int> testList = new List<int>(); // Create new list for testing purposes
+
+            // Iterate through the array and set the inputForListNumbers to each value in order
+            foreach (var inputForListNumbers in inputHashNums)
+            {
+                testList.Add(inputForListNumbers); // Adds each number in the array passed in and adds it to the list
+            }
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(testList)); // Exception case to test if the numbers being passed does not conform to the criteia
         }
 
         // TEST CASES FOR THE SORTED FOR LOOP

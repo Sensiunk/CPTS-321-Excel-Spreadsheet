@@ -27,9 +27,10 @@ namespace HW2.DistinctIntegersCalculator
             // Iterate through the list and grab each value and place it in the retreivedValues variable.
             foreach (int retreivedValues in hashUtilizedList)
             {
+                // Check to see if the number coming from the list is outside of the range
                 if (retreivedValues <= -1 || retreivedValues >= 20001)
                 {
-                    throw new ArgumentOutOfRangeException($"{nameof(retreivedValues)} must be greater than or equal to zero.");
+                    throw new ArgumentOutOfRangeException(); // Throw an exception if the numbers inputted happen to be out of the range
                 }
                 else
                 {
@@ -52,10 +53,18 @@ namespace HW2.DistinctIntegersCalculator
             // Making a for loop that we are going to iterate through the count of the list
             for (int index = 0; index < forUtilizedList.Count(); index++)
             {
-                // We check to see if the value found at the last index is where our index incrementer is
-                if (forUtilizedList.FindLastIndex(indexLastChecker => indexLastChecker == forUtilizedList[index]) == index)
+                // Check to see if the number coming from the list is outside of the range
+                if (forUtilizedList[index] <= -1 || forUtilizedList[index] >= 20001)
                 {
-                    uniqueNumbers++; // Increment the counter if the statement is true
+                    throw new ArgumentOutOfRangeException(); // Throw an exception if the numbers inputted happen to be out of the range
+                }
+                else
+                {
+                    // We check to see if the value found at the last index is where our index incrementer is
+                    if (forUtilizedList.FindLastIndex(indexLastChecker => indexLastChecker == forUtilizedList[index]) == index)
+                    {
+                        uniqueNumbers++; // Increment the counter if the statement is true
+                    }
                 }
             }
 

@@ -29,25 +29,6 @@ namespace HW2
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            List<int> masterList = new List<int>(10000);
-            Random randValue = new Random();
-
-            for (int counter = 1; counter <= 10000; counter++)
-            {
-                masterList.Add(randValue.Next(20001));
-            }
-
-            int hashNum = DistinctIntegersCalculator.DistinctIntegersCalculator.UniqueNumbersUsingHashSet(masterList);
-            int lastNum = DistinctIntegersCalculator.DistinctIntegersCalculator.UniqueNumbersUsingLastIndex(masterList);
-            int sortNum = DistinctIntegersCalculator.DistinctIntegersCalculator.UniqueNumbersUsingSortedForLoops(masterList);
-
-            string test = string.Format("{0} This is a test", hashNum);
-            string test1 = string.Format("{0} This is a test", lastNum);
-            string test2 = string.Format("{0} This is a test", sortNum);
-
-            this.finalTextBox.Text = test + Environment.NewLine;
-            this.finalTextBox.AppendText(test1 + Environment.NewLine);
-            this.finalTextBox.AppendText(test2 + Environment.NewLine);
         }
     }
 }
