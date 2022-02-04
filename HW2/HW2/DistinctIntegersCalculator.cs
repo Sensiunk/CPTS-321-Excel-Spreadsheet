@@ -78,19 +78,28 @@ namespace HW2.DistinctIntegersCalculator
         /// <returns> Returns the number of unique numbers found in the random list. </returns>
         public static int UniqueNumbersUsingSortedForLoops(List<int> sortedForUtilizedList)
         {
-            sortedForUtilizedList.Sort();
-            int uniqueNumbers = 1;
+            sortedForUtilizedList.Sort(); // Sort the list for this method
 
+            int uniqueNumbers = 1; // Start the counter at 1 since there will always be 1 unique number
 
-            for (int i = 1; i < sortedForUtilizedList.Count(); i++)
+            for (int index = 1; index < sortedForUtilizedList.Count(); index++)
             {
-                if (sortedForUtilizedList[i - 1] != sortedForUtilizedList[i])
+                // Check to see if the number coming from the list is outside of the range
+                if (sortedForUtilizedList[index] <= -1 || sortedForUtilizedList[index] >= 20001 || sortedForUtilizedList[index - 1] <= -1 || sortedForUtilizedList[index - 1] >= 20001)
                 {
-                    uniqueNumbers++;
+                    throw new ArgumentOutOfRangeException(); // Throw an exception if the numbers inputted happen to be out of the range
+                }
+                else
+                {
+                    // Check to see if the number at index is the same as the index place minus 1
+                    if (sortedForUtilizedList[index - 1] != sortedForUtilizedList[index])
+                    {
+                        uniqueNumbers++; // Increment our counter if it is unique
+                    }
                 }
             }
 
-            return uniqueNumbers;
+            return uniqueNumbers; // Return the value after we calculate the uniqueNumberCount
         }
     }
 }
