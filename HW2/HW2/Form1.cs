@@ -51,7 +51,12 @@ namespace HW2
             this.finalTextBox.AppendText(firstMethodStats + Environment.NewLine);
 
             // This is the code block that shows why we recieved a O(1) time complexity when we use a hashset
-            string timeComplexityExplination = string.Format("   In our scenario, a HashSet uses a O(1) time complexity for adding into a hashset. The reason for this is because we take the input and make that into a hash and stores into that location. If we get another value that happens to be the same, the hash will be the same and therefore it will just write over the prior hash and it allows for no instances of duplicates.", hashNum);
+            string timeComplexityExplination = string.Format(
+                "   In our scenario, a HashSet uses a O(1) time complexity for adding into a hashset. The reason for this is because we take the" +
+                " input and make that into a hash and stores into that location. If we get another value that happens to be the same, the hash will be the same " +
+                "and therefore it will just write over the prior hash and it allows for no instances of duplicates. One thing to keep in mind is that the O(1) time" +
+                " complexity can only be achieved if the hash function is good. Another main takeaway is that the Amortized (Average or Usual Case) time complexity " +
+                "for add and look-up operations of a HashSet take O(1) time.", hashNum);
             this.finalTextBox.AppendText(timeComplexityExplination + Environment.NewLine);
 
             // These three lines of code: Calculate the number of unique numbers using the last index method and stores into a int called lastNum
