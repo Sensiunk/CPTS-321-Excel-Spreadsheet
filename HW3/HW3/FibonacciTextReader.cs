@@ -41,39 +41,46 @@ namespace HW3.FibonacciTextReader
         /// <returns> Return the string after calculating. </returns>
         public override string ReadToEnd()
         {
-            StringBuilder outputResult = new StringBuilder();
-            for (int lineNum = 1; lineNum <= this.maxNumberLines; lineNum++)
+            if (this.maxNumberLines < 0)
             {
-                BigInteger currentFibonacciNumber = 0;
-                if (this.fibCounter == this.maxNumberLines)
+                throw new ArgumentOutOfRangeException();
+            }
+            else
+            {
+                StringBuilder outputResult = new StringBuilder();
+                for (int lineNum = 1; lineNum <= this.maxNumberLines; lineNum++)
                 {
-                    return null;
-                }
-                else
-                {
-                    switch (this.fibCounter)
+                    BigInteger currentFibonacciNumber;
+                    if (this.fibCounter == this.maxNumberLines)
                     {
-                        case 0:
-                            this.fibCounter++;
-                            outputResult.Append(lineNum + ": " + "0" + Environment.NewLine);
-                            continue;
-                        case 1:
-                            this.fibCounter++;
-                            outputResult.Append(lineNum + ": " + "1" + Environment.NewLine);
-                            continue;
+                        return null;
+                    }
+                    else
+                    {
+                        switch (this.fibCounter)
+                        {
+                            case 0:
+                                this.fibCounter++;
+                                outputResult.Append(lineNum + ": " + "0" + Environment.NewLine);
+                                continue;
+                            case 1:
+                                this.fibCounter++;
+                                outputResult.Append(lineNum + ": " + "1" + Environment.NewLine);
+                                continue;
+                        }
+
+                        this.fibCounter++;
+
+                        currentFibonacciNumber = this.onePosBehind + this.twoPosBehind;
+                        this.onePosBehind = this.twoPosBehind;
+                        this.onePosBehind = currentFibonacciNumber;
                     }
 
-                    this.fibCounter++;
-
-                    currentFibonacciNumber = this.onePosBehind + this.twoPosBehind;
-                    this.onePosBehind = this.twoPosBehind;
-                    this.onePosBehind = currentFibonacciNumber;
+                    outputResult.Append(lineNum + ": " + currentFibonacciNumber + Environment.NewLine);
                 }
 
-                outputResult.Append(lineNum + ": " + currentFibonacciNumber + Environment.NewLine);
+                return outputResult.ToString();
             }
-
-            return outputResult.ToString();
         }
     }
 }
