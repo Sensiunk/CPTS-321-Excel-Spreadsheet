@@ -2,7 +2,7 @@
 // Copyright (c) Manjesh Reddy Puram 11716685. All rights reserved.
 // </copyright>
 
-namespace HW3
+namespace HW3.FibonacciTextReader
 {
     using System;
     using System.Collections.Generic;

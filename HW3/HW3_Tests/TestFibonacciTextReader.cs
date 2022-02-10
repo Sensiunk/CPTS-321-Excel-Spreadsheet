@@ -1,5 +1,5 @@
-// <copyright file="UnitTest1.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+// <copyright file="Program.cs" company="Manjesh Reddy Puram 11716685">
+// Copyright (c) Manjesh Reddy Puram 11716685. All rights reserved.
 // </copyright>
 
 namespace HW3_Tests
@@ -14,7 +14,7 @@ namespace HW3_Tests
         }
 
         [Test]
-        public void Test1()
+        public void TestNormalCase()
         {
             Assert.Pass();
         }
