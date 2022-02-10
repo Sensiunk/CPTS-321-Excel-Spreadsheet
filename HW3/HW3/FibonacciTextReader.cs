@@ -15,16 +15,17 @@ namespace HW3.FibonacciTextReader
     /// </summary>
     public class FibonacciTextReader : System.IO.TextReader
     {
-        private int maxNumLines;
+        // Variable used to hold the max number of lines when we plug into constructor
+        private int maxNumberLines;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FibonacciTextReader"/> class.
         /// Constructor of the FibonacciTextReader.
         /// </summary>
-        /// <param name="maxNumOfLines"> Set the inputMaxNumOfLines. </param>
-        public FibonacciTextReader(int inputMaxNumOfLines)
+        /// <param name="maxNumberLines"> Set the maxNumberLines. </param>
+        public FibonacciTextReader(int maxNumberLines)
         {
-            this.maxNumLines = inputMaxNumOfLines;
+            this.maxNumberLines = maxNumberLines;
         }
     }
 }

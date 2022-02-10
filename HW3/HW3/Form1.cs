@@ -28,19 +28,38 @@ namespace HW3
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Used as our method to load our text.
+        /// </summary>
+        /// <param name="sr"> TextReader Object. </param>
         private void LoadText(TextReader sr)
         {
             this.textBox1.Text = sr.ReadToEnd();
         }
 
+        /// <summary>
+        /// Button in the menu for loading a file.
+        /// </summary>
+        /// <param name="sender"> Sender Object. </param>
+        /// <param name="e"> Passing in the EventArgs called e. </param>
         private void LoadFromFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
         }
 
+        /// <summary>
+        /// Button in the menu for loading the first 50 fibonacci numbers into the text box.
+        /// </summary>
+        /// <param name="sender"> Sender Object. </param>
+        /// <param name="e"> Passing in the EventArgs called e. </param>
         private void LoadFibonacciNumbersFirst50ToolStripMenuItem_Click(object sender, EventArgs e)
         {
         }
 
+        /// <summary>
+        /// Button in the menu for loading the first 50 fibonacci numbers into the text box.
+        /// </summary>
+        /// <param name="sender"> Sender Object. </param>
+        /// <param name="e"> Passing in the EventArgs called e. </param>
         private void LoadFibonacciNumbersFirst100ToolStripMenuItem_Click(object sender, EventArgs e)
         {
         }
