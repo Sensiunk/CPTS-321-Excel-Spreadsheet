@@ -2,8 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace HW3_Tests
+namespace HW3.FibonacciTextReader.Tests
 {
+    using System;
+    using System.Text;
     using NUnit.Framework;
 
     /// <summary>
