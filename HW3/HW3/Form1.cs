@@ -28,6 +28,11 @@ namespace HW3
             this.InitializeComponent();
         }
 
+        private void LoadText(TextReader sr)
+        {
+            this.textBox1.Text = sr.ReadToEnd();
+        }
+
         private void LoadFromFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
         }

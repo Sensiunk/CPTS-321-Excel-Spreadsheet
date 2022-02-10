@@ -10,7 +10,21 @@ namespace HW3.FibonacciTextReader
     using System.Text;
     using System.Threading.Tasks;
 
-    public class FibonacciTextReader
+    /// <summary>
+    /// Create the FibonacciTextReader Class.
+    /// </summary>
+    public class FibonacciTextReader : System.IO.TextReader
     {
+        private int maxNumLines;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FibonacciTextReader"/> class.
+        /// Constructor of the FibonacciTextReader.
+        /// </summary>
+        /// <param name="maxNumOfLines"> Set the inputMaxNumOfLines. </param>
+        public FibonacciTextReader(int inputMaxNumOfLines)
+        {
+            this.maxNumLines = inputMaxNumOfLines;
+        }
     }
 }
