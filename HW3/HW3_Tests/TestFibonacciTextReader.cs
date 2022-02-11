@@ -5,8 +5,10 @@
 namespace HW3.FibonacciTextReader.Tests
 {
     using System;
+    using System.IO;
     using System.Text;
     using NUnit.Framework;
+    using SemanticComparison;
 
     /// <summary>
     /// Implementation of Test Cases to check for the validity of methods.
@@ -26,10 +28,29 @@ namespace HW3.FibonacciTextReader.Tests
         /// </summary>
         /// <param name="testFibNumber"> Takes in the number of testFibNumber. </param>
         /// <returns> We should return the value of the nth Fibonacci number. </returns>
-        [TestCase(3, ExpectedResult = 2)]
-        public int TestNormalCase(int testFibNumber)
+        [Test]
+        public void TestNormalCase()
         {
-            return 0;
+            int testFibNumber = 3;
+
+            StringBuilder correctResult = new StringBuilder();
+            StringBuilder fibonacciResult = new StringBuilder();
+
+            correctResult.Append("0" + Environment.NewLine);
+            correctResult.Append("1" + Environment.NewLine);
+            correctResult.Append("1" + Environment.NewLine);
+
+            FibonacciTextReader fibNumberGenerator = new FibonacciTextReader(testFibNumber);
+
+            // calculate the sequence of fibonacci numbers
+            // up to the maximumLines
+            for (int i = 1; i <= testFibNumber; i++)
+            {
+                // append the fibonacci number to the result
+                fibonacciResult.Append(fibNumberGenerator.ReadLine() + Environment.NewLine);
+            }
+            var expectedStudent = new Likeness<StringBuilder, StringBuilder>(correctResult);
+            Assert.AreEqual(expectedStudent, fibonacciResult);
         }
 
         /// <summary>

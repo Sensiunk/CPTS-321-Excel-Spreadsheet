@@ -55,6 +55,7 @@ namespace HW3
         /// <param name="e"> Passing in the EventArgs called e. </param>
         private void LoadFromFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            FibonacciTextReader.FibonacciTextReader newsds = new FibonacciTextReader.FibonacciTextReader(3);
         }
 
         /// <summary>
