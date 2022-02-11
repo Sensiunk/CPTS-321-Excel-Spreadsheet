@@ -78,12 +78,26 @@ namespace HW3.FibonacciTextReader.Tests
         /// <summary>
         /// Testing to see if the number that comes in is able to compute to the right number.
         /// </summary>
-        /// <param name="testFibNumber"> Takes in the number of testFibNumber. </param>
-        /// <returns> We should return the value of the nth Fibonacci number. </returns>
-        [TestCase(1, ExpectedResult = 1)]
-        public int TestNormalCaseForOne(int testFibNumber)
+        [Test]
+        public void TestNormalCaseForOne()
         {
-            return 0;
+            int testFibNumber = 1;
+
+            StringBuilder correctResult = new StringBuilder();
+            StringBuilder fibonacciResult = new StringBuilder();
+
+            correctResult.Append("0" + Environment.NewLine);
+            correctResult.Append("1" + Environment.NewLine);
+
+            FibonacciTextReader fibNumberGenerator = new FibonacciTextReader(testFibNumber);
+
+            for (int i = 0; i <= testFibNumber; i++)
+            {
+                fibonacciResult.Append(fibNumberGenerator.ReadLine() + Environment.NewLine);
+            }
+
+            var expectedResult = new Likeness<StringBuilder, StringBuilder>(correctResult);
+            Assert.AreEqual(expectedResult, fibonacciResult);
         }
 
         /// <summary>
