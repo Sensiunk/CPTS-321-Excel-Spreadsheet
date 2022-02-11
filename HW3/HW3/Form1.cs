@@ -38,24 +38,19 @@ namespace HW3
         }
 
         /// <summary>
-        /// We take the file name from the user and call the LoadText function.
-        /// </summary>
-        /// <param name="fileName"> String the holds the name of the file. </param>
-        private void LoadFile(string fileName)
-        {
-            StreamReader file = new StreamReader(fileName);
-
-            this.LoadText(file);
-        }
-
-        /// <summary>
         /// Button in the menu for loading a file.
         /// </summary>
         /// <param name="sender"> Sender Object. </param>
         /// <param name="e"> Passing in the EventArgs called e. </param>
         private void LoadFromFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FibonacciTextReader.FibonacciTextReader newsds = new FibonacciTextReader.FibonacciTextReader(3);
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                StreamReader sr = new StreamReader(openFileDialog.FileName);
+                this.LoadText(sr);
+            }
         }
 
         /// <summary>

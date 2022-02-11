@@ -33,7 +33,6 @@ namespace HW3.FibonacciTextReader
             this.fibCounter = 0;
             this.onePosBehind = 0;
             this.twoPosBehind = 1;
-
         }
 
         /// <summary>
