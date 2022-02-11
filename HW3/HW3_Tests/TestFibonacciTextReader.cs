@@ -34,19 +34,15 @@ namespace HW3.FibonacciTextReader.Tests
             StringBuilder correctResult = new StringBuilder();
             StringBuilder fibonacciResult = new StringBuilder();
 
-            correctResult.Append("0" + Environment.NewLine);
-            correctResult.Append("1" + Environment.NewLine);
-            correctResult.Append("1" + Environment.NewLine);
+            correctResult.Append("1: " + "0" + Environment.NewLine);
+            correctResult.Append("2: " + "1" + Environment.NewLine);
+            correctResult.Append("3: " + "1" + Environment.NewLine);
 
             FibonacciTextReader fibNumberGenerator = new FibonacciTextReader(testFibNumber);
 
             // calculate the sequence of fibonacci numbers
             // up to the maximumLines
-            for (int lineCounter = 1; lineCounter <= testFibNumber; lineCounter++)
-            {
-                // append the fibonacci number to the result
-                fibonacciResult.Append(fibNumberGenerator.ReadLine() + Environment.NewLine);
-            }
+            fibonacciResult.Append(fibNumberGenerator.ReadToEnd());
 
             var expectedResult = new Likeness<StringBuilder, StringBuilder>(correctResult);
             Assert.AreEqual(expectedResult, fibonacciResult);
