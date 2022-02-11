@@ -66,13 +66,11 @@ namespace HW3.FibonacciTextReader.Tests
 
             FibonacciTextReader fibNumberGenerator = new FibonacciTextReader(testFibNumber);
 
-            // calculate the sequence of fibonacci numbers
-            // up to the maximumLines
             for (int i = 0; i <= testFibNumber; i++)
             {
-                // append the fibonacci number to the result
                 fibonacciResult.Append(fibNumberGenerator.ReadLine() + Environment.NewLine);
             }
+
             var expectedResult = new Likeness<StringBuilder, StringBuilder>(correctResult);
             Assert.AreEqual(expectedResult, fibonacciResult);
         }
