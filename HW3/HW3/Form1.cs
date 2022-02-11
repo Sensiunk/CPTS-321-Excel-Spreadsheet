@@ -20,6 +20,7 @@ namespace HW3
     /// </summary>
     public partial class Form1 : Form
     {
+        StringBuilder fibonacciResult = new StringBuilder();
         /// <summary>
         /// Initializes a new instance of the <see cref="Form1"/> class.
         /// </summary>
@@ -34,7 +35,17 @@ namespace HW3
         /// <param name="sr"> TextReader Object. </param>
         private void LoadText(TextReader sr)
         {
-            this.textBox1.Text = sr.ReadToEnd();
+            //StringBuilder fibonacciResult = new StringBuilder();
+
+            this.fibonacciResult.Append(sr.ReadLine() + Environment.NewLine);
+
+            /*for (int lineCounter = 1; lineCounter <= 200; lineCounter++)
+            {
+                //fibonacciResult.Append(lineCounter + ": " + sr.ReadLine() + Environment.NewLine);
+                fibonacciResult.Append(sr.ReadLine() + Environment.NewLine);
+            }*/
+
+            this.textBox1.Text = this.fibonacciResult.ToString();
         }
 
         /// <summary>
@@ -45,11 +56,12 @@ namespace HW3
         private void LoadFromFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            this.fibonacciResult = new StringBuilder();
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 StreamReader sr = new StreamReader(openFileDialog.FileName);
-                this.LoadText(sr);
+                this.textBox1.Text = sr.ReadToEnd();
             }
         }
 
@@ -60,6 +72,14 @@ namespace HW3
         /// <param name="e"> Passing in the EventArgs called e. </param>
         private void LoadFibonacciNumbersFirst50ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            FibonacciTextReader.FibonacciTextReader firstFiftyFibonacci = new FibonacciTextReader.FibonacciTextReader(50);
+
+            this.fibonacciResult = new StringBuilder();
+
+            for (int lineCounter = 1; lineCounter <= 50; lineCounter++)
+            {
+                this.LoadText(firstFiftyFibonacci);
+            }
         }
 
         /// <summary>
@@ -69,6 +89,14 @@ namespace HW3
         /// <param name="e"> Passing in the EventArgs called e. </param>
         private void LoadFibonacciNumbersFirst100ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            FibonacciTextReader.FibonacciTextReader firstHundredFibonacci = new FibonacciTextReader.FibonacciTextReader(100);
+
+            this.fibonacciResult = new StringBuilder();
+
+            for (int lineCounter = 1; lineCounter <= 100; lineCounter++)
+            {
+                this.LoadText(firstHundredFibonacci);
+            }
         }
 
         /// <summary>

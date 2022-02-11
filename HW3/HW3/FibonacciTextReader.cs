@@ -63,19 +63,11 @@ namespace HW3.FibonacciTextReader
                 }
                 else
                 {
-                    BigInteger currentFibonacciNumber;
-                    if (this.fibCounter == this.maxNumberLines)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        this.fibCounter++;
+                    BigInteger currentFibonacciNumber = BigInteger.Add(this.onePosBehind, this.twoPosBehind);
+                    this.fibCounter++;
 
-                        currentFibonacciNumber = this.onePosBehind + this.twoPosBehind;
-                        this.onePosBehind = this.twoPosBehind;
-                        this.onePosBehind = currentFibonacciNumber;
-                    }
+                    this.onePosBehind = this.twoPosBehind;
+                    this.twoPosBehind = currentFibonacciNumber;
 
                     return currentFibonacciNumber.ToString();
                 }
