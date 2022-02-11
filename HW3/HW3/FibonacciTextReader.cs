@@ -29,17 +29,11 @@ namespace HW3.FibonacciTextReader
         /// <param name="maxNumberLines"> Set the maxNumberLines. </param>
         public FibonacciTextReader(int maxNumberLines)
         {
-            if (this.maxNumberLines < 0)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-            else
-            {
-                this.maxNumberLines = maxNumberLines;
-                this.fibCounter = 0;
-                this.onePosBehind = 0;
-                this.twoPosBehind = 1;
-            }
+            this.maxNumberLines = maxNumberLines;
+            this.fibCounter = 0;
+            this.onePosBehind = 0;
+            this.twoPosBehind = 1;
+
         }
 
         /// <summary>
@@ -48,38 +42,46 @@ namespace HW3.FibonacciTextReader
         /// <returns> Return the string after calculating. </returns>
         public override string ReadLine()
         {
-            if (this.fibCounter == this.maxNumberLines)
+            if (this.maxNumberLines < 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException();
             }
             else
             {
-                BigInteger currentFibonacciNumber;
                 if (this.fibCounter == this.maxNumberLines)
                 {
                     return null;
                 }
                 else
                 {
-                    switch (this.fibCounter)
+                    BigInteger currentFibonacciNumber;
+                    if (this.fibCounter == this.maxNumberLines)
                     {
-                        case 0:
-                            this.fibCounter++;
-                            return "0";
-                        case 1:
-                            this.fibCounter++;
-                            return "1";
+                        return null;
+                    }
+                    else
+                    {
+                        switch (this.fibCounter)
+                        {
+                            case 0:
+                                this.fibCounter++;
+                                return "0";
+                            case 1:
+                                this.fibCounter++;
+                                return "1";
+                        }
+
+                        this.fibCounter++;
+
+                        currentFibonacciNumber = this.onePosBehind + this.twoPosBehind;
+                        this.onePosBehind = this.twoPosBehind;
+                        this.onePosBehind = currentFibonacciNumber;
                     }
 
-                    this.fibCounter++;
-
-                    currentFibonacciNumber = this.onePosBehind + this.twoPosBehind;
-                    this.onePosBehind = this.twoPosBehind;
-                    this.onePosBehind = currentFibonacciNumber;
+                    return currentFibonacciNumber.ToString();
                 }
-
-                return currentFibonacciNumber.ToString();
             }
+            
         }
     }
 }

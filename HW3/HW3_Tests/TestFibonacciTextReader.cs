@@ -26,8 +26,6 @@ namespace HW3.FibonacciTextReader.Tests
         /// <summary>
         /// Testing to see if the number that comes in is able to compute to the right number.
         /// </summary>
-        /// <param name="testFibNumber"> Takes in the number of testFibNumber. </param>
-        /// <returns> We should return the value of the nth Fibonacci number. </returns>
         [Test]
         public void TestNormalCase()
         {
@@ -49,19 +47,34 @@ namespace HW3.FibonacciTextReader.Tests
                 // append the fibonacci number to the result
                 fibonacciResult.Append(fibNumberGenerator.ReadLine() + Environment.NewLine);
             }
-            var expectedStudent = new Likeness<StringBuilder, StringBuilder>(correctResult);
-            Assert.AreEqual(expectedStudent, fibonacciResult);
+            var expectedResult = new Likeness<StringBuilder, StringBuilder>(correctResult);
+            Assert.AreEqual(expectedResult, fibonacciResult);
         }
 
         /// <summary>
         /// Testing to see if the number that comes in is able to compute to the right number.
         /// </summary>
-        /// <param name="testFibNumber"> Takes in the number of testFibNumber. </param>
-        /// <returns> We should return the value of the nth Fibonacci number. </returns>
-        [TestCase(0, ExpectedResult = 0)]
-        public int TestNormalCaseForZero(int testFibNumber)
+        [Test]
+        public void TestNormalCaseForZero()
         {
-            return 0;
+            int testFibNumber = 0;
+
+            StringBuilder correctResult = new StringBuilder();
+            StringBuilder fibonacciResult = new StringBuilder();
+
+            correctResult.Append("0" + Environment.NewLine);
+
+            FibonacciTextReader fibNumberGenerator = new FibonacciTextReader(testFibNumber);
+
+            // calculate the sequence of fibonacci numbers
+            // up to the maximumLines
+            for (int i = 0; i <= testFibNumber; i++)
+            {
+                // append the fibonacci number to the result
+                fibonacciResult.Append(fibNumberGenerator.ReadLine() + Environment.NewLine);
+            }
+            var expectedResult = new Likeness<StringBuilder, StringBuilder>(correctResult);
+            Assert.AreEqual(expectedResult, fibonacciResult);
         }
 
         /// <summary>
@@ -82,7 +95,10 @@ namespace HW3.FibonacciTextReader.Tests
         public void TestExceptionCase()
         {
             int testFibNumber = -1;
-            return;
+
+            FibonacciTextReader fibNumberGenerator = new FibonacciTextReader(testFibNumber);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => fibNumberGenerator.ReadLine());
         }
     }
 }
