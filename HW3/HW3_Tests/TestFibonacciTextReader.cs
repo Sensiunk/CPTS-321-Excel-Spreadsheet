@@ -149,7 +149,8 @@ namespace HW3.FibonacciTextReader.Tests
             // For loop that goes through and tests the foundation function which is the read line and iterates until the max number
             for (int lineCounter = 1; lineCounter <= testFibNumber + 1; lineCounter++)
             {
-                fibonacciResult.Append( fibNumberGenerator.ReadLine() + Environment.NewLine); // Keep on appending until we reach the end. In this case, it will only return nulls
+                // Keep on appending until we reach the end. In this case, it will only return nulls
+                fibonacciResult.Append(fibNumberGenerator.ReadLine() + Environment.NewLine);
             }
 
             // Make a variable that checks the similarity of the correct result vs the fibonacci string.

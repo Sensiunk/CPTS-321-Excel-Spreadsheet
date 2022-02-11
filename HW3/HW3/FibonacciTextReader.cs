@@ -18,15 +18,21 @@ namespace HW3.FibonacciTextReader
     {
         // Variable used to hold the max number of lines when we plug into constructor
         private int maxNumberLines;
-        private int fibCounter; // Holds the counter for which number we are at in the process of the Fibonacci Calculations.
-        private BigInteger onePosBehind; // Number that holds the fibCounter - 1.
-        private BigInteger twoPosBehind; // Number that holds the fibCounter - 2.
+
+        // Holds the counter for which number we are at in the process of the Fibonacci Calculations.
+        private int fibCounter;
+
+        // Number that holds the fibCounter - 1.
+        private BigInteger onePosBehind;
+
+        // Number that holds the fibCounter - 2.
+        private BigInteger twoPosBehind;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FibonacciTextReader"/> class.
         /// Constructor of the FibonacciTextReader.
         /// </summary>
-        /// <param name="maxNumberLines"> Set the maxNumberLines to the inputted maxNumberLines, set the counter to 0, set the onePosBehind to 0 and the twoPosBehind to 1. </param>
+        /// <param name="maxNumberLines"> Set the maxNumberLines to the inputted maxNumberLines, set the counter to 0, set the onePositionBehind to 0 and the twoPositionBehind to 1. </param>
         public FibonacciTextReader(int maxNumberLines)
         {
             this.maxNumberLines = maxNumberLines;
@@ -80,7 +86,7 @@ namespace HW3.FibonacciTextReader
         /// <summary>
         /// Overriding the ReadToEnd function from the TextReader class.
         /// </summary>
-        /// <returns> Returns the full list of the combinations from the calcuations. </returns>
+        /// <returns> Returns the full list of the combinations from the calculations. </returns>
         public override string ReadToEnd()
         {
             StringBuilder fullStringReadout = new StringBuilder(); // Our temporary string builder that we will be returning

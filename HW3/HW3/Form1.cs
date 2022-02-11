@@ -20,6 +20,9 @@ namespace HW3
     /// </summary>
     public partial class Form1 : Form
     {
+        /// <summary>
+        /// Creates a new instance of the StringBuilder for the fibonacciResult.
+        /// </summary>
         private StringBuilder fibonacciResult = new StringBuilder();
 
         /// <summary>
