@@ -87,22 +87,26 @@ namespace HW3.FibonacciTextReader.Tests
         [Test]
         public void TestNormalCaseForSecondNum()
         {
-            int testFibNumber = 2;
+            int testFibNumber = 2; // The nth number we are testing for.
 
+            // Our two string builders to be used to compare.
             StringBuilder correctResult = new StringBuilder();
             StringBuilder fibonacciResult = new StringBuilder();
 
-            correctResult.Append("0" + Environment.NewLine);
-            correctResult.Append("1" + Environment.NewLine);
+            // Adding in our known correct numbers into the correct result to be checked.
+            correctResult.Append("1: " + "0" + Environment.NewLine);
+            correctResult.Append("2: " + "1" + Environment.NewLine);
 
+            // Make an instance of our FibonacciTextReader class to use the functions.
             FibonacciTextReader fibNumberGenerator = new FibonacciTextReader(testFibNumber);
 
-            for (int lineCounter = 1; lineCounter <= testFibNumber; lineCounter++)
-            {
-                fibonacciResult.Append(fibNumberGenerator.ReadLine() + Environment.NewLine);
-            }
+            // Run the ReadToEnd function and append that to the string builder
+            fibonacciResult.Append(fibNumberGenerator.ReadToEnd());
 
+            // Make a variable that checks the similarity of the correct result vs the fibonacci string.
             var expectedResult = new Likeness<StringBuilder, StringBuilder>(correctResult);
+
+            // Returns a valid if they happen to be the same.
             Assert.AreEqual(expectedResult, fibonacciResult);
         }
 
