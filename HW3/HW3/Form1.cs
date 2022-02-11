@@ -46,14 +46,14 @@ namespace HW3
         /// <param name="e"> Passing in the EventArgs called e. </param>
         private void LoadFromFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            this.fibonacciResult = new StringBuilder();
+            OpenFileDialog openFileDialog = new OpenFileDialog(); // Make an instance of the open file dialog
 
+            // Checks to see if opening and getting the file was successful
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                StreamReader sr = new StreamReader(openFileDialog.FileName);
-                this.LoadText(sr);
-                sr.Dispose();
+                StreamReader sr = new StreamReader(openFileDialog.FileName); // Sets the Stream reader up and tells where and what the file is called
+                this.LoadText(sr); // Calls the function and doesnt override the function since we are passing in a StreamReader
+                sr.Dispose(); // Dispose of the StreamReader once we are done such that it is ready for garbage collection
             }
         }
 
@@ -64,21 +64,21 @@ namespace HW3
         /// <param name="e"> Passing in the EventArgs called e. </param>
         private void LoadFibonacciNumbersFirst50ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FibonacciTextReader.FibonacciTextReader firstFiftyFibonacci = new FibonacciTextReader.FibonacciTextReader(50);
-            this.LoadText(firstFiftyFibonacci);
-            firstFiftyFibonacci.Dispose();
+            FibonacciTextReader.FibonacciTextReader firstFiftyFibonacci = new FibonacciTextReader.FibonacciTextReader(50); // Create a new instance of the FibonacciTextReader and load 50 into the maxNumber
+            this.LoadText(firstFiftyFibonacci); // Calls the function to calculate the first 50 fibonacci and it does this through overriding the function
+            firstFiftyFibonacci.Dispose(); // Dispose of the FibonacciTextReader once we are done such that it is ready for garbage collection
         }
 
         /// <summary>
-        /// Button in the menu for loading the first 50 fibonacci numbers into the text box.
+        /// Button in the menu for loading the first 100 fibonacci numbers into the text box.
         /// </summary>
         /// <param name="sender"> Sender Object. </param>
         /// <param name="e"> Passing in the EventArgs called e. </param>
         private void LoadFibonacciNumbersFirst100ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FibonacciTextReader.FibonacciTextReader firstHundredFibonacci = new FibonacciTextReader.FibonacciTextReader(100);
-            this.LoadText(firstHundredFibonacci);
-            firstHundredFibonacci.Dispose();
+            FibonacciTextReader.FibonacciTextReader firstHundredFibonacci = new FibonacciTextReader.FibonacciTextReader(100); // Create a new instance of the FibonacciTextReader and load 100 into the maxNumber
+            this.LoadText(firstHundredFibonacci); // Calls the function to calculate the first 100 fibonacci and it does this through overriding the function
+            firstHundredFibonacci.Dispose(); // Dispose of the FibonacciTextReader once we are done such that it is ready for garbage collection
         }
 
         /// <summary>
