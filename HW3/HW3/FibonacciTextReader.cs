@@ -36,9 +36,9 @@ namespace HW3.FibonacciTextReader
         }
 
         /// <summary>
-        /// Overriding the ReadToEnd function from the TextReader class.
+        /// Overriding the ReadLine function from the TextReader class.
         /// </summary>
-        /// <returns> Return the string after calculating. </returns>
+        /// <returns> Return the number after calculating. </returns>
         public override string ReadLine()
         {
             if (this.maxNumberLines < 0)
@@ -72,6 +72,22 @@ namespace HW3.FibonacciTextReader
                     return currentFibonacciNumber.ToString();
                 }
             }
+        }
+
+        /// <summary>
+        /// Overriding the ReadToEnd function from the TextReader class.
+        /// </summary>
+        /// <returns> Returns the full list of the combinations from the calcuations. </returns>
+        public override string ReadToEnd()
+        {
+            StringBuilder fullStringReadout = new StringBuilder();
+
+            for (int lineCounter = 1; lineCounter <= this.maxNumberLines; lineCounter++)
+            {
+                fullStringReadout.Append(lineCounter + ": " + this.ReadLine() + Environment.NewLine);
+            }
+
+            return fullStringReadout.ToString();
         }
     }
 }
