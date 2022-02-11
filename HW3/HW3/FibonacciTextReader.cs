@@ -26,7 +26,7 @@ namespace HW3.FibonacciTextReader
         /// Initializes a new instance of the <see cref="FibonacciTextReader"/> class.
         /// Constructor of the FibonacciTextReader.
         /// </summary>
-        /// <param name="maxNumberLines"> Set the maxNumberLines. </param>
+        /// <param name="maxNumberLines"> Set the maxNumberLines to the inputted maxNumberLines, set the counter to 0, set the onePosBehind to 0 and the twoPosBehind to 1. </param>
         public FibonacciTextReader(int maxNumberLines)
         {
             this.maxNumberLines = maxNumberLines;
@@ -41,35 +41,38 @@ namespace HW3.FibonacciTextReader
         /// <returns> Return the number after calculating. </returns>
         public override string ReadLine()
         {
-            if (this.maxNumberLines < 0)
+            if (this.maxNumberLines < 1)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(); // We throw an error here if we receive a number that is less than 1 since we will always be looking for either 1 or more numbers.
             }
             else
             {
+                // Switch statement that checks if the counter is in the 1st posiiton or the 2nd posiiton
                 switch (this.fibCounter)
                 {
                     case 0:
-                        this.fibCounter++;
-                        return "0";
+                        this.fibCounter++; // Increase the counter if we get the posiiton to be in the 1st
+                        return "0"; // Return 0 as the string
                     case 1:
-                        this.fibCounter++;
-                        return "1";
+                        this.fibCounter++; // Increase the counter if we get the potition to be in the 2nd
+                        return "1"; // Return 1 as the string
                 }
 
+                // If we get our counter to be the max then we return null since we reached our cap
                 if (this.fibCounter == this.maxNumberLines)
                 {
-                    return null;
+                    return null; // Don't add anything
                 }
                 else
                 {
-                    BigInteger currentFibonacciNumber = BigInteger.Add(this.onePosBehind, this.twoPosBehind);
-                    this.fibCounter++;
+                    BigInteger currentFibonacciNumber = BigInteger.Add(this.onePosBehind, this.twoPosBehind); // Adds the two number to be stored as our currectFibonacciNumber
 
-                    this.onePosBehind = this.twoPosBehind;
-                    this.twoPosBehind = currentFibonacciNumber;
+                    this.fibCounter++; // Increase the counter since we are counting towards our goal of numbers
 
-                    return currentFibonacciNumber.ToString();
+                    this.onePosBehind = this.twoPosBehind; // Set the number that was originally two behind as the one that is now one behind
+                    this.twoPosBehind = currentFibonacciNumber; // Set the number that is currently as the number that two positions behind
+
+                    return currentFibonacciNumber.ToString(); // Return the string to the ReadToEnd function
                 }
             }
         }
@@ -80,14 +83,23 @@ namespace HW3.FibonacciTextReader
         /// <returns> Returns the full list of the combinations from the calcuations. </returns>
         public override string ReadToEnd()
         {
-            StringBuilder fullStringReadout = new StringBuilder();
+            StringBuilder fullStringReadout = new StringBuilder(); // Our temporary string builder that we will be returning
 
-            for (int lineCounter = 1; lineCounter <= this.maxNumberLines; lineCounter++)
+            // If we hit a case where our maxNumberLines is less than 1 then we return an exception
+            if (this.maxNumberLines < 1)
             {
-                fullStringReadout.Append(lineCounter + ": " + this.ReadLine() + Environment.NewLine);
+                throw new ArgumentOutOfRangeException(); // Out of range exception
+            }
+            else
+            {
+                // Loops through the first time all the way to the max numbers of lines we are looking for
+                for (int lineCounter = 1; lineCounter <= this.maxNumberLines; lineCounter++)
+                {
+                    fullStringReadout.Append(lineCounter + ": " + this.ReadLine() + Environment.NewLine); // Add the number line and the calculated number to the string and add a new line to the end
+                }
             }
 
-            return fullStringReadout.ToString();
+            return fullStringReadout.ToString(); // Return the complete string builder once we are done.
         }
     }
 }
