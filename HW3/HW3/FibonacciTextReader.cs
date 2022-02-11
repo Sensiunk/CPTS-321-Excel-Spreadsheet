@@ -48,6 +48,16 @@ namespace HW3.FibonacciTextReader
             }
             else
             {
+                switch (this.fibCounter)
+                {
+                    case 0:
+                        this.fibCounter++;
+                        return "0";
+                    case 1:
+                        this.fibCounter++;
+                        return "1";
+                }
+
                 if (this.fibCounter == this.maxNumberLines)
                 {
                     return null;
@@ -61,16 +71,6 @@ namespace HW3.FibonacciTextReader
                     }
                     else
                     {
-                        switch (this.fibCounter)
-                        {
-                            case 0:
-                                this.fibCounter++;
-                                return "0";
-                            case 1:
-                                this.fibCounter++;
-                                return "1";
-                        }
-
                         this.fibCounter++;
 
                         currentFibonacciNumber = this.onePosBehind + this.twoPosBehind;
@@ -81,7 +81,6 @@ namespace HW3.FibonacciTextReader
                     return currentFibonacciNumber.ToString();
                 }
             }
-            
         }
     }
 }
