@@ -36,7 +36,7 @@
             this.dataGridView1.Rows.Clear();
             this.dataGridView1.Rows.Add(50);
 
-            for (int i = 1; i < 50; i++)
+            for (int i = 0; i < 50; i++)
             {
                 var row = this.dataGridView1.Rows[i];
                 row.HeaderCell.Value = (i + 1).ToString();
