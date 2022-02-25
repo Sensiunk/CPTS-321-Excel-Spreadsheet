@@ -1,4 +1,4 @@
-namespace Spreadsheet_Manjesh_Puram_Tests
+namespace CptS321
 {
     using NUnit.Framework;
 
@@ -10,9 +10,10 @@ namespace Spreadsheet_Manjesh_Puram_Tests
         }
 
         [Test]
-        public void Test1()
+        public void TestCellValue()
         {
-            Assert.Pass();
+            Spreadsheet newSpreadsheet = new Spreadsheet(1, 2);
+            Assert.AreEqual(3, newSpreadsheet.GetCell.)
         }
     }
 }

@@ -24,22 +24,19 @@
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            int asciiIncrementer = 64;
-
-            for (int i = 1; i <= 26; i++)
+            for (int i = 65; i <= 90; i++)
             {
-                string letter = ((char)(asciiIncrementer + i)).ToString();
+                string letter = ((char)i).ToString();
 
-                this.dataGridView1.Columns.Add("column" + i, letter);
+                this.SpreadsheetGridView.Columns.Add("newColumnName" + i, letter);
             }
 
-            this.dataGridView1.Rows.Clear();
-            this.dataGridView1.Rows.Add(50);
+            this.SpreadsheetGridView.Rows.Clear();
+            this.SpreadsheetGridView.Rows.Add(50);
 
-            for (int i = 0; i < 50; i++)
+            for (int i = 1; i <= 50; i++)
             {
-                var row = this.dataGridView1.Rows[i];
-                row.HeaderCell.Value = (i + 1).ToString();
+                this.SpreadsheetGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
             }
         }
     }

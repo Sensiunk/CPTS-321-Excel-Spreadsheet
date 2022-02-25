@@ -1,5 +1,9 @@
 ﻿namespace CptS321
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
@@ -16,9 +20,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="SpreadsheetCell"/> class.
         /// </summary>
-        public SpreadsheetCell()
-        {
-        }
+        //public SpreadsheetCell()
+        //{
+        //}
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpreadsheetCell"/> class.
@@ -72,7 +76,7 @@
 
                 this.cellText = value;
 
-                this.OnPropertyChanged("Text");
+                this.OnPropertyChanged("CellText");
             }
         }
 
@@ -96,7 +100,7 @@
 
                 this.cellValue = value;
 
-                this.OnPropertyChanged("Value");
+                this.OnPropertyChanged("CellValue");
             }
         }
 
@@ -114,6 +118,71 @@
     /// </summary>
     public class Spreadsheet
     {
+        public event PropertyChangedEventHandler CellPropertyChanged = (sender, e) => { };
+        private int spreadsheetColumn;
+        private int spreadsheetRow;
+        private SpreadsheetCell[,] twoDArray;
 
+        public sealed class NewCell : SpreadsheetCell
+        {
+            public NewCell(int newRow, int newColumn) : base(newRow, newColumn)
+            {
+
+            }
+        }
+        public Spreadsheet (int newRow, int newColumn)
+        {
+            this.spreadsheetRow = newRow;
+            this.spreadsheetColumn = newColumn;
+
+            this.twoDArray = new SpreadsheetCell[newRow, newColumn];
+
+            for (int i = 0; i < newRow; i++)
+            {
+                for (int j = 0; i < newColumn; j++)
+                {
+                    SpreadsheetCell currentCell = new NewCell(i, j);
+
+                    currentCell.PropertyChanged += RefreshCellValue;
+
+                    twoDArray[i, j] = currentCell;
+                }
+            }
+        }
+
+        public SpreadsheetCell GetCell(int inputRow, int inputColumn)
+        {
+            if (inputRow > twoDArray.GetLength(0) || inputColumn > twoDArray.GetLength(1))
+            {
+                return null;
+            }
+            else
+            {
+                return twoDArray[inputRow, inputColumn];
+            }
+        }
+
+        public int ColumnCount
+        {
+            get { return this.ColumnCount; }
+        }
+
+        public int RowCount
+        {
+            get { return this.RowCount; }
+        }
+
+        private void RefreshCellValue(object sender, PropertyChangedEventArgs e)
+        {
+            if ("Text" == e.PropertyName)
+            {
+                SpreadsheetCell updateCell = (SpreadsheetCell)sender;
+                
+                if(updateCell.CellText[0] == '=')
+                {
+
+                }
+            }
+        }
     }
 }
