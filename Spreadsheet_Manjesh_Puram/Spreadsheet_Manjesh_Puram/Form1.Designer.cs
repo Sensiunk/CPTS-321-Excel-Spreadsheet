@@ -29,18 +29,20 @@ namespace Spreadsheet_Manjesh_Puram
         /// </summary>
         private void InitializeComponent()
         {
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.SpreadsheetGridView = new System.Windows.Forms.DataGridView();
             this.DemoButton = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SpreadsheetGridView)).BeginInit();
             this.SuspendLayout();
             // 
-            // dataGridView1
+            // SpreadsheetGridView
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 13);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(2853, 536);
-            this.dataGridView1.TabIndex = 0;
+            this.SpreadsheetGridView.AllowUserToAddRows = false;
+            this.SpreadsheetGridView.AllowUserToDeleteRows = false;
+            this.SpreadsheetGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.SpreadsheetGridView.Location = new System.Drawing.Point(12, 13);
+            this.SpreadsheetGridView.Name = "SpreadsheetGridView";
+            this.SpreadsheetGridView.Size = new System.Drawing.Size(2853, 536);
+            this.SpreadsheetGridView.TabIndex = 0;
             // 
             // DemoButton
             // 
@@ -58,18 +60,18 @@ namespace Spreadsheet_Manjesh_Puram
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2889, 714);
             this.Controls.Add(this.DemoButton);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.SpreadsheetGridView);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SpreadsheetGridView)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView SpreadsheetGridView;
         private System.Windows.Forms.Button DemoButton;
     }
 }

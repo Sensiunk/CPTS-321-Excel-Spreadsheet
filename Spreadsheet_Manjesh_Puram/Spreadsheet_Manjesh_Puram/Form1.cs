@@ -29,7 +29,20 @@ namespace Spreadsheet_Manjesh_Puram
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            for (int i = 65; i <= 90; i++)
+            {
+                string letter = ((char)i).ToString();
 
+                this.SpreadsheetGridView.Columns.Add("newColumnName" + i, letter);
+            }
+
+            this.SpreadsheetGridView.Rows.Clear();
+            this.SpreadsheetGridView.Rows.Add(50);
+
+            for (int i = 1; i <= 50; i++)
+            {
+                this.SpreadsheetGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
+            }
         }
 
         /// <summary>
