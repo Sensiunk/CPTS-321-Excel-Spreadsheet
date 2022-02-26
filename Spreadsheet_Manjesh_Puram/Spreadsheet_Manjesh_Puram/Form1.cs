@@ -46,6 +46,28 @@ namespace Spreadsheet_Manjesh_Puram
         }
 
         /// <summary>
+        /// RefreshPage function to react when the CellRefresh is fired.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> PropertyChangedEventArgs e. </param>
+        private void RefreshPage(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "CellRefresh")
+            {
+                CptS321.SpreadsheetCell refreshCell = (CptS321.SpreadsheetCell)sender;
+
+                // If the refreshCell isn't null then we go into the condition and set the values
+                if (refreshCell != null)
+                {
+                    int cellRow = refreshCell.RowIndex;
+                    int cellColumn = refreshCell.ColumnIndex;
+
+                    this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = refreshCell.CellValue;
+                }
+            }
+        }
+
+        /// <summary>
         /// Function to get the demo button to work.
         /// </summary>
         /// <param name="sender"> Object sender to get the sender to work. </param>
