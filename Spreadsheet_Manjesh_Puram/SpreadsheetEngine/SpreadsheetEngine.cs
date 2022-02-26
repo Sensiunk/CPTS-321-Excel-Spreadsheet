@@ -115,4 +115,20 @@ namespace CptS321
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
+
+    /// <summary>
+    /// New Cell class since its an abstract class and instantiating doesn't work smoothly.
+    /// </summary>
+    public sealed class NewCell : SpreadsheetCell
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NewCell"/> class.
+        /// </summary>
+        /// <param name="newRow"> Takes in a newRow value. </param>
+        /// <param name="newColumn"> Takes in a newColumn value. </param>
+        public NewCell(int newRow, int newColumn)
+            : base(newRow, newColumn)
+        {
+        }
+    }
 }
