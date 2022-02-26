@@ -52,15 +52,5 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Spreadsheet_Manjesh_Puram\Spreadsheet_Manjesh_Puram.csproj">
-      <Project>{84d2f616-a38b-4497-a888-7e85366054c9}</Project>
-      <Name>Spreadsheet_Manjesh_Puram</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Spreadsheet_Manjesh_Puram_Tests\Spreadsheet_Manjesh_Puram_Tests.csproj">
-      <Project>{ba8c465a-b9cb-4145-b319-52e42977f677}</Project>
-      <Name>Spreadsheet_Manjesh_Puram_Tests</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

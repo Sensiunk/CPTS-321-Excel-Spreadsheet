@@ -131,4 +131,106 @@ namespace CptS321
         {
         }
     }
+
+    /// <summary>
+    /// Public class of the Spreadsheet.
+    /// </summary>
+    public class Spreadsheet
+    {
+        /// <summary>
+        /// Event to fire when we have property change in the cell
+        /// </summary>
+        public event PropertyChangedEventHandler CellPropertyChanged;
+
+        private int spreadsheetColumn;
+        private int spreadsheetRow;
+        private SpreadsheetCell[,] twoDArray;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
+        /// </summary>
+        /// <param name="newRow"> Construct with a row input. </param>
+        /// <param name="newColumn"> Construct with a column input. </param>
+        public Spreadsheet(int newRow, int newColumn)
+        {
+            this.spreadsheetRow = newRow;
+            this.spreadsheetColumn = newColumn;
+
+            this.twoDArray = new SpreadsheetCell[newRow, newColumn];
+
+            for (int i = 0; i < newRow; i++)
+            {
+                for (int j = 0; j < newColumn; j++)
+                {
+                    this.twoDArray[i, j] = new NewCell(i, j);
+                    this.twoDArray[i, j].CellText = string.Empty;
+
+                    this.twoDArray[i, j].PropertyChanged += this.RefreshCellValue;
+                }
+            }
+        }
+
+        /// <summary>
+        /// GetCell function that returns a SpreadsheetCell so it can retreive the values from that cell.
+        /// </summary>
+        /// <param name="inputRow"> InputRow takes the location of that index. </param>
+        /// <param name="inputColumn"> InputColumn takes the location of that index. </param>
+        /// <returns> Returns the Cell at that location. </returns>
+        public SpreadsheetCell GetCell(int inputRow, int inputColumn)
+        {
+            if (this.twoDArray[inputRow, inputColumn] == null)
+            {
+                return null;
+            }
+            else
+            {
+                return this.twoDArray[inputRow, inputColumn];
+            }
+        }
+
+        /// <summary>
+        /// Gets property for the ColumnCount.
+        /// </summary>
+        public int ColumnCount
+        {
+            get { return this.spreadsheetColumn; }
+        }
+
+        /// <summary>
+        /// Gets property for the RowCount.
+        /// </summary>
+        public int RowCount
+        {
+            get { return this.spreadsheetRow; }
+        }
+
+        /// <summary>
+        /// RefreshCellValue function to be fired when we get the CellText fire.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> PropertyChangedEvents. </param>
+        private void RefreshCellValue(object sender, PropertyChangedEventArgs e)
+        {
+            // If we get the fire of CellText then we go into this statement.
+            if (e.PropertyName == "CellText")
+            {
+
+                // If the starting of the input is equal to = then we go into this.
+                if (((SpreadsheetCell)sender).CellText[0] == '=')
+                {
+                    string equalsSign = ((SpreadsheetCell)sender).CellText.Substring(0);
+                    int columnGrab = Convert.ToInt16(equalsSign[1]) - 'A';
+                    int rowGrab = Convert.ToInt16(equalsSign.Substring(2)) - 1;
+                    ((SpreadsheetCell)sender).CellValue = this.GetCell(rowGrab, columnGrab).CellValue;
+                }
+                else
+                {
+                    ((SpreadsheetCell)sender).CellValue = ((SpreadsheetCell)sender).CellText;
+                }
+            }
+
+            // Fire the CellRefresh call so that it can be changed in the form class.
+            this.CellPropertyChanged?.Invoke(sender, new PropertyChangedEventArgs("CellRefresh"));
+        }
+    }
 }
