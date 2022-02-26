@@ -50,6 +50,5 @@ namespace CptS321
         {
             Assert.AreEqual(this.testSpreadsheet.ColumnCount, 2);
         }
-
     }
 }

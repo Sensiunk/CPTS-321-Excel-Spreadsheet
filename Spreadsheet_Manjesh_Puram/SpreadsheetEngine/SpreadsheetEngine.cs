@@ -137,11 +137,6 @@ namespace CptS321
     /// </summary>
     public class Spreadsheet
     {
-        /// <summary>
-        /// Event to fire when we have property change in the cell
-        /// </summary>
-        public event PropertyChangedEventHandler CellPropertyChanged;
-
         private int spreadsheetColumn;
         private int spreadsheetRow;
         private SpreadsheetCell[,] twoDArray;
@@ -171,6 +166,27 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Gets property for the ColumnCount.
+        /// </summary>
+        public int ColumnCount
+        {
+            get { return this.spreadsheetColumn; }
+        }
+
+        /// <summary>
+        /// Gets property for the RowCount.
+        /// </summary>
+        public int RowCount
+        {
+            get { return this.spreadsheetRow; }
+        }
+
+        /// <summary>
+        /// Event to fire when we have property change in the cell
+        /// </summary>
+        public event PropertyChangedEventHandler CellPropertyChanged;
+
+        /// <summary>
         /// GetCell function that returns a SpreadsheetCell so it can retreive the values from that cell.
         /// </summary>
         /// <param name="inputRow"> InputRow takes the location of that index. </param>
@@ -189,22 +205,6 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Gets property for the ColumnCount.
-        /// </summary>
-        public int ColumnCount
-        {
-            get { return this.spreadsheetColumn; }
-        }
-
-        /// <summary>
-        /// Gets property for the RowCount.
-        /// </summary>
-        public int RowCount
-        {
-            get { return this.spreadsheetRow; }
-        }
-
-        /// <summary>
         /// RefreshCellValue function to be fired when we get the CellText fire.
         /// </summary>
         /// <param name="sender"> Object sender. </param>
@@ -214,7 +214,6 @@ namespace CptS321
             // If we get the fire of CellText then we go into this statement.
             if (e.PropertyName == "CellText")
             {
-
                 // If the starting of the input is equal to = then we go into this.
                 if (((SpreadsheetCell)sender).CellText[0] == '=')
                 {
