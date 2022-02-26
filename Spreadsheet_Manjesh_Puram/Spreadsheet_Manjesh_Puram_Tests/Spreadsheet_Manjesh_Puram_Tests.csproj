@@ -17,4 +17,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Spreadsheet_Manjesh_Puram\Spreadsheet_Manjesh_Puram.csproj" />
+  </ItemGroup>
+
 </Project>

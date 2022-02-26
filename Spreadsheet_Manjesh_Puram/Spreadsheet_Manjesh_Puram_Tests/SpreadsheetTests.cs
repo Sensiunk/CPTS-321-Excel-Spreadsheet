@@ -11,6 +11,8 @@ namespace CptS321
     /// </summary>
     public class SpreadsheetTests
     {
+        private CptS321.Spreadsheet testSpreadsheet = new Spreadsheet(2, 2);
+
         /// <summary>
         /// Setup for the test file.
         /// </summary>
@@ -25,7 +27,10 @@ namespace CptS321
         [Test]
         public void TestCellValue()
         {
-            Assert.AreEqual(0, 0);
+            this.testSpreadsheet = new Spreadsheet(2, 2);
+            this.testSpreadsheet.GetCell(1, 1).CellText = "This is a test";
+
+            Assert.AreEqual(this.testSpreadsheet.GetCell(1, 1).CellText, "This is a test");
         }
 
         /// <summary>
@@ -34,7 +39,7 @@ namespace CptS321
         [Test]
         public void TestRowCount()
         {
-            Assert.AreEqual(0, 0);
+            Assert.AreEqual(this.testSpreadsheet.RowCount, 2);
         }
 
         /// <summary>
@@ -43,7 +48,7 @@ namespace CptS321
         [Test]
         public void TestColumnCount()
         {
-            Assert.AreEqual(0, 0);
+            Assert.AreEqual(this.testSpreadsheet.ColumnCount, 2);
         }
 
     }
