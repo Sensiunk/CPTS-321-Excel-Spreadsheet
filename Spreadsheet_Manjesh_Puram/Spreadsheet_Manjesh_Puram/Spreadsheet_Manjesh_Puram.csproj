@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7D23D1AF-B7DC-43F0-A961-67B845028D9B}</ProjectGuid>
+    <ProjectGuid>{533EF1A1-907A-4CB6-AC7C-9FEC34D077A5}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Spreadsheet_Manjesh_Puram</RootNamespace>
     <AssemblyName>Spreadsheet_Manjesh_Puram</AssemblyName>
@@ -76,7 +76,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -84,12 +83,6 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SpreadsheetEngine\SpreadsheetEngine.csproj">
-      <Project>{e6eb92f0-1026-49fa-a65e-50aba9ba6df9}</Project>
-      <Name>SpreadsheetEngine</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
