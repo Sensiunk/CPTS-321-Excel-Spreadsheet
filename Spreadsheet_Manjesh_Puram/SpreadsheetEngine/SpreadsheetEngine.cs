@@ -232,4 +232,38 @@ namespace CptS321
             this.CellPropertyChanged?.Invoke(sender, new PropertyChangedEventArgs("CellRefresh"));
         }
     }
+
+    /// <summary>
+    /// Class that handles out expression tree construction.
+    /// </summary>
+    public class ExpressionTree
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
+        /// </summary>
+        /// <param name="expression"> Used to construct the tree from what ever expression is fed in. </param>
+        public ExpressionTree(string expression)
+        {
+
+        }
+
+        /// <summary>
+        /// Sets the specified variable within the ExpressionTree variables dictionary.
+        /// </summary>
+        /// <param name="variableName"> Used to assign the variable name. </param>
+        /// <param name="variableValue"> Used to assign the variable value. </param>
+        public void SetVariable(string variableName, double variableValue)
+        {
+
+        }
+
+        /// <summary>
+        /// Used to calculate the phrase fed in.
+        /// </summary>
+        /// <returns> Returns a double value of the evaluated total. </returns>
+        public double Evaluate()
+        {
+            return 0.0;
+        }
+    }
 }
