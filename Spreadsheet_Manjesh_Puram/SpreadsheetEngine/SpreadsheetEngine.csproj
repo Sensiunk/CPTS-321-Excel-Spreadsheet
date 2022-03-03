@@ -41,8 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseNode.cs" />
+    <Compile Include="ConstantNumNode.cs" />
     <Compile Include="SpreadsheetEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VariableNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

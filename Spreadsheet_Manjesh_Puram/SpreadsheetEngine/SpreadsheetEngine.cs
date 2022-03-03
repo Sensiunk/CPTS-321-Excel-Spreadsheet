@@ -247,6 +247,8 @@ namespace CptS321
 
         }
 
+        private static Dictionary<string, double> userVariables;
+
         /// <summary>
         /// Sets the specified variable within the ExpressionTree variables dictionary.
         /// </summary>
