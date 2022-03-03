@@ -11,6 +11,10 @@ namespace ExpressionTreeDemoConsole
         static void Main(string[] args)
         {
             Console.Out.WriteLine("Hello World!");
+            // Need the option to grab the entered expression
+            // Need the option to set a variables value in the expression. Must ask for both the variable name and value
+            // Need the option to evaluate the expression to a numerical value
+            // Need the option to quit
         }
     }
 }
