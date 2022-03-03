@@ -15,10 +15,5 @@ namespace CptS321
     /// </summary>
     internal abstract class BaseNode
     {
-        /// <summary>
-        /// This is the default Evaluate method for all other Nodes to build off of.
-        /// </summary>
-        /// <returns> We return the evaluated double. </returns>
-        public abstract double Evaluate();
     }
 }

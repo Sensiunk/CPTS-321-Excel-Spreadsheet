@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseNode.cs" />
+    <Compile Include="BinaryOperatorNode.cs" />
     <Compile Include="ConstantNumNode.cs" />
     <Compile Include="SpreadsheetEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

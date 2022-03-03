@@ -12,8 +12,6 @@ namespace CptS321
 
     /// <summary>
     /// This serves as the node that gets created in the case that we see a constant number in the expression given by the user.
-    /// We also are inheriting the BaseNode class which lets us utilize the abstract function of Evaluate which in this case,
-    /// allows us to return the constant value when we get this class called on to evaluate.
     /// </summary>
     internal class ConstantNumNode : BaseNode
     {
@@ -29,12 +27,12 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Evaluate method which is overriden from the base abstract class. This is called on when we utilize the evaluate function in the expression tree class.
+        /// Gets or sets, this serves as the get and set controller for our constantValue.
         /// </summary>
-        /// <returns> We return the constant value stored in this Class. </returns>
-        public override double Evaluate()
+        public double ConstantValue
         {
-            return this.constantValue; // Returrn the value of our constant value.
+            get { return this.constantValue; }
+            set { this.constantValue = value; }
         }
     }
 }
