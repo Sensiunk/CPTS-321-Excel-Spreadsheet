@@ -4,8 +4,8 @@
 
 namespace CptS321
 {
-    using NUnit.Framework;
     using System.Globalization;
+    using NUnit.Framework;
 
     /// <summary>
     /// Tests class to test to features in the expression tree.
