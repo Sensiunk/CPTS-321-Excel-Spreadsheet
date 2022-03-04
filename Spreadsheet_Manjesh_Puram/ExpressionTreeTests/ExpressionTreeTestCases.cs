@@ -122,10 +122,21 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Test case to test the functionality to see if it knows what to do when we do subtraction of two max values.
+        /// Test case to test the functionality to see if it knows what to do when we do addition of two max values.
         /// </summary>
         [Test]
         public void TestAdditionNegativeInfinityExpression()
+        {
+            string minValue = double.MinValue.ToString("F", CultureInfo.InvariantCulture);
+            ExpressionTree testTree = new ExpressionTree($"{minValue}+{minValue}");
+            Assert.AreEqual(testTree.Evaluate(), double.NegativeInfinity);
+        }
+
+        /// <summary>
+        /// Test case to test the functionality to see if it knows what to do when we do subtraction of two max values.
+        /// </summary>
+        [Test]
+        public void TestSubtractionNegativeInfinityExpression()
         {
             string minValue = double.MinValue.ToString("F", CultureInfo.InvariantCulture);
             ExpressionTree testTree = new ExpressionTree($"{minValue}-{minValue}");
