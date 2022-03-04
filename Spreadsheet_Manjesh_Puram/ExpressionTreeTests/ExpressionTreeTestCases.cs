@@ -30,6 +30,16 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Test case to test the functionality to see if our addition works.
+        /// </summary>
+        [Test]
+        public void TestAdditionWithSpaceExpression()
+        {
+            ExpressionTree testTree = new ExpressionTree("1 + 2 + 3 + 4");
+            Assert.AreEqual(testTree.Evaluate(), 10);
+        }
+
+        /// <summary>
         /// Test case to test the functionality to see if our subtraction works.
         /// </summary>
         [Test]
