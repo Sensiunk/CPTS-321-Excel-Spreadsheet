@@ -33,7 +33,8 @@ namespace CptS321
         [Test]
         public void TestDivisionExpression()
         {
-            Assert.AreEqual(0, 0);
+            ExpressionTree testTree = new ExpressionTree("27/9/3");
+            Assert.AreEqual(testTree.Evaluate(), 1);
         }
     }
 }
