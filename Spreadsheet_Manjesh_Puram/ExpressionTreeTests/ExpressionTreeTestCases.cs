@@ -26,7 +26,8 @@ namespace CptS321
         [Test]
         public void TestMultiplicationExpression()
         {
-            Assert.AreEqual(0, 0);
+            ExpressionTree testTree = new ExpressionTree("2*3*4");
+            Assert.AreEqual(testTree.Evaluate(), 24);
         }
 
         [Test]
