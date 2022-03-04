@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace ExpressionTreeTests
+namespace CptS321
 {
     public class Tests
     {
@@ -12,7 +12,8 @@ namespace ExpressionTreeTests
         [Test]
         public void TestAdditionExpression()
         {
-            Assert.AreEqual(0, 0);
+            ExpressionTree testTree = new ExpressionTree("1+2+3+4");
+            Assert.AreEqual(testTree.Evaluate(), 10);
         }
 
         [Test]
