@@ -25,7 +25,7 @@ namespace CptS321
         /// <param name="newBinaryOperator"> Takes in a value for our binary operator name when we get a new instance created. </param>
         /// <param name="newLeftNode"> Takes in a Node for our left node when we get a new instance created. </param>
         /// <param name="newRightNode"> Takes in a Node for our right node when we get a new instance created. </param>
-        public BinaryOperatorNode (char newBinaryOperator, BaseNode newLeftNode, BaseNode newRightNode)
+        public BinaryOperatorNode(char newBinaryOperator, BaseNode newLeftNode, BaseNode newRightNode)
         {
             this.binaryOperator = newBinaryOperator; // Set the value of the binaryOperator to the value being passed in during instantiation.
             this.leftNode = newLeftNode; // Set the value of the leftNode to the Node being passed in during instantiation.
@@ -66,7 +66,7 @@ namespace CptS321
         /// <param name="leftVal"> Takes in the double from the left side. </param>
         /// <param name="rightVal"> Takes in the double from the right side. </param>
         /// <returns> Returns the operated value of the left side and right side. </returns>
-        public double Evaluate (char binOperator, double leftVal, double rightVal)
+        public double Evaluate(char binOperator, double leftVal, double rightVal)
         {
             switch (binOperator)
             {

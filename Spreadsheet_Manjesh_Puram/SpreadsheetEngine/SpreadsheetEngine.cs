@@ -1,4 +1,4 @@
-﻿// <copyright file="Class1.cs" company="Manjesh Reddy Puram 11716685">
+﻿// <copyright file="SpreadsheetEngine.cs" company="Manjesh Reddy Puram 11716685">
 // Copyright (c) Manjesh Reddy Puram 11716685. All rights reserved.
 // </copyright>
 
@@ -166,6 +166,11 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Event to fire when we have property change in the cell
+        /// </summary>
+        public event PropertyChangedEventHandler CellPropertyChanged;
+
+        /// <summary>
         /// Gets property for the ColumnCount.
         /// </summary>
         public int ColumnCount
@@ -180,11 +185,6 @@ namespace CptS321
         {
             get { return this.spreadsheetRow; }
         }
-
-        /// <summary>
-        /// Event to fire when we have property change in the cell
-        /// </summary>
-        public event PropertyChangedEventHandler CellPropertyChanged;
 
         /// <summary>
         /// GetCell function that returns a SpreadsheetCell so it can retreive the values from that cell.
@@ -238,16 +238,19 @@ namespace CptS321
     /// </summary>
     public class ExpressionTree
     {
+        private static Dictionary<string, double> userVariables;
+        private BaseNode rootNode;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
         /// </summary>
         /// <param name="expression"> Used to construct the tree from what ever expression is fed in. </param>
         public ExpressionTree(string expression)
         {
+            userVariables = new Dictionary<string, double>();
 
+            this.rootNode = this.Compile(expression);
         }
-
-        private static Dictionary<string, double> userVariables;
 
         /// <summary>
         /// Sets the specified variable within the ExpressionTree variables dictionary.
@@ -256,7 +259,39 @@ namespace CptS321
         /// <param name="variableValue"> Used to assign the variable value. </param>
         public void SetVariable(string variableName, double variableValue)
         {
+            userVariables[variableName] = variableValue;
+        }
 
+        private BaseNode Compile(string userExpression)
+        {
+            if (userExpression.Length == 0)
+            {
+                return null;
+            }
+            else
+            {
+                for (int index = userExpression.Length - 1; index >= 0; index--)
+                {
+                    switch (userExpression[index])
+                    {
+                        case '+':
+                        case '-':
+                        case '*':
+                        case '/':
+                            return new BinaryOperatorNode(userExpression[index], this.Compile(userExpression.Substring(0, index)), this.Compile(userExpression.Substring(index + 1)));
+                    }
+                }
+
+                double number;
+                if (double.TryParse(userExpression, out number))
+                {
+                    return new ConstantNumNode(number);
+                }
+                else
+                {
+                    return new VariableNode(userExpression);
+                }
+            }
         }
 
         /// <summary>
@@ -265,7 +300,45 @@ namespace CptS321
         /// <returns> Returns a double value of the evaluated total. </returns>
         public double Evaluate()
         {
-            return 0.0;
+            if (this.rootNode == null)
+            {
+                return 0.0;
+            }
+            else
+            {
+                return this.Evaluate(this.rootNode);
+            }
+        }
+
+        private double Evaluate(BaseNode evalTree)
+        {
+            if (evalTree == null)
+            {
+                return 0.0;
+            }
+            else
+            {
+                // Method for explicitly casting the evalTree as other nodes found from youtube tutorial
+                // https://www.youtube.com/watch?v=jRkmPRk5j2E
+                if (evalTree is BinaryOperatorNode)
+                {
+                    BinaryOperatorNode tempInstance = (BinaryOperatorNode)evalTree;
+
+                    return tempInstance.Evaluate(tempInstance.BinaryOperator, this.Evaluate(tempInstance.LeftNode), this.Evaluate(tempInstance.RightNode));
+                }
+                else if (evalTree is VariableNode)
+                {
+                    VariableNode tempInstance = (VariableNode)evalTree;
+                    return userVariables[tempInstance.VariableName];
+                }
+                else if (evalTree is ConstantNumNode)
+                {
+                    ConstantNumNode tempInstance = (ConstantNumNode)evalTree;
+                    return tempInstance.ConstantValue;
+                }
+
+                return 0.0;
+            }
         }
     }
 }

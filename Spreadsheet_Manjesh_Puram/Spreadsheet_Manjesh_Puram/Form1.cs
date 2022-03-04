@@ -1,5 +1,5 @@
 ﻿// <copyright file="Form1.cs" company="PlaceholderCompany">
-// Copyright (c) Manjesh Reddy Puram 11716685. All rights reserved.
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace Spreadsheet_Manjesh_Puram
