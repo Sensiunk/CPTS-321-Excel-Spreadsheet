@@ -1,19 +1,15 @@
-﻿// <copyright file="AssemblyInfo.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Spreadsheet_Manjesh_Puram")]
+[assembly: AssemblyTitle("ExpressionTreeDemoConsole")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Spreadsheet_Manjesh_Puram")]
+[assembly: AssemblyProduct("ExpressionTreeDemoConsole")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -24,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("84d2f616-a38b-4497-a888-7e85366054c9")]
+[assembly: Guid("5ce3e8ce-92f6-4d49-afb1-f8b1ad4d8d55")]
 
 // Version information for an assembly consists of the following four values:
 //

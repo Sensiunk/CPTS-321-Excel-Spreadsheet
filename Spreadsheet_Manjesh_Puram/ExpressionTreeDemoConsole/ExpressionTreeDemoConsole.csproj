@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2E41D736-BE40-4AF7-A9D2-F28CBBBCE540}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SpreadsheetEngine</RootNamespace>
-    <AssemblyName>SpreadsheetEngine</AssemblyName>
+    <ProjectGuid>{5CE3E8CE-92F6-4D49-AFB1-F8B1AD4D8D55}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ExpressionTreeDemoConsole</RootNamespace>
+    <AssemblyName>ExpressionTreeDemoConsole</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -41,25 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseNode.cs" />
-    <Compile Include="BinaryOperatorNode.cs" />
-    <Compile Include="ConstantNumNode.cs" />
-    <Compile Include="DivisionOperatorNode.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="MinusOperatorNode.cs" />
-    <Compile Include="MultiplyOperatorNode.cs" />
-    <Compile Include="PlusOperatorNode.cs" />
-    <Compile Include="SpreadsheetEngine.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VariableNode.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-    <AdditionalFiles Include="stylecop.json" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <ProjectReference Include="..\SpreadsheetEngine\SpreadsheetEngine.csproj">
+      <Project>{2e41d736-be40-4af7-a9d2-f28cbbbce540}</Project>
+      <Name>SpreadsheetEngine</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

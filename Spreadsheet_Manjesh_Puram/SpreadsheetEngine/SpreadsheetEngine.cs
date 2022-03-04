@@ -1,4 +1,4 @@
-﻿// <copyright file="Class1.cs" company="Manjesh Reddy Puram 11716685">
+﻿// <copyright file="SpreadsheetEngine.cs" company="Manjesh Reddy Puram 11716685">
 // Copyright (c) Manjesh Reddy Puram 11716685. All rights reserved.
 // </copyright>
 
@@ -15,10 +15,25 @@ namespace CptS321
     /// </summary>
     public abstract class SpreadsheetCell : INotifyPropertyChanged
     {
-        protected int rowIndex; // Index of the row
-        protected int columnIndex; // Index of the column
-        protected string cellText; // Text in the cell
-        protected string cellValue; // Value in the cell
+        /// <summary>
+        /// Index of the row.
+        /// </summary>
+        protected int rowIndex;
+
+        /// <summary>
+        /// Index of the column.
+        /// </summary>
+        protected int columnIndex;
+
+        /// <summary>
+        /// Text in the cell.
+        /// </summary>
+        protected string cellText;
+
+        /// <summary>
+        /// Value in the cell.
+        /// </summary>
+        protected string cellValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpreadsheetCell"/> class.
@@ -166,6 +181,11 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Event to fire when we have property change in the cell
+        /// </summary>
+        public event PropertyChangedEventHandler CellPropertyChanged;
+
+        /// <summary>
         /// Gets property for the ColumnCount.
         /// </summary>
         public int ColumnCount
@@ -180,11 +200,6 @@ namespace CptS321
         {
             get { return this.spreadsheetRow; }
         }
-
-        /// <summary>
-        /// Event to fire when we have property change in the cell
-        /// </summary>
-        public event PropertyChangedEventHandler CellPropertyChanged;
 
         /// <summary>
         /// GetCell function that returns a SpreadsheetCell so it can retreive the values from that cell.
@@ -230,6 +245,150 @@ namespace CptS321
 
             // Fire the CellRefresh call so that it can be changed in the form class.
             this.CellPropertyChanged?.Invoke(sender, new PropertyChangedEventArgs("CellRefresh"));
+        }
+    }
+
+    /// <summary>
+    /// Class that handles out expression tree construction.
+    /// </summary>
+    public class ExpressionTree
+    {
+        private static Dictionary<string, double> userVariables;
+        private BaseNode rootNode;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
+        /// </summary>
+        /// <param name="expression"> Used to construct the tree from what ever expression is fed in. </param>
+        public ExpressionTree(string expression)
+        {
+            userVariables = new Dictionary<string, double>();
+
+            this.rootNode = this.Compile(expression);
+        }
+
+        /// <summary>
+        /// Sets the specified variable within the ExpressionTree variables dictionary.
+        /// </summary>
+        /// <param name="variableName"> Used to assign the variable name. </param>
+        /// <param name="variableValue"> Used to assign the variable value. </param>
+        public void SetVariable(string variableName, double variableValue)
+        {
+            userVariables[variableName] = variableValue;
+        }
+
+        /// <summary>
+        /// This constructs the expression tree with the expression being fed in.
+        /// </summary>
+        /// <param name="userExpression"> This is the expression taken from the user. </param>
+        /// <returns> Returns the node of the type we need. </returns>
+        private BaseNode Compile(string userExpression)
+        {
+            // If there is no expression being fed in the return 0
+            if (userExpression.Length == 0)
+            {
+                return null;
+            }
+            else
+            {
+                // Loop from the back to the front checking if the we can find a operator
+                for (int index = userExpression.Length - 1; index >= 0; index--)
+                {
+                    switch (userExpression[index])
+                    {
+                        case '+': // We create a plus operator node if we find a plus operator in the expression
+                            BinaryOperatorNode newPlusOperatorNode = new PlusOperatorNode();
+                            newPlusOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
+                            newPlusOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
+                            return newPlusOperatorNode;
+                        case '-': // We create a minus operator node if we find a minus operator in the expression
+                            BinaryOperatorNode newMinusOperatorNode = new MinusOperatorNode();
+                            newMinusOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
+                            newMinusOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
+                            return newMinusOperatorNode;
+                        case '*': // We create a multiply operator node if we find a multiply operator in the expression
+                            BinaryOperatorNode newMultiplyOperatorNode = new MultiplyOperatorNode();
+                            newMultiplyOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
+                            newMultiplyOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
+                            return newMultiplyOperatorNode;
+                        case '/': // We create a divide operator node if we find a divide operator in the expression
+                            BinaryOperatorNode newDivisionOperatorNode = new DivisionOperatorNode();
+                            newDivisionOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
+                            newDivisionOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
+                            return newDivisionOperatorNode;
+                    }
+                }
+
+                // We try to parse the expression and check if its a number
+                double number;
+                if (double.TryParse(userExpression, out number))
+                {
+                    return new ConstantNumNode(number);
+                }
+
+                // If its not a number then we know its a variable and we declare that number as 0 by default.
+                else
+                {
+                    userVariables[userExpression] = 0.0;
+                    return new VariableNode(userExpression);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Used to calculate the phrase fed in.
+        /// </summary>
+        /// <returns> Returns a double value of the evaluated total. </returns>
+        public double Evaluate()
+        {
+            // This means that the expression was empty.
+            if (this.rootNode == null)
+            {
+                return 0.0;
+            }
+
+            // If its not empty then we can evaluate.
+            else
+            {
+                return this.Evaluate(this.rootNode);
+            }
+        }
+
+        private double Evaluate(BaseNode evalTree)
+        {
+            // If the expression is empty then we return 0.
+            if (evalTree == null)
+            {
+                return 0.0;
+            }
+            else
+            {
+                // Method for explicitly casting the evalTree as other nodes found from youtube tutorial
+                // https://www.youtube.com/watch?v=jRkmPRk5j2E
+                // If its an Binary Operator Node then we do the evaluation function from the respective operator node
+                if (evalTree is BinaryOperatorNode)
+                {
+                    BinaryOperatorNode tempInstance = (BinaryOperatorNode)evalTree;
+
+                    return tempInstance.Evaluate(this.Evaluate(tempInstance.LeftNode), this.Evaluate(tempInstance.RightNode));
+                }
+
+                // If its a variable node then we do a look up in the dictionary and return the value in that location or 0 if it was never changed.
+                else if (evalTree is VariableNode)
+                {
+                    VariableNode tempInstance = (VariableNode)evalTree;
+                    return userVariables[tempInstance.VariableName];
+                }
+
+                // If its a constant node then we return the value stored in that constant node.
+                else if (evalTree is ConstantNumNode)
+                {
+                    ConstantNumNode tempInstance = (ConstantNumNode)evalTree;
+                    return tempInstance.ConstantValue;
+                }
+
+                return 0.0;
+            }
         }
     }
 }
