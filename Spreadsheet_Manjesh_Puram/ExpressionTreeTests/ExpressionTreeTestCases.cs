@@ -70,6 +70,16 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Test case to test the functionality to see if our division works.
+        /// </summary>
+        [Test]
+        public void TestDivisionPositiveByZeroExpression()
+        {
+            ExpressionTree testTree = new ExpressionTree("27/0");
+            Assert.AreEqual(testTree.Evaluate(), double.PositiveInfinity);
+        }
+
+        /// <summary>
         /// Test case to test the functionality to see if sending a blank expression returns a 0.0.
         /// </summary>
         [Test]
