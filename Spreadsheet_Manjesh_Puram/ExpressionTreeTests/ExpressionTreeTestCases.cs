@@ -5,6 +5,7 @@
 namespace CptS321
 {
     using NUnit.Framework;
+    using System.Globalization;
 
     /// <summary>
     /// Tests class to test to features in the expression tree.
@@ -107,6 +108,28 @@ namespace CptS321
         {
             ExpressionTree testTree = new ExpressionTree(string.Empty);
             Assert.AreEqual(testTree.Evaluate(), 0);
+        }
+
+        /// <summary>
+        /// Test case to test the functionality to see if it knows what to do when we do addition of two max values.
+        /// </summary>
+        [Test]
+        public void TestAdditionInfinityExpression()
+        {
+            string maxValue = double.MaxValue.ToString("F", CultureInfo.InvariantCulture);
+            ExpressionTree testTree = new ExpressionTree($"{maxValue}+{maxValue}");
+            Assert.AreEqual(testTree.Evaluate(), double.PositiveInfinity);
+        }
+
+        /// <summary>
+        /// Test case to test the functionality to see if it knows what to do when we do addition of two max values.
+        /// </summary>
+        [Test]
+        public void TestMultiplicationInfinityExpression()
+        {
+            string maxValue = double.MaxValue.ToString("F", CultureInfo.InvariantCulture);
+            ExpressionTree testTree = new ExpressionTree($"{maxValue}*{maxValue}");
+            Assert.AreEqual(testTree.Evaluate(), double.PositiveInfinity);
         }
     }
 }
