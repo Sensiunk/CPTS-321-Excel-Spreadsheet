@@ -53,6 +53,16 @@ namespace CptS321
         /// Test case to test the functionality to see if our subtraction works.
         /// </summary>
         [Test]
+        public void TestSubtractionWithSpacesExpression()
+        {
+            ExpressionTree testTree = new ExpressionTree("10 - 5 - 4");
+            Assert.AreEqual(testTree.Evaluate(), 1);
+        }
+
+        /// <summary>
+        /// Test case to test the functionality to see if our subtraction works.
+        /// </summary>
+        [Test]
         public void TestSubtractionToNegativeExpression()
         {
             ExpressionTree testTree = new ExpressionTree("10-5-10");
