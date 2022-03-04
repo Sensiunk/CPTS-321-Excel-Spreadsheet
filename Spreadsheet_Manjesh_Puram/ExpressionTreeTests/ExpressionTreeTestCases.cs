@@ -19,7 +19,8 @@ namespace CptS321
         [Test]
         public void TestSubtractionExpression()
         {
-            Assert.AreEqual(0, 0);
+            ExpressionTree testTree = new ExpressionTree("10-5-4");
+            Assert.AreEqual(testTree.Evaluate(), 1);
         }
 
         [Test]
