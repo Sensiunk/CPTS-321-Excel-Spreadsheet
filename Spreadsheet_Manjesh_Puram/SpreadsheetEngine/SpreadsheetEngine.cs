@@ -291,31 +291,16 @@ namespace CptS321
             }
             else
             {
+                char[] validOperators = { '+', '-', '*', '/' };
                 // Loop from the back to the front checking if the we can find a operator
                 for (int index = userExpression.Length - 1; index >= 0; index--)
                 {
-                    switch (userExpression[index])
+                    if (validOperators.Contains(userExpression[index]))
                     {
-                        case '+': // We create a plus operator node if we find a plus operator in the expression
-                            BinaryOperatorNode newPlusOperatorNode = new PlusOperatorNode();
-                            newPlusOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
-                            newPlusOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
-                            return newPlusOperatorNode;
-                        case '-': // We create a minus operator node if we find a minus operator in the expression
-                            BinaryOperatorNode newMinusOperatorNode = new MinusOperatorNode();
-                            newMinusOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
-                            newMinusOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
-                            return newMinusOperatorNode;
-                        case '*': // We create a multiply operator node if we find a multiply operator in the expression
-                            BinaryOperatorNode newMultiplyOperatorNode = new MultiplyOperatorNode();
-                            newMultiplyOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
-                            newMultiplyOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
-                            return newMultiplyOperatorNode;
-                        case '/': // We create a divide operator node if we find a divide operator in the expression
-                            BinaryOperatorNode newDivisionOperatorNode = new DivisionOperatorNode();
-                            newDivisionOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
-                            newDivisionOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
-                            return newDivisionOperatorNode;
+                        BinaryOperatorNode opNode = CreateFactoryOperator.CreateOperator(userExpression[index]);
+                        opNode.LeftNode = this.Compile(userExpression.Substring(0, index));
+                        opNode.RightNode = this.Compile(userExpression.Substring(index + 1));
+                        return opNode;
                     }
                 }
 
