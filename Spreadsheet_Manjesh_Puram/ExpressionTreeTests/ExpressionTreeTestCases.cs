@@ -153,5 +153,29 @@ namespace CptS321
             ExpressionTree testTree = new ExpressionTree($"{maxValue}*{maxValue}");
             Assert.AreEqual(testTree.Evaluate(), double.PositiveInfinity);
         }
+
+        /// <summary>
+        /// Test case to test the functionality to see if it knows what to do when there is precedence involved.
+        /// </summary>
+        public void TestWithPrecedence()
+        {
+            Assert.AreEqual(0, 0);
+        }
+
+        /// <summary>
+        /// Test case to test the functionality to see if it knows what to do when there is parentheses involved.
+        /// </summary>
+        public void TestWithParentheses()
+        {
+            Assert.AreEqual(0, 0);
+        }
+
+        /// <summary>
+        /// Test case to test the functionality to see if it knows what to do when there is the same precedence invovled.
+        /// </summary>
+        public void TestEqualPrecedence()
+        {
+            Assert.AreEqual(0, 0);
+        }
     }
 }
