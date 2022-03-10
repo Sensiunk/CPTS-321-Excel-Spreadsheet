@@ -255,6 +255,10 @@ namespace CptS321
     {
         private static Dictionary<string, double> userVariables;
         private BaseNode rootNode;
+        private Stack<BaseNode> postFixExpression = new Stack<BaseNode>();
+        private Stack<BaseNode> operatorStack = new Stack<BaseNode>();
+
+        public string Expression { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
@@ -265,6 +269,28 @@ namespace CptS321
             userVariables = new Dictionary<string, double>();
 
             this.rootNode = this.Compile(expression);
+
+            while (this.operatorStack.Count > 0)
+            {
+                this.postFixExpression.Push(this.operatorStack.Pop());
+            }
+
+            this.rootNode = this.postFixExpression.Pop();
+
+            this.Expression = expression;
+
+        }
+
+        private BaseNode CompileTree(BaseNode currentNode)
+        {
+            if (this.rootNode is BinaryOperatorNode)
+            {
+                BinaryOperatorNode tempNode = (BinaryOperatorNode)this.rootNode;
+                tempNode.LeftNode = this.CompileTree(this.postFixExpression.Pop());
+                tempNode.RightNode = this.CompileTree(this.postFixExpression.Pop());
+            }
+
+            return currentNode;
         }
 
         /// <summary>
@@ -275,6 +301,43 @@ namespace CptS321
         public void SetVariable(string variableName, double variableValue)
         {
             userVariables[variableName] = variableValue;
+        }
+
+        public string convertInfixToPostfix(string expression)
+        {
+            char[] validOperators = { '+', '-', '*', '/' };
+            string postfixExpression = string.Empty;
+            Stack<char> myStack = new Stack<char>();
+            foreach (char currentChar in expression)
+            {
+                if (!validOperators.Contains(currentChar))
+                {
+                    postfixExpression.Append(currentChar);
+                }
+                else if (currentChar == '(')
+                {
+                    myStack.Push('(');
+                }
+                else if (currentChar == ')')
+                {
+                    while (myStack.Peek() != '(')
+                    {
+                        postfixExpression.Append(myStack.Pop());
+                    }
+
+                    myStack.Pop();
+                }
+                else if (validOperators.Contains(currentChar) && (myStack.Count == 0 || myStack.Peek() == '('))
+                {
+                    myStack.Push(currentChar);
+                }
+                else if ((validOperators.Contains(currentChar) && myStack.Peek() == '*') || myStack.Peek() == '/')
+                {
+                    postfixExpression.Append(myStack.Pop());
+                }
+            }
+
+            return postfixExpression;
         }
 
         /// <summary>
@@ -293,7 +356,7 @@ namespace CptS321
             {
                 char[] validOperators = { '+', '-', '*', '/' };
                 // Loop from the back to the front checking if the we can find a operator
-                for (int index = userExpression.Length - 1; index >= 0; index--)
+                for (int index = 0; index <= userExpression.Length - 1; index++)
                 {
                     if (validOperators.Contains(userExpression[index]))
                     {
