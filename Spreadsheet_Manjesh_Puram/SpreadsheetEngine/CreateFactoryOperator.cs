@@ -32,9 +32,39 @@ namespace CptS321
                     return new MultiplyOperatorNode();
                 case '/':
                     return new DivisionOperatorNode();
+                case '(':
+                    return new OpenParenthesesNode();
+                case ')':
+                    return new ClosingParenthesesNode();
             }
 
             throw new Exception("Operator not supported");
+        }
+
+        /// <summary>
+        /// Function to streamline checking if a operator in the input expression is a valid operator.
+        /// </summary>
+        /// <param name="opValue"> Takes in the operator in question. </param>
+        /// <returns> Returns true if in the case that the operator is actually a valid operator. </returns>
+        public static bool IsValidOperator(char opValue)
+        {
+            switch (opValue)
+            {
+                case '+':
+                    return true;
+                case '-':
+                    return true;
+                case '*':
+                    return true;
+                case '/':
+                    return true;
+                case '(':
+                    return true;
+                case ')':
+                    return true;
+            }
+
+            return false;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// <copyright file="DivisionOperatorNode.cs" company="Manjesh Reddy Puram 11716685">
+﻿// <copyright file="OpenParenthesesNode.cs" company="Manjesh Reddy Puram 11716685">
 // Copyright (c) Manjesh Reddy Puram 11716685. All rights reserved.
 // </copyright>
 
@@ -11,32 +11,32 @@ namespace CptS321
     using System.Threading.Tasks;
 
     /// <summary>
-    /// This serves as the node that gets created in the case that we see a division as the operator.
+    /// This serves as the node that gets created in the case that we see a open parentheses as the operator.
     /// </summary>
-    internal class DivisionOperatorNode : BinaryOperatorNode
+    internal class OpenParenthesesNode : BinaryOperatorNode
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DivisionOperatorNode"/> class.
+        /// Initializes a new instance of the <see cref="OpenParenthesesNode"/> class.
         /// </summary>
-        public DivisionOperatorNode()
-            : base('/')
+        public OpenParenthesesNode()
+            : base('(')
         {
         }
 
         /// <summary>
-        /// Gets, this contains the information needed to know what precedence the division has.
+        /// Gets, this contains the information needed to know what precedence the open parentheses has.
         /// </summary>
-        public ushort Precedence { get; } = 1;
+        public ushort Precedence { get; } = 2;
 
         /// <summary>
-        /// This function serves the purpose to return the division when we do the evaluation for the calculations.
+        /// This function serves the purpose to return the difference when we do the evaluation for the calculations.
         /// </summary>
         /// <param name="leftVal"> Takes in the double from the left side. </param>
         /// <param name="rightVal"> Takes in the double from the right side. </param>
         /// <returns> Returns the operated value of the left side and right side. </returns>
         public override double Evaluate(double leftVal, double rightVal)
         {
-            return rightVal / leftVal;
+            return rightVal;
         }
     }
 }

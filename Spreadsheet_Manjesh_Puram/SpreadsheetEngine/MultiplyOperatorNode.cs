@@ -24,6 +24,11 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Gets, this contains the information needed to know what precedence the multiplication has.
+        /// </summary>
+        public ushort Precedence { get; } = 1;
+
+        /// <summary>
         /// This function serves the purpose to return the multiplication when we do the evaluation for the calculations.
         /// </summary>
         /// <param name="leftVal"> Takes in the double from the left side. </param>

@@ -42,6 +42,11 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Gets the value of the precedence.
+        /// </summary>
+        public ushort Precedence { get; }
+
+        /// <summary>
         /// Gets or sets, this serves as the get and set controller for our leftNode.
         /// </summary>
         public BaseNode LeftNode
