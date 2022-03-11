@@ -36,7 +36,7 @@ namespace CptS321
         /// <returns> Returns the operated value of the left side and right side. </returns>
         public override double Evaluate(double leftVal, double rightVal)
         {
-            return leftVal + rightVal;
+            return rightVal + leftVal;
         }
     }
 }

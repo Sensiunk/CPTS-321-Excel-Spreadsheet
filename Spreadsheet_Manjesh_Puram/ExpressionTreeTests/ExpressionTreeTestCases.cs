@@ -27,8 +27,7 @@ namespace CptS321
         public void TestAdditionExpression()
         {
             ExpressionTree testTree = new ExpressionTree("1+2+3+4");
-
-           Assert.AreEqual(testTree.Evaluate(), 10);
+            Assert.AreEqual(testTree.Evaluate(), 10);
         }
 
         /// <summary>

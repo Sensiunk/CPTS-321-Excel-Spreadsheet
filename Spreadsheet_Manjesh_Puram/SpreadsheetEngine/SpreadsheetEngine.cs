@@ -344,8 +344,6 @@ namespace CptS321
             }
         }
 
-
-
         /// <summary>
         /// This recursively calls the compile tree function that builds from the stack.
         /// </summary>
@@ -444,20 +442,25 @@ namespace CptS321
                             // Since we know that the operator in question isn't a open parenthesis, we can push it onto the stack of operators.
                             this.operatorStack.Push(operatorNode);
                         }
+
                         // Step 5 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either higher precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is right associative -- push it on the stack.
+                        // This checks if the prcedence of the value we have right now is greater than the prcedence of the node a the top of the operator stack.
                         else if (operatorNode.Precedence > (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()))
                         {
                             this.operatorStack.Push(operatorNode);
                         }
 
                         // Step 6 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either lower precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is left associative -- continue to pop the stack until this is not true. Then, push the incoming operator.
-                        else if (operatorNode.Precedence <= (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) || operatorNode.Precedence == ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek())))
+                        // This checks is the precedence of the value we have right now is less than the precedence of the node at the top of the operator stack
+                        else if (operatorNode.Precedence <= (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()))
                         {
+                            // We do this while our operator stack still has operators inside, and the top isn't a ( and than our precedence is greater than top.
                             while (this.operatorStack.Count > 0 && ((BinaryOperatorNode)this.operatorStack.Peek()).BinaryOperator != '(' && ((BinaryOperatorNode)this.operatorStack.Peek()).Precedence >= operatorNode.Precedence)
                             {
                                 this.postFixExpression.Push(this.operatorStack.Pop());
                             }
 
+                            // Push the operator onto the stack.
                             this.operatorStack.Push(operatorNode);
                         }
                     }
