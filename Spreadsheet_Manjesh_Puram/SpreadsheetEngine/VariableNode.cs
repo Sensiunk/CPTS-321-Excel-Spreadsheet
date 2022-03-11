@@ -15,7 +15,10 @@ namespace CptS321
     /// </summary>
     internal class VariableNode : BaseNode
     {
-        private string variableName; // This holds the value of our variable name
+        /// <summary>
+        /// This holds the value of our variable name.
+        /// </summary>
+        private string variableName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableNode"/> class.

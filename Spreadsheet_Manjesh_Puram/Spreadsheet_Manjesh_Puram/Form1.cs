@@ -19,6 +19,9 @@ namespace Spreadsheet_Manjesh_Puram
     /// </summary>
     public partial class Form1 : Form
     {
+        /// <summary>
+        /// Spreadsheet instance.
+        /// </summary>
         private CptS321.Spreadsheet mainSpreadsheet;
 
         /// <summary>
@@ -37,6 +40,11 @@ namespace Spreadsheet_Manjesh_Puram
             this.DemoButton.Text = "Perform Demo"; // Change the name of the button
         }
 
+        /// <summary>
+        /// Form load function that takes assembles the grid view.
+        /// </summary>
+        /// <param name="sender"> Sender object. </param>
+        /// <param name="e"> EventArgs e. </param>
         private void Form1_Load(object sender, EventArgs e)
         {
             // For loop that takes a number and converts the ascii to a letter an places it in the column
@@ -134,7 +142,7 @@ namespace Spreadsheet_Manjesh_Puram
         }
 
         /// <summary>
-        /// Function to place the items in the Cell B into the Cell A with the automaic firing happening.
+        /// Function to place the items in the Cell B into the Cell A with the automatic firing happening.
         /// </summary>
         /// <param name="rowNumber"> Random number for the row. </param>
         private void EqualsCellBPlacement(int rowNumber)

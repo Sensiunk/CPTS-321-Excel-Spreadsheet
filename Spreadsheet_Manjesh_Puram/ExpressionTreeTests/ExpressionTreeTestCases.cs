@@ -71,7 +71,7 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Test case to test the functionality to see if our multiplcation works.
+        /// Test case to test the functionality to see if our multiplication works.
         /// </summary>
         [Test]
         public void TestMultiplicationExpression()
@@ -171,7 +171,7 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Test case to test the functionality to see if it knows what to do when there is the same precedence invovled.
+        /// Test case to test the functionality to see if it knows what to do when there is the same precedence involved.
         /// </summary>
         public void TestEqualPrecedence()
         {

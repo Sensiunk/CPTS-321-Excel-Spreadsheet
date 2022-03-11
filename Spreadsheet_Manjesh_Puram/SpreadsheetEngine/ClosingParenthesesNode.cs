@@ -11,7 +11,7 @@ namespace CptS321
     using System.Threading.Tasks;
 
     /// <summary>
-    /// This serves as the node that gets created in the case that we see a closing parantheses as the operator.
+    /// This serves as the node that gets created in the case that we see a closing parentheses as the operator.
     /// </summary>
     internal class ClosingParenthesesNode : BinaryOperatorNode
     {

@@ -10,6 +10,9 @@ namespace Spreadsheet_Manjesh_Puram
     using System.Threading.Tasks;
     using System.Windows.Forms;
 
+    /// <summary>
+    /// Program for our forms app.
+    /// </summary>
     static class Program
     {
         /// <summary>

@@ -18,22 +18,22 @@ namespace CptS321
         /// <summary>
         /// Index of the row.
         /// </summary>
-        protected int rowIndex;
+        private int rowIndex;
 
         /// <summary>
         /// Index of the column.
         /// </summary>
-        protected int columnIndex;
+        private int columnIndex;
 
         /// <summary>
         /// Text in the cell.
         /// </summary>
-        protected string cellText;
+        private string cellText;
 
         /// <summary>
         /// Value in the cell.
         /// </summary>
-        protected string cellValue;
+        private string cellValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpreadsheetCell"/> class.
@@ -152,8 +152,19 @@ namespace CptS321
     /// </summary>
     public class Spreadsheet
     {
+        /// <summary>
+        /// Value that contains the number of columns in the spreadsheet.
+        /// </summary>
         private int spreadsheetColumn;
+
+        /// <summary>
+        /// Value that contains the number of rows in the spreadsheet.
+        /// </summary>
         private int spreadsheetRow;
+
+        /// <summary>
+        /// Our 2D array that holds the values that correlate with the spreadsheet grid view.
+        /// </summary>
         private SpreadsheetCell[,] twoDArray;
 
         /// <summary>
@@ -202,7 +213,7 @@ namespace CptS321
         }
 
         /// <summary>
-        /// GetCell function that returns a SpreadsheetCell so it can retreive the values from that cell.
+        /// GetCell function that returns a SpreadsheetCell so it can retrieve the values from that cell.
         /// </summary>
         /// <param name="inputRow"> InputRow takes the location of that index. </param>
         /// <param name="inputColumn"> InputColumn takes the location of that index. </param>
@@ -223,7 +234,7 @@ namespace CptS321
         /// RefreshCellValue function to be fired when we get the CellText fire.
         /// </summary>
         /// <param name="sender"> Object sender. </param>
-        /// <param name="e"> PropertyChangedEvents. </param>
+        /// <param name="e"> PropertyChangedEvents e. </param>
         private void RefreshCellValue(object sender, PropertyChangedEventArgs e)
         {
             // If we get the fire of CellText then we go into this statement.
@@ -253,12 +264,25 @@ namespace CptS321
     /// </summary>
     public class ExpressionTree
     {
+        /// <summary>
+        /// Dictionary that holds all the values for the variables.
+        /// </summary>
         private static Dictionary<string, double> userVariables;
-        private BaseNode rootNode;
-        private Stack<BaseNode> postFixExpression = new Stack<BaseNode>();
-        private Stack<BaseNode> operatorStack = new Stack<BaseNode>();
 
-        public string Expression { get; set; }
+        /// <summary>
+        /// Root of the expression tree.
+        /// </summary>
+        private BaseNode rootNode;
+
+        /// <summary>
+        /// Stack that maintains the postFixExpression after being converted.
+        /// </summary>
+        private Stack<BaseNode> postFixExpression = new Stack<BaseNode>();
+
+        /// <summary>
+        /// Stack that actively maintains the operator while being converted.
+        /// </summary>
+        private Stack<BaseNode> operatorStack = new Stack<BaseNode>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
@@ -268,7 +292,7 @@ namespace CptS321
         {
             userVariables = new Dictionary<string, double>();
 
-            this.rootNode = this.Compile(expression);
+            this.Compile(expression);
 
             while (this.operatorStack.Count > 0)
             {
@@ -278,20 +302,12 @@ namespace CptS321
             this.rootNode = this.postFixExpression.Pop();
 
             this.Expression = expression;
-
         }
 
-        private BaseNode CompileTree(BaseNode currentNode)
-        {
-            if (this.rootNode is BinaryOperatorNode)
-            {
-                BinaryOperatorNode tempNode = (BinaryOperatorNode)this.rootNode;
-                tempNode.LeftNode = this.CompileTree(this.postFixExpression.Pop());
-                tempNode.RightNode = this.CompileTree(this.postFixExpression.Pop());
-            }
-
-            return currentNode;
-        }
+        /// <summary>
+        /// Gets or sets, this holds the value of the expression.
+        /// </summary>
+        public string Expression { get; set; }
 
         /// <summary>
         /// Sets the specified variable within the ExpressionTree variables dictionary.
@@ -303,7 +319,30 @@ namespace CptS321
             userVariables[variableName] = variableValue;
         }
 
-        public string convertInfixToPostfix(string expression)
+        /// <summary>
+        /// Used to calculate the phrase fed in.
+        /// </summary>
+        /// <returns> Returns a double value of the evaluated total. </returns>
+        public double Evaluate()
+        {
+            // This means that the expression was empty.
+            if (this.rootNode == null)
+            {
+                return 0.0;
+            }
+            else
+            {
+                // If its not empty then we can evaluate.
+                return this.Evaluate(this.rootNode);
+            }
+        }
+
+        /// <summary>
+        /// Temp.
+        /// </summary>
+        /// <param name="expression"> temp test. </param>
+        /// <returns> test temp. </returns>
+        public string ConvertInfixToPostfix(string expression)
         {
             char[] validOperators = { '+', '-', '*', '/' };
             string postfixExpression = string.Empty;
@@ -341,29 +380,43 @@ namespace CptS321
         }
 
         /// <summary>
+        /// This recursively calls the compile tree function that builds from the stack.
+        /// </summary>
+        /// <param name="currentNode"> The current node from the stack that is passed in. </param>
+        /// <returns> Returns the node for the tree. </returns>
+        private BaseNode CompileTree(BaseNode currentNode)
+        {
+            if (this.rootNode is BinaryOperatorNode)
+            {
+                BinaryOperatorNode tempNode = (BinaryOperatorNode)this.rootNode;
+                tempNode.LeftNode = this.CompileTree(this.postFixExpression.Pop());
+                tempNode.RightNode = this.CompileTree(this.postFixExpression.Pop());
+            }
+
+            return currentNode;
+        }
+
+        /// <summary>
         /// This constructs the expression tree with the expression being fed in.
         /// </summary>
         /// <param name="userExpression"> This is the expression taken from the user. </param>
-        /// <returns> Returns the node of the type we need. </returns>
-        private BaseNode Compile(string userExpression)
+        private void Compile(string userExpression)
         {
             // If there is no expression being fed in the return 0
             if (userExpression.Length == 0)
             {
-                return null;
+                return;
             }
             else
             {
                 char[] validOperators = { '+', '-', '*', '/' };
+
                 // Loop from the back to the front checking if the we can find a operator
                 for (int index = 0; index <= userExpression.Length - 1; index++)
                 {
-                    if (validOperators.Contains(userExpression[index]))
+                    if (CreateFactoryOperator.IsValidOperator(userExpression[index]))
                     {
-                        BinaryOperatorNode opNode = CreateFactoryOperator.CreateOperator(userExpression[index]);
-                        opNode.LeftNode = this.Compile(userExpression.Substring(0, index));
-                        opNode.RightNode = this.Compile(userExpression.Substring(index + 1));
-                        return opNode;
+                        BinaryOperatorNode operatorNode = CreateFactoryOperator.CreateOperator(userExpression[index]);
                     }
                 }
 
@@ -371,37 +424,26 @@ namespace CptS321
                 double number;
                 if (double.TryParse(userExpression, out number))
                 {
-                    return new ConstantNumNode(number);
-                }
+                    ConstantNumNode temp = new ConstantNumNode(number);
 
-                // If its not a number then we know its a variable and we declare that number as 0 by default.
+                    this.postFixExpression.Push(temp);
+                }
                 else
                 {
+                    // If its not a number then we know its a variable and we declare that number as 0 by default.
                     userVariables[userExpression] = 0.0;
-                    return new VariableNode(userExpression);
+                    VariableNode temp = new VariableNode(userExpression);
+
+                    this.postFixExpression.Push(temp);
                 }
             }
         }
 
         /// <summary>
-        /// Used to calculate the phrase fed in.
+        /// Overloaded Evaluate function that does the operation with the node being fed in.
         /// </summary>
-        /// <returns> Returns a double value of the evaluated total. </returns>
-        public double Evaluate()
-        {
-            // This means that the expression was empty.
-            if (this.rootNode == null)
-            {
-                return 0.0;
-            }
-
-            // If its not empty then we can evaluate.
-            else
-            {
-                return this.Evaluate(this.rootNode);
-            }
-        }
-
+        /// <param name="evalTree"> Takes in the node being fed in. </param>
+        /// <returns> Returns the value of the evaluated total. </returns>
         private double Evaluate(BaseNode evalTree)
         {
             // If the expression is empty then we return 0.
@@ -420,17 +462,15 @@ namespace CptS321
 
                     return tempInstance.Evaluate(this.Evaluate(tempInstance.LeftNode), this.Evaluate(tempInstance.RightNode));
                 }
-
-                // If its a variable node then we do a look up in the dictionary and return the value in that location or 0 if it was never changed.
                 else if (evalTree is VariableNode)
                 {
+                    // If its a variable node then we do a look up in the dictionary and return the value in that location or 0 if it was never changed.
                     VariableNode tempInstance = (VariableNode)evalTree;
                     return userVariables[tempInstance.VariableName];
                 }
-
-                // If its a constant node then we return the value stored in that constant node.
                 else if (evalTree is ConstantNumNode)
                 {
+                    // If its a constant node then we return the value stored in that constant node.
                     ConstantNumNode tempInstance = (ConstantNumNode)evalTree;
                     return tempInstance.ConstantValue;
                 }

@@ -11,6 +11,9 @@ namespace CptS321
     /// </summary>
     public class SpreadsheetTests
     {
+        /// <summary>
+        /// Temp spreadsheet instance.
+        /// </summary>
         private CptS321.Spreadsheet testSpreadsheet = new Spreadsheet(2, 2);
 
         /// <summary>

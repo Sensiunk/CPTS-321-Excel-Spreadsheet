@@ -18,11 +18,11 @@ namespace CptS321
         /// <summary>
         /// Creates the correct operator node based on the input char value.
         /// </summary>
-        /// <param name="opValue"> Can be either a plus, minus, multiply, or divide. </param>
+        /// <param name="operatorValue"> Can be either a plus, minus, multiply, or divide. </param>
         /// <returns> Returns the correct node. </returns>
-        public static BinaryOperatorNode CreateOperator(char opValue)
+        public static BinaryOperatorNode CreateOperator(char operatorValue)
         {
-            switch (opValue)
+            switch (operatorValue)
             {
                 case '+':
                     return new PlusOperatorNode();
@@ -44,11 +44,11 @@ namespace CptS321
         /// <summary>
         /// Function to streamline checking if a operator in the input expression is a valid operator.
         /// </summary>
-        /// <param name="opValue"> Takes in the operator in question. </param>
+        /// <param name="operatorValue"> Takes in the operator in question. </param>
         /// <returns> Returns true if in the case that the operator is actually a valid operator. </returns>
-        public static bool IsValidOperator(char opValue)
+        public static bool IsValidOperator(char operatorValue)
         {
-            switch (opValue)
+            switch (operatorValue)
             {
                 case '+':
                     return true;
