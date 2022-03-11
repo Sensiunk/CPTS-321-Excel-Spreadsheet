@@ -380,6 +380,11 @@ namespace CptS321
             }
             else
             {
+                if (CreateFactoryOperator.IsValidOperator(userExpression[0]))
+                {
+                    throw new InvalidOperationException("You may not start an expression with an operator.");
+                }
+
                 // Loop from the front to the back checking if the we can find a operator
                 for (int index = 0; index < userExpression.Length; index++)
                 {
@@ -440,13 +445,13 @@ namespace CptS321
                             this.operatorStack.Push(operatorNode);
                         }
                         // Step 5 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either higher precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is right associative -- push it on the stack.
-                        else if (operatorNode.Precedence >= (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()))
+                        else if (operatorNode.Precedence > (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()))
                         {
                             this.operatorStack.Push(operatorNode);
                         }
 
                         // Step 6 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either lower precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is left associative -- continue to pop the stack until this is not true. Then, push the incoming operator.
-                        else if (operatorNode.Precedence <= (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()))
+                        else if (operatorNode.Precedence <= (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) || operatorNode.Precedence == ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek())))
                         {
                             while (this.operatorStack.Count > 0 && ((BinaryOperatorNode)this.operatorStack.Peek()).BinaryOperator != '(' && ((BinaryOperatorNode)this.operatorStack.Peek()).Precedence >= operatorNode.Precedence)
                             {
@@ -455,23 +460,6 @@ namespace CptS321
 
                             this.operatorStack.Push(operatorNode);
                         }
-
-                        //// Step 5 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either higher precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is right associative -- push it on the stack.
-                        //else if ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) < operatorNode.Precedence || ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) == operatorNode.Precedence))
-                        //{
-                        //    this.operatorStack.Push(operatorNode);
-                        //}
-
-                        //// Step 6 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either lower precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is left associative -- continue to pop the stack until this is not true. Then, push the incoming operator.
-                        //else if (operatorNode.Precedence < (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) || operatorNode.Precedence == ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek())))
-                        //{
-                        //    while (this.operatorStack.Count > 0 && ((BinaryOperatorNode)this.operatorStack.Peek()).BinaryOperator != '(' && ((BinaryOperatorNode)this.operatorStack.Peek()).Precedence >= operatorNode.Precedence)
-                        //    {
-                        //        this.postFixExpression.Push(this.operatorStack.Pop());
-                        //    }
-
-                        //    this.operatorStack.Push(operatorNode);
-                        //}
                     }
                     else if (double.TryParse(substring, out number))
                     {
