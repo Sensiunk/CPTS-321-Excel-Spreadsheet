@@ -26,7 +26,7 @@ namespace CptS321
         /// <summary>
         /// Gets, this contains the information needed to know what precedence the closing parentheses has.
         /// </summary>
-        public ushort Precedence { get; } = 2;
+        public int Precedence { get; } = 2;
 
         /// <summary>
         /// This function serves the purpose to return the difference when we do the evaluation for the calculations.

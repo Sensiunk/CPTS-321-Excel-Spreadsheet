@@ -290,6 +290,11 @@ namespace CptS321
         /// <param name="expression"> Used to construct the tree from what ever expression is fed in. </param>
         public ExpressionTree(string expression)
         {
+            if (expression.Length == 0)
+            {
+                return;
+            }
+
             userVariables = new Dictionary<string, double>();
 
             this.Compile(expression);
@@ -300,6 +305,8 @@ namespace CptS321
             }
 
             this.rootNode = this.postFixExpression.Pop();
+
+            this.rootNode = this.CompileTree(this.rootNode);
 
             this.Expression = expression;
         }
@@ -337,47 +344,7 @@ namespace CptS321
             }
         }
 
-        /// <summary>
-        /// Temp.
-        /// </summary>
-        /// <param name="expression"> temp test. </param>
-        /// <returns> test temp. </returns>
-        public string ConvertInfixToPostfix(string expression)
-        {
-            char[] validOperators = { '+', '-', '*', '/' };
-            string postfixExpression = string.Empty;
-            Stack<char> myStack = new Stack<char>();
-            foreach (char currentChar in expression)
-            {
-                if (!validOperators.Contains(currentChar))
-                {
-                    postfixExpression.Append(currentChar);
-                }
-                else if (currentChar == '(')
-                {
-                    myStack.Push('(');
-                }
-                else if (currentChar == ')')
-                {
-                    while (myStack.Peek() != '(')
-                    {
-                        postfixExpression.Append(myStack.Pop());
-                    }
 
-                    myStack.Pop();
-                }
-                else if (validOperators.Contains(currentChar) && (myStack.Count == 0 || myStack.Peek() == '('))
-                {
-                    myStack.Push(currentChar);
-                }
-                else if ((validOperators.Contains(currentChar) && myStack.Peek() == '*') || myStack.Peek() == '/')
-                {
-                    postfixExpression.Append(myStack.Pop());
-                }
-            }
-
-            return postfixExpression;
-        }
 
         /// <summary>
         /// This recursively calls the compile tree function that builds from the stack.
@@ -386,9 +353,9 @@ namespace CptS321
         /// <returns> Returns the node for the tree. </returns>
         private BaseNode CompileTree(BaseNode currentNode)
         {
-            if (this.rootNode is BinaryOperatorNode)
+            if (currentNode is BinaryOperatorNode)
             {
-                BinaryOperatorNode tempNode = (BinaryOperatorNode)this.rootNode;
+                BinaryOperatorNode tempNode = (BinaryOperatorNode)currentNode;
                 tempNode.LeftNode = this.CompileTree(this.postFixExpression.Pop());
                 tempNode.RightNode = this.CompileTree(this.postFixExpression.Pop());
             }
@@ -402,6 +369,10 @@ namespace CptS321
         /// <param name="userExpression"> This is the expression taken from the user. </param>
         private void Compile(string userExpression)
         {
+            string substring = string.Empty;
+            int indexOfOperatorLocation = 0;
+            double number = 0.0;
+
             // If there is no expression being fed in the return 0
             if (userExpression.Length == 0)
             {
@@ -409,32 +380,114 @@ namespace CptS321
             }
             else
             {
-                char[] validOperators = { '+', '-', '*', '/' };
-
-                // Loop from the back to the front checking if the we can find a operator
-                for (int index = 0; index <= userExpression.Length - 1; index++)
+                // Loop from the front to the back checking if the we can find a operator
+                for (int index = 0; index < userExpression.Length; index++)
                 {
-                    if (CreateFactoryOperator.IsValidOperator(userExpression[index]))
+                    indexOfOperatorLocation = index;
+
+                    while (indexOfOperatorLocation < userExpression.Length && !CreateFactoryOperator.IsValidOperator(userExpression[indexOfOperatorLocation]))
                     {
-                        BinaryOperatorNode operatorNode = CreateFactoryOperator.CreateOperator(userExpression[index]);
+                        indexOfOperatorLocation++;
                     }
-                }
 
-                // We try to parse the expression and check if its a number
-                double number;
-                if (double.TryParse(userExpression, out number))
-                {
-                    ConstantNumNode temp = new ConstantNumNode(number);
+                    if (indexOfOperatorLocation != index)
+                    {
+                        int offset = indexOfOperatorLocation - index;
+                        substring = userExpression.Substring(index, offset);
 
-                    this.postFixExpression.Push(temp);
-                }
-                else
-                {
-                    // If its not a number then we know its a variable and we declare that number as 0 by default.
-                    userVariables[userExpression] = 0.0;
-                    VariableNode temp = new VariableNode(userExpression);
+                        if (offset > 1)
+                        {
+                            index += offset;
+                            index--;
+                        }
+                    }
+                    else
+                    {
+                        substring = userExpression[index].ToString();
+                    }
 
-                    this.postFixExpression.Push(temp);
+                    if (CreateFactoryOperator.IsValidOperator(substring[0]))
+                    {
+                        BinaryOperatorNode operatorNode = CreateFactoryOperator.CreateOperator(substring[0]);
+
+                        // Step 2 of Shunting Yard Algorithm. If the incoming symbol is a left parenthesis, push it on the stack.
+                        if (operatorNode.BinaryOperator == '(')
+                        {
+                            this.operatorStack.Push(operatorNode);
+                        }
+
+                        // Step 3 of Shunting Yard Algorithm. If the incoming symbol is a right parenthesis: discard the right parenthesis, pop and print the stack symbols until you see a left parenthesis. Pop the left parenthesis and discard it.
+                        else if (operatorNode.BinaryOperator == ')')
+                        {
+                            // We need to check the values on the stack until we find a left parentheses.
+                            // This means that since we push on a operater node, we need to get the value stored in that Binary Opertor and check against to see that it is not a left parentheses.
+                            // Once we confirm that we aren't hitting a left parentheses, we push that operator node onto our post fix expression stack
+                            while ((char)this.operatorStack.Peek().GetType().GetProperty("BinaryOperator").GetValue(this.operatorStack.Peek()) != '(')
+                            {
+                                this.postFixExpression.Push(this.operatorStack.Pop());
+                            }
+
+                            // Once we are done, we need to discard the left parentheses stored on the stack still.
+                            this.operatorStack.Pop();
+                        }
+
+                        // Step 4 of Shunting Yard Algorithm. If the incoming symbol is an operator and the stack is empty or contains a left parenthesis on top, push the incoming operator onto the stack.
+                        // This checks to see if the top of the operator stacks node contains the open parentheses.
+                        // We check that nodes value to see if the nodes of type that is on the top of the stack is equal to a open parentheses
+                        else if (this.operatorStack.Count == 0 || (char)this.operatorStack.Peek().GetType().GetProperty("BinaryOperator").GetValue(this.operatorStack.Peek()) == '(')
+                        {
+                            // Since we know that the operator in question isn't a open parenthesis, we can push it onto the stack of operators.
+                            this.operatorStack.Push(operatorNode);
+                        }
+                        // Step 5 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either higher precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is right associative -- push it on the stack.
+                        else if (operatorNode.Precedence >= (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()))
+                        {
+                            this.operatorStack.Push(operatorNode);
+                        }
+
+                        // Step 6 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either lower precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is left associative -- continue to pop the stack until this is not true. Then, push the incoming operator.
+                        else if (operatorNode.Precedence <= (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()))
+                        {
+                            while (this.operatorStack.Count > 0 && ((BinaryOperatorNode)this.operatorStack.Peek()).BinaryOperator != '(' && ((BinaryOperatorNode)this.operatorStack.Peek()).Precedence >= operatorNode.Precedence)
+                            {
+                                this.postFixExpression.Push(this.operatorStack.Pop());
+                            }
+
+                            this.operatorStack.Push(operatorNode);
+                        }
+
+                        //// Step 5 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either higher precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is right associative -- push it on the stack.
+                        //else if ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) < operatorNode.Precedence || ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) == operatorNode.Precedence))
+                        //{
+                        //    this.operatorStack.Push(operatorNode);
+                        //}
+
+                        //// Step 6 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either lower precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is left associative -- continue to pop the stack until this is not true. Then, push the incoming operator.
+                        //else if (operatorNode.Precedence < (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) || operatorNode.Precedence == ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek())))
+                        //{
+                        //    while (this.operatorStack.Count > 0 && ((BinaryOperatorNode)this.operatorStack.Peek()).BinaryOperator != '(' && ((BinaryOperatorNode)this.operatorStack.Peek()).Precedence >= operatorNode.Precedence)
+                        //    {
+                        //        this.postFixExpression.Push(this.operatorStack.Pop());
+                        //    }
+
+                        //    this.operatorStack.Push(operatorNode);
+                        //}
+                    }
+                    else if (double.TryParse(substring, out number))
+                    {
+                        // We try to parse the expression and check if its a number
+                        ConstantNumNode temp = new ConstantNumNode(number);
+
+                        this.postFixExpression.Push(temp);
+                    }
+                    else
+                    {
+                        // If its not a number then we know its a variable and we declare that number as 0 by default.
+                        userVariables[substring] = 0.0;
+                        VariableNode temp = new VariableNode(substring);
+
+                        this.postFixExpression.Push(temp);
+                    }
                 }
             }
         }

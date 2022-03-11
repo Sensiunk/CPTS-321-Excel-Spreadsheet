@@ -42,6 +42,11 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Gets, this holds the value of our Precedence.
+        /// </summary>
+        public int Precedence { get; }
+
+        /// <summary>
         /// Gets or sets, this serves as the get and set controller for our binaryOperator.
         /// </summary>
         public char BinaryOperator

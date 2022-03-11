@@ -26,7 +26,7 @@ namespace CptS321
         /// <summary>
         /// Gets, this contains the information needed to know what precedence the plus has.
         /// </summary>
-        public ushort Precedence { get; } = 0;
+        public int Precedence { get; } = 0;
 
         /// <summary>
         /// This function serves the purpose to return the sum when we do the evaluation for the calculations.
