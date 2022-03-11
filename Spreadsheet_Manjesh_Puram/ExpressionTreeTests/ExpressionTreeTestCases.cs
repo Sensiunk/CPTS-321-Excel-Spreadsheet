@@ -27,12 +27,8 @@ namespace CptS321
         public void TestAdditionExpression()
         {
             ExpressionTree testTree = new ExpressionTree("1+2+3+4");
-            if (testTree.Evaluate() == 4)
-            {
-                Assert.Pass();
-            }
 
-           // Assert.AreEqual(testTree.Evaluate(), 10);
+           Assert.AreEqual(testTree.Evaluate(), 10);
         }
 
         /// <summary>
@@ -127,28 +123,6 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Test case to test the functionality to see if it knows what to do when we do addition of two max values.
-        /// </summary>
-        [Test]
-        public void TestAdditionNegativeInfinityExpression()
-        {
-            string minValue = double.MinValue.ToString("F", CultureInfo.InvariantCulture);
-            ExpressionTree testTree = new ExpressionTree($"{minValue}+{minValue}");
-            Assert.Throws<System.InvalidOperationException>(() => testTree.Evaluate());
-        }
-
-        /// <summary>
-        /// Test case to test the functionality to see if it knows what to do when we do subtraction of two max values.
-        /// </summary>
-        [Test]
-        public void TestSubtractionNegativeInfinityExpression()
-        {
-            string minValue = double.MinValue.ToString("F", CultureInfo.InvariantCulture);
-            ExpressionTree testTree = new ExpressionTree($"{minValue}-{minValue}");
-            Assert.Throws<System.InvalidOperationException>(() => testTree.Evaluate());
-        }
-
-        /// <summary>
         /// Test case to test the functionality to see if it knows what to do when we do multiplication of two max values.
         /// </summary>
         [Test]
@@ -165,7 +139,8 @@ namespace CptS321
         [Test]
         public void TestWithPrecedence()
         {
-            Assert.AreEqual(0, 0);
+            ExpressionTree testTree = new ExpressionTree("2*3+1");
+            Assert.AreEqual(testTree.Evaluate(), 7);
         }
 
         /// <summary>
