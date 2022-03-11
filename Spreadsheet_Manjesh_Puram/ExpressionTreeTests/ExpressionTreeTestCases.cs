@@ -134,7 +134,7 @@ namespace CptS321
         {
             string minValue = double.MinValue.ToString("F", CultureInfo.InvariantCulture);
             ExpressionTree testTree = new ExpressionTree($"{minValue}+{minValue}");
-            Assert.AreEqual(testTree.Evaluate(), double.NegativeInfinity);
+            Assert.Throws<System.InvalidOperationException>(() => testTree.Evaluate());
         }
 
         /// <summary>
@@ -174,7 +174,8 @@ namespace CptS321
         [Test]
         public void TestWithParentheses()
         {
-            Assert.AreEqual(0, 0);
+            ExpressionTree testTree = new ExpressionTree("(1+2)*3");
+            Assert.AreEqual(testTree.Evaluate(), 9);
         }
 
         /// <summary>

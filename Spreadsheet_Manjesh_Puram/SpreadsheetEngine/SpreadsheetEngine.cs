@@ -380,7 +380,7 @@ namespace CptS321
             }
             else
             {
-                if (CreateFactoryOperator.IsValidOperator(userExpression[0]))
+                if (userExpression[0] == '+' || userExpression[0] == '-' || userExpression[0] == '*' || userExpression[0] == '/')
                 {
                     throw new InvalidOperationException("You may not start an expression with an operator.");
                 }
