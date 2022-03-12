@@ -24,6 +24,11 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Gets, this contains the information needed to know what precedence the division has.
+        /// </summary>
+        public new int Precedence { get; } = 6;
+
+        /// <summary>
         /// This function serves the purpose to return the division when we do the evaluation for the calculations.
         /// </summary>
         /// <param name="leftVal"> Takes in the double from the left side. </param>
@@ -31,7 +36,7 @@ namespace CptS321
         /// <returns> Returns the operated value of the left side and right side. </returns>
         public override double Evaluate(double leftVal, double rightVal)
         {
-            return leftVal / rightVal;
+            return rightVal / leftVal;
         }
     }
 }

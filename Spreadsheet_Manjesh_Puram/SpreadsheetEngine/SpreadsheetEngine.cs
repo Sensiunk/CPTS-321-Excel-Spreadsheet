@@ -11,29 +11,29 @@ namespace CptS321
     using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// Abstract class of the Spreadsheetcell.
+    /// Abstract class of the Spreadsheet cell.
     /// </summary>
     public abstract class SpreadsheetCell : INotifyPropertyChanged
     {
         /// <summary>
         /// Index of the row.
         /// </summary>
-        protected int rowIndex;
+        private int rowIndex;
 
         /// <summary>
         /// Index of the column.
         /// </summary>
-        protected int columnIndex;
+        private int columnIndex;
 
         /// <summary>
         /// Text in the cell.
         /// </summary>
-        protected string cellText;
+        private string cellText;
 
         /// <summary>
         /// Value in the cell.
         /// </summary>
-        protected string cellValue;
+        private string cellValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpreadsheetCell"/> class.
@@ -152,8 +152,19 @@ namespace CptS321
     /// </summary>
     public class Spreadsheet
     {
+        /// <summary>
+        /// Value that contains the number of columns in the spreadsheet.
+        /// </summary>
         private int spreadsheetColumn;
+
+        /// <summary>
+        /// Value that contains the number of rows in the spreadsheet.
+        /// </summary>
         private int spreadsheetRow;
+
+        /// <summary>
+        /// Our 2D array that holds the values that correlate with the spreadsheet grid view.
+        /// </summary>
         private SpreadsheetCell[,] twoDArray;
 
         /// <summary>
@@ -202,7 +213,7 @@ namespace CptS321
         }
 
         /// <summary>
-        /// GetCell function that returns a SpreadsheetCell so it can retreive the values from that cell.
+        /// GetCell function that returns a SpreadsheetCell so it can retrieve the values from that cell.
         /// </summary>
         /// <param name="inputRow"> InputRow takes the location of that index. </param>
         /// <param name="inputColumn"> InputColumn takes the location of that index. </param>
@@ -223,7 +234,7 @@ namespace CptS321
         /// RefreshCellValue function to be fired when we get the CellText fire.
         /// </summary>
         /// <param name="sender"> Object sender. </param>
-        /// <param name="e"> PropertyChangedEvents. </param>
+        /// <param name="e"> PropertyChangedEvents e. </param>
         private void RefreshCellValue(object sender, PropertyChangedEventArgs e)
         {
             // If we get the fire of CellText then we go into this statement.
@@ -253,8 +264,25 @@ namespace CptS321
     /// </summary>
     public class ExpressionTree
     {
+        /// <summary>
+        /// Dictionary that holds all the values for the variables.
+        /// </summary>
         private static Dictionary<string, double> userVariables;
+
+        /// <summary>
+        /// Root of the expression tree.
+        /// </summary>
         private BaseNode rootNode;
+
+        /// <summary>
+        /// Stack that maintains the postFixExpression after being converted.
+        /// </summary>
+        private Stack<BaseNode> postFixExpression = new Stack<BaseNode>();
+
+        /// <summary>
+        /// Stack that actively maintains the operator while being converted.
+        /// </summary>
+        private Stack<BaseNode> operatorStack = new Stack<BaseNode>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
@@ -262,10 +290,31 @@ namespace CptS321
         /// <param name="expression"> Used to construct the tree from what ever expression is fed in. </param>
         public ExpressionTree(string expression)
         {
+            if (expression.Length == 0)
+            {
+                return;
+            }
+
             userVariables = new Dictionary<string, double>();
 
-            this.rootNode = this.Compile(expression);
+            this.Compile(expression);
+
+            while (this.operatorStack.Count > 0)
+            {
+                this.postFixExpression.Push(this.operatorStack.Pop());
+            }
+
+            this.rootNode = this.postFixExpression.Pop();
+
+            this.rootNode = this.CompileTree(this.rootNode);
+
+            this.Expression = expression;
         }
+
+        /// <summary>
+        /// Gets or sets, this holds the value of the expression.
+        /// </summary>
+        public string Expression { get; set; }
 
         /// <summary>
         /// Sets the specified variable within the ExpressionTree variables dictionary.
@@ -275,64 +324,6 @@ namespace CptS321
         public void SetVariable(string variableName, double variableValue)
         {
             userVariables[variableName] = variableValue;
-        }
-
-        /// <summary>
-        /// This constructs the expression tree with the expression being fed in.
-        /// </summary>
-        /// <param name="userExpression"> This is the expression taken from the user. </param>
-        /// <returns> Returns the node of the type we need. </returns>
-        private BaseNode Compile(string userExpression)
-        {
-            // If there is no expression being fed in the return 0
-            if (userExpression.Length == 0)
-            {
-                return null;
-            }
-            else
-            {
-                // Loop from the back to the front checking if the we can find a operator
-                for (int index = userExpression.Length - 1; index >= 0; index--)
-                {
-                    switch (userExpression[index])
-                    {
-                        case '+': // We create a plus operator node if we find a plus operator in the expression
-                            BinaryOperatorNode newPlusOperatorNode = new PlusOperatorNode();
-                            newPlusOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
-                            newPlusOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
-                            return newPlusOperatorNode;
-                        case '-': // We create a minus operator node if we find a minus operator in the expression
-                            BinaryOperatorNode newMinusOperatorNode = new MinusOperatorNode();
-                            newMinusOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
-                            newMinusOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
-                            return newMinusOperatorNode;
-                        case '*': // We create a multiply operator node if we find a multiply operator in the expression
-                            BinaryOperatorNode newMultiplyOperatorNode = new MultiplyOperatorNode();
-                            newMultiplyOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
-                            newMultiplyOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
-                            return newMultiplyOperatorNode;
-                        case '/': // We create a divide operator node if we find a divide operator in the expression
-                            BinaryOperatorNode newDivisionOperatorNode = new DivisionOperatorNode();
-                            newDivisionOperatorNode.LeftNode = this.Compile(userExpression.Substring(0, index));
-                            newDivisionOperatorNode.RightNode = this.Compile(userExpression.Substring(index + 1));
-                            return newDivisionOperatorNode;
-                    }
-                }
-
-                // We try to parse the expression and check if its a number
-                double number;
-                if (double.TryParse(userExpression, out number))
-                {
-                    return new ConstantNumNode(number);
-                }
-
-                // If its not a number then we know its a variable and we declare that number as 0 by default.
-                else
-                {
-                    userVariables[userExpression] = 0.0;
-                    return new VariableNode(userExpression);
-                }
-            }
         }
 
         /// <summary>
@@ -346,14 +337,167 @@ namespace CptS321
             {
                 return 0.0;
             }
-
-            // If its not empty then we can evaluate.
             else
             {
+                // If its not empty then we can evaluate.
                 return this.Evaluate(this.rootNode);
             }
         }
 
+        /// <summary>
+        /// This recursively calls the compile tree function that builds from the stack.
+        /// </summary>
+        /// <param name="currentNode"> The current node from the stack that is passed in. </param>
+        /// <returns> Returns the node for the tree. </returns>
+        private BaseNode CompileTree(BaseNode currentNode)
+        {
+            if (currentNode is BinaryOperatorNode)
+            {
+                BinaryOperatorNode tempNode = (BinaryOperatorNode)currentNode;
+                tempNode.LeftNode = this.CompileTree(this.postFixExpression.Pop());
+                tempNode.RightNode = this.CompileTree(this.postFixExpression.Pop());
+            }
+
+            return currentNode;
+        }
+
+        /// <summary>
+        /// This constructs the expression tree with the expression being fed in.
+        /// </summary>
+        /// <param name="userExpression"> This is the expression taken from the user. </param>
+        private void Compile(string userExpression)
+        {
+            string substring = string.Empty;
+            int indexOfOperatorLocation = 0;
+            double number = 0.0;
+
+            // If there is no expression being fed in the return 0
+            if (userExpression.Length == 0)
+            {
+                return;
+            }
+            else
+            {
+                if (userExpression[0] == '+' || userExpression[0] == '-' || userExpression[0] == '*' || userExpression[0] == '/')
+                {
+                    throw new InvalidOperationException("You may not start an expression with an operator.");
+                }
+
+                // Loop from the front to the back checking if the we can find a operator
+                for (int index = 0; index < userExpression.Length; index++)
+                {
+                    // Set the index of the operator equal to the current parsing index value
+                    indexOfOperatorLocation = index;
+
+                    // We check to see that the operator index is within the bounds the user expression and also checking until we hit an expression
+                    while (indexOfOperatorLocation < userExpression.Length && !CreateFactoryOperator.IsValidOperator(userExpression[indexOfOperatorLocation]))
+                    {
+                        indexOfOperatorLocation++;
+                    }
+
+                    // If the expression is found but not at the parsing index value then we do this action.
+                    if (indexOfOperatorLocation != index)
+                    {
+                        // Set the offset
+                        int offset = indexOfOperatorLocation - index;
+
+                        // Set the substring to the part before the operator and do the next actions
+                        substring = userExpression.Substring(index, offset);
+
+                        // If the offset it more than one then we set the index to that and decrement by one so we can find that operator the next time we iterate
+                        if (offset > 1)
+                        {
+                            index += offset;
+                            index--;
+                        }
+                    }
+                    else
+                    {
+                        // If parser index is equal to the operator index then we set the operator to a string
+                        substring = userExpression[index].ToString();
+                    }
+
+                    if (CreateFactoryOperator.IsValidOperator(substring[0]))
+                    {
+                        // Use the factory method to create a operator node based on the operator
+                        BinaryOperatorNode operatorNode = CreateFactoryOperator.CreateOperator(substring[0]);
+
+                        // Step 2 of Shunting Yard Algorithm. If the incoming symbol is a left parenthesis, push it on the stack.
+                        if (operatorNode.BinaryOperator == '(')
+                        {
+                            this.operatorStack.Push(operatorNode);
+                        }
+
+                        // Step 3 of Shunting Yard Algorithm. If the incoming symbol is a right parenthesis: discard the right parenthesis, pop and print the stack symbols until you see a left parenthesis. Pop the left parenthesis and discard it.
+                        else if (operatorNode.BinaryOperator == ')')
+                        {
+                            // We need to check the values on the stack until we find a left parentheses.
+                            // This means that since we push on a operater node, we need to get the value stored in that Binary Opertor and check against to see that it is not a left parentheses.
+                            // Once we confirm that we aren't hitting a left parentheses, we push that operator node onto our post fix expression stack
+                            while ((char)this.operatorStack.Peek().GetType().GetProperty("BinaryOperator").GetValue(this.operatorStack.Peek()) != '(')
+                            {
+                                this.postFixExpression.Push(this.operatorStack.Pop());
+                            }
+
+                            // Once we are done, we need to discard the left parentheses stored on the stack still.
+                            this.operatorStack.Pop();
+                        }
+
+                        // Step 4 of Shunting Yard Algorithm. If the incoming symbol is an operator and the stack is empty or contains a left parenthesis on top, push the incoming operator onto the stack.
+                        // This checks to see if the top of the operator stacks node contains the open parentheses.
+                        // We check that nodes value to see if the nodes of type that is on the top of the stack is equal to a open parentheses
+                        else if (this.operatorStack.Count == 0 || (char)this.operatorStack.Peek().GetType().GetProperty("BinaryOperator").GetValue(this.operatorStack.Peek()) == '(')
+                        {
+                            // Since we know that the operator in question isn't a open parenthesis, we can push it onto the stack of operators.
+                            this.operatorStack.Push(operatorNode);
+                        }
+
+                        // Step 5 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either higher precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is right associative -- push it on the stack.
+                        // This checks if the prcedence of the value we have right now is greater than the prcedence of the node a the top of the operator stack.
+                        else if ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) < CreateFactoryOperator.GetOperatorPrecedence(operatorNode.BinaryOperator))
+                        {
+                            this.operatorStack.Push(operatorNode);
+                        }
+
+                        // Step 6 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either lower precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is left associative -- continue to pop the stack until this is not true. Then, push the incoming operator.
+                        // This checks is the precedence of the value we have right now is less than the precedence of the node at the top of the operator stack
+                        else if ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) >= CreateFactoryOperator.GetOperatorPrecedence(operatorNode.BinaryOperator))
+                        {
+                            // We do this while our operator stack still has operators inside, and the top isn't a ( and than our precedence is greater than top.
+                            while (this.operatorStack.Count > 0 && ((BinaryOperatorNode)this.operatorStack.Peek()).BinaryOperator != '(' && ((BinaryOperatorNode)this.operatorStack.Peek()).Precedence >= operatorNode.Precedence)
+                            {
+                                // Pop the operator into the postfix expression stack
+                                this.postFixExpression.Push(this.operatorStack.Pop());
+                            }
+
+                            // Push the operator onto the stack.
+                            this.operatorStack.Push(operatorNode);
+                        }
+                    }
+                    else if (double.TryParse(substring, out number))
+                    {
+                        // We try to parse the expression and check if its a number
+                        ConstantNumNode temp = new ConstantNumNode(number);
+
+                        this.postFixExpression.Push(temp);
+                    }
+                    else
+                    {
+                        // If its not a number then we know its a variable and we declare that number as 0 by default.
+                        userVariables[substring] = 0.0;
+                        VariableNode temp = new VariableNode(substring);
+
+                        this.postFixExpression.Push(temp);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Overloaded Evaluate function that does the operation with the node being fed in.
+        /// </summary>
+        /// <param name="evalTree"> Takes in the node being fed in. </param>
+        /// <returns> Returns the value of the evaluated total. </returns>
         private double Evaluate(BaseNode evalTree)
         {
             // If the expression is empty then we return 0.
@@ -372,17 +516,15 @@ namespace CptS321
 
                     return tempInstance.Evaluate(this.Evaluate(tempInstance.LeftNode), this.Evaluate(tempInstance.RightNode));
                 }
-
-                // If its a variable node then we do a look up in the dictionary and return the value in that location or 0 if it was never changed.
                 else if (evalTree is VariableNode)
                 {
+                    // If its a variable node then we do a look up in the dictionary and return the value in that location or 0 if it was never changed.
                     VariableNode tempInstance = (VariableNode)evalTree;
                     return userVariables[tempInstance.VariableName];
                 }
-
-                // If its a constant node then we return the value stored in that constant node.
                 else if (evalTree is ConstantNumNode)
                 {
+                    // If its a constant node then we return the value stored in that constant node.
                     ConstantNumNode tempInstance = (ConstantNumNode)evalTree;
                     return tempInstance.ConstantValue;
                 }

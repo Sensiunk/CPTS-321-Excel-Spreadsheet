@@ -1,14 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="Program.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CptS321
 {
-    class Program
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Class that runs our code to do the demo to see if our expression tree works as intended.
+    /// </summary>
+    internal class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// Main function that runs the program.
+        /// </summary>
+        /// <param name="args"> Total number of arguments. </param>
+        private static void Main(string[] args)
         {
             bool runSimulation = true;
             string varName = string.Empty, varVal = string.Empty;
@@ -61,6 +72,7 @@ namespace CptS321
                     Console.WriteLine(e.Message);
                 }
             }
+
             Console.WriteLine("Done");
         }
     }

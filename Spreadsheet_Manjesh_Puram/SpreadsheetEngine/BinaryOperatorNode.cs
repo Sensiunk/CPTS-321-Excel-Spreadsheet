@@ -15,22 +15,36 @@ namespace CptS321
     /// </summary>
     internal abstract class BinaryOperatorNode : BaseNode
     {
-        private char binaryOperator; // This holds the value of our binary operator.
-        private BaseNode leftNode; // This holds the Node of our left node.
-        private BaseNode rightNode; // This holds the Node of our right node.
+        /// <summary>
+        /// This holds the value of our binary operator.
+        /// </summary>
+        private char binaryOperator;
+
+        /// <summary>
+        /// This holds the Node of our left node.
+        /// </summary>
+        private BaseNode leftNode;
+
+        /// <summary>
+        /// This holds the Node of our right node.
+        /// </summary>
+        private BaseNode rightNode;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryOperatorNode"/> class.
         /// </summary>
         /// <param name="newBinaryOperator"> Takes in a value for our binary operator name when we get a new instance created. </param>
-        /// <param name="newLeftNode"> Takes in a Node for our left node when we get a new instance created. </param>
-        /// <param name="newRightNode"> Takes in a Node for our right node when we get a new instance created. </param>
         public BinaryOperatorNode(char newBinaryOperator)
         {
             this.binaryOperator = newBinaryOperator; // Set the value of the binaryOperator to the value being passed in during instantiation.
             this.leftNode = null; // Set the value of the leftNode to null during instantiation.
             this.rightNode = null; // Set the value of the rightNode to null during instantiation.
         }
+
+        /// <summary>
+        /// Gets, this holds the value of our Precedence.
+        /// </summary>
+        public int Precedence { get; }
 
         /// <summary>
         /// Gets or sets, this serves as the get and set controller for our binaryOperator.

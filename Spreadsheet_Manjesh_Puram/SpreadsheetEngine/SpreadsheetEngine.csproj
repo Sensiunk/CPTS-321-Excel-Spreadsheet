@@ -44,11 +44,14 @@
     <Compile Include="BaseNode.cs" />
     <Compile Include="BinaryOperatorNode.cs" />
     <Compile Include="ConstantNumNode.cs" />
+    <Compile Include="CreateFactoryOperator.cs" />
     <Compile Include="DivisionOperatorNode.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="OpenParenthesesNode.cs" />
     <Compile Include="MinusOperatorNode.cs" />
     <Compile Include="MultiplyOperatorNode.cs" />
     <Compile Include="PlusOperatorNode.cs" />
+    <Compile Include="ClosingParenthesesNode.cs" />
     <Compile Include="SpreadsheetEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VariableNode.cs" />

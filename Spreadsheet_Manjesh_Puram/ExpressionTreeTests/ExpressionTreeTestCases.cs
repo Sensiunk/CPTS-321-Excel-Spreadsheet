@@ -66,12 +66,12 @@ namespace CptS321
         [Test]
         public void TestSubtractionToNegativeExpression()
         {
-            ExpressionTree testTree = new ExpressionTree("10-5-10");
-            Assert.AreEqual(testTree.Evaluate(), -5);
+            ExpressionTree testTree = new ExpressionTree("10-10-5");
+            Assert.AreEqual(-5, testTree.Evaluate());
         }
 
         /// <summary>
-        /// Test case to test the functionality to see if our multiplcation works.
+        /// Test case to test the functionality to see if our multiplication works.
         /// </summary>
         [Test]
         public void TestMultiplicationExpression()
@@ -122,28 +122,6 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Test case to test the functionality to see if it knows what to do when we do addition of two max values.
-        /// </summary>
-        [Test]
-        public void TestAdditionNegativeInfinityExpression()
-        {
-            string minValue = double.MinValue.ToString("F", CultureInfo.InvariantCulture);
-            ExpressionTree testTree = new ExpressionTree($"{minValue}+{minValue}");
-            Assert.AreEqual(testTree.Evaluate(), double.NegativeInfinity);
-        }
-
-        /// <summary>
-        /// Test case to test the functionality to see if it knows what to do when we do subtraction of two max values.
-        /// </summary>
-        [Test]
-        public void TestSubtractionNegativeInfinityExpression()
-        {
-            string minValue = double.MinValue.ToString("F", CultureInfo.InvariantCulture);
-            ExpressionTree testTree = new ExpressionTree($"{minValue}-{minValue}");
-            Assert.AreEqual(testTree.Evaluate(), double.NegativeInfinity);
-        }
-
-        /// <summary>
         /// Test case to test the functionality to see if it knows what to do when we do multiplication of two max values.
         /// </summary>
         [Test]
@@ -152,6 +130,36 @@ namespace CptS321
             string maxValue = double.MaxValue.ToString("F", CultureInfo.InvariantCulture);
             ExpressionTree testTree = new ExpressionTree($"{maxValue}*{maxValue}");
             Assert.AreEqual(testTree.Evaluate(), double.PositiveInfinity);
+        }
+
+        /// <summary>
+        /// Test case to test the functionality to see if it knows what to do when there is precedence involved.
+        /// </summary>
+        [Test]
+        public void TestWithPrecedence()
+        {
+            ExpressionTree testTree = new ExpressionTree("2*3+1");
+            Assert.AreEqual(testTree.Evaluate(), 7);
+        }
+
+        /// <summary>
+        /// Test case to test the functionality to see if it knows what to do when there is parentheses involved.
+        /// </summary>
+        [Test]
+        public void TestWithParentheses()
+        {
+            ExpressionTree testTree = new ExpressionTree("(1+2)*3");
+            Assert.AreEqual(testTree.Evaluate(), 9);
+        }
+
+        /// <summary>
+        /// Test case to test the functionality to see if it knows what to do when there is the same precedence involved.
+        /// </summary>
+        [Test]
+        public void TestEqualPrecedence()
+        {
+            ExpressionTree testTree = new ExpressionTree("1+2+3-4");
+            Assert.AreEqual(testTree.Evaluate(), 2);
         }
     }
 }

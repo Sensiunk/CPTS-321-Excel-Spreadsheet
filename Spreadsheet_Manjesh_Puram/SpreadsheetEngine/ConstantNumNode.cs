@@ -15,7 +15,10 @@ namespace CptS321
     /// </summary>
     internal class ConstantNumNode : BaseNode
     {
-        private double constantValue; // This holds the value of our constant value.
+        /// <summary>
+        /// This holds the value of our constant value.
+        /// </summary>
+        private double constantValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstantNumNode"/> class.
