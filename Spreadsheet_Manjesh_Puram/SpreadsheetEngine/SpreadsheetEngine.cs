@@ -11,7 +11,7 @@ namespace CptS321
     using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// Abstract class of the Spreadsheetcell.
+    /// Abstract class of the Spreadsheet cell.
     /// </summary>
     public abstract class SpreadsheetCell : INotifyPropertyChanged
     {
@@ -386,18 +386,25 @@ namespace CptS321
                 // Loop from the front to the back checking if the we can find a operator
                 for (int index = 0; index < userExpression.Length; index++)
                 {
+                    // Set the index of the operator equal to the current parsing index value
                     indexOfOperatorLocation = index;
 
+                    // We check to see that the operator index is within the bounds the user expression and also checking until we hit an expression
                     while (indexOfOperatorLocation < userExpression.Length && !CreateFactoryOperator.IsValidOperator(userExpression[indexOfOperatorLocation]))
                     {
                         indexOfOperatorLocation++;
                     }
 
+                    // If the expression is found but not at the parsing index value then we do this action.
                     if (indexOfOperatorLocation != index)
                     {
+                        // Set the offset
                         int offset = indexOfOperatorLocation - index;
+
+                        // Set the substring to the part before the operator and do the next actions
                         substring = userExpression.Substring(index, offset);
 
+                        // If the offset it more than one then we set the index to that and decrement by one so we can find that operator the next time we iterate
                         if (offset > 1)
                         {
                             index += offset;
@@ -406,11 +413,13 @@ namespace CptS321
                     }
                     else
                     {
+                        // If parser index is equal to the operator index then we set the operator to a string
                         substring = userExpression[index].ToString();
                     }
 
                     if (CreateFactoryOperator.IsValidOperator(substring[0]))
                     {
+                        // Use the factory method to create a operator node based on the operator
                         BinaryOperatorNode operatorNode = CreateFactoryOperator.CreateOperator(substring[0]);
 
                         // Step 2 of Shunting Yard Algorithm. If the incoming symbol is a left parenthesis, push it on the stack.
@@ -445,18 +454,19 @@ namespace CptS321
 
                         // Step 5 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either higher precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is right associative -- push it on the stack.
                         // This checks if the prcedence of the value we have right now is greater than the prcedence of the node a the top of the operator stack.
-                        else if (operatorNode.Precedence > (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()))
+                        else if ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) < CreateFactoryOperator.GetOperatorPrecedence(operatorNode.BinaryOperator))
                         {
                             this.operatorStack.Push(operatorNode);
                         }
 
                         // Step 6 of Shunting Yard Algorithm. If the incoming symbol is an operator and has either lower precedence than the operator on the top of the stack, or has the same precedence as the operator on the top of the stack and is left associative -- continue to pop the stack until this is not true. Then, push the incoming operator.
                         // This checks is the precedence of the value we have right now is less than the precedence of the node at the top of the operator stack
-                        else if (operatorNode.Precedence <= (int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()))
+                        else if ((int)this.operatorStack.Peek().GetType().GetProperty("Precedence").GetValue(this.operatorStack.Peek()) >= CreateFactoryOperator.GetOperatorPrecedence(operatorNode.BinaryOperator))
                         {
                             // We do this while our operator stack still has operators inside, and the top isn't a ( and than our precedence is greater than top.
                             while (this.operatorStack.Count > 0 && ((BinaryOperatorNode)this.operatorStack.Peek()).BinaryOperator != '(' && ((BinaryOperatorNode)this.operatorStack.Peek()).Precedence >= operatorNode.Precedence)
                             {
+                                // Pop the operator into the postfix expression stack
                                 this.postFixExpression.Push(this.operatorStack.Pop());
                             }
 

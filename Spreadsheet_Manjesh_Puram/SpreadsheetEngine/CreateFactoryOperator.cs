@@ -66,5 +66,31 @@ namespace CptS321
 
             return false;
         }
+
+        /// <summary>
+        /// Function to streamline checking what precedence the operator has.
+        /// </summary>
+        /// <param name="operatorValue"> Takes in the operator in question. </param>
+        /// <returns> Returns the value of the precedence of the operator. </returns>
+        public static int GetOperatorPrecedence(char operatorValue)
+        {
+            switch (operatorValue)
+            {
+                case '+':
+                    return 5;
+                case '-':
+                    return 5;
+                case '*':
+                    return 6;
+                case '/':
+                    return 6;
+                case '(':
+                    return 7;
+                case ')':
+                    return 7;
+            }
+
+            return 0;
+        }
     }
 }
