@@ -283,44 +283,72 @@ namespace CptS321
             // If we get the fire of CellText then we go into this statement.
             if (e.PropertyName == "CellText")
             {
-                //// If the starting of the input is equal to = then we go into this.
-                //if (((SpreadsheetCell)sender).CellText[0] == '=')
-                //{
-                //    string equalsSign = ((SpreadsheetCell)sender).CellText.Substring(0);
-                //    int columnGrab = Convert.ToInt16(equalsSign[1]) - 'A';
-                //    int rowGrab = Convert.ToInt16(equalsSign.Substring(2)) - 1;
-                //    ((SpreadsheetCell)sender).CellValue = this.GetCell(rowGrab, columnGrab).CellValue;
-                //}
-                //else
-                //{
-                //    ((SpreadsheetCell)sender).CellValue = ((SpreadsheetCell)sender).CellText;
-                //}
                 this.RefreshCellValue((SpreadsheetCell)sender);
             }
-
-            // Fire the CellRefresh call so that it can be changed in the form class.
-            this.CellPropertyChanged((SpreadsheetCell)sender, new PropertyChangedEventArgs("CellRefresh"));
         }
 
         private void RefreshCellValue(SpreadsheetCell currentCell)
         {
+            this.DestroyLinkageBetweenCells(currentCell);
 
-        }
-
-        private void CellVariableDeclaration(ExpressionTree cellExpressionTree, string variableName)
-        {
-            SpreadsheetCell targetCell = this.GetCell(variableName);
-
-            double number;
-
-            if (double.TryParse(targetCell.CellValue, out number))
+            if (currentCell.CellText == string.Empty || currentCell.CellText == null)
             {
-                cellExpressionTree.SetVariable(variableName, number);
+                currentCell.CellValue = string.Empty;
+            }
+
+            // If the starting of the input is equal to = then we go into this.
+            else if (currentCell.CellText[0] == '=')
+            {
+                //string equalsSign = currentCell.CellText.Substring(0);
+                //int columnGrab = Convert.ToInt16(equalsSign[1]) - 'A';
+                //int rowGrab = Convert.ToInt16(equalsSign.Substring(2)) - 1;
+                //currentCell.CellValue = this.GetCell(rowGrab, columnGrab).CellValue;
+
+                string expression = currentCell.CellText.Substring(1);
+
+                ExpressionTree expressionTree = new ExpressionTree(expression);
+                expressionTree.Evaluate();
+
+                string[] variableNames = expressionTree.GetVariable();
+
+                foreach (string variable in variableNames)
+                {
+                    double number = 0.0;
+                    SpreadsheetCell valueNeededCell = this.GetCell(variable);
+
+                    double.TryParse(valueNeededCell.CellValue, out number);
+
+                    expressionTree.SetVariable(variable, number);
+                }
+
+                currentCell.CellValue = expressionTree.Evaluate().ToString();
+
+                this.DefineLinkageBetweenCells(currentCell, variableNames);
             }
             else
             {
-                cellExpressionTree.SetVariable(variableName, 0.0);
+                double number;
+                if (double.TryParse(currentCell.CellText, out number))
+                {
+                    ExpressionTree expressionTree = new ExpressionTree(currentCell.CellText);
+                    number = expressionTree.Evaluate();
+                    expressionTree.SetVariable(currentCell.Name, number);
+
+                    currentCell.CellValue = number.ToString();
+                }
+                else
+                {
+                    currentCell.CellValue = currentCell.CellText;
+                }
             }
+
+            if (this.linkageBetweenCells.ContainsKey(currentCell))
+            {
+                this.UpdateLinkage(currentCell);
+            }
+
+            // Fire the CellRefresh call so that it can be changed in the form class.
+            this.CellPropertyChanged(currentCell, new PropertyChangedEventArgs("CellRefresh"));
         }
 
         private void DefineLinkageBetweenCells(SpreadsheetCell linkingCell, string[] linkNeededCells)
@@ -364,7 +392,7 @@ namespace CptS321
         /// <summary>
         /// Dictionary that holds all the values for the variables.
         /// </summary>
-        private static Dictionary<string, double> userVariables;
+        private static Dictionary<string, double> userVariables = new Dictionary<string, double>();
 
         /// <summary>
         /// Root of the expression tree.
@@ -391,8 +419,6 @@ namespace CptS321
             {
                 return;
             }
-
-            userVariables = new Dictionary<string, double>();
 
             this.Compile(expression);
 
@@ -421,6 +447,15 @@ namespace CptS321
         public void SetVariable(string variableName, double variableValue)
         {
             userVariables[variableName] = variableValue;
+        }
+
+        /// <summary>
+        /// Utilized in the spreadsheet class.
+        /// </summary>
+        /// <returns> Returns the list of keys. </returns>
+        public string[] GetVariable()
+        {
+            return userVariables.Keys.ToArray();
         }
 
         /// <summary>
@@ -581,7 +616,10 @@ namespace CptS321
                     else
                     {
                         // If its not a number then we know its a variable and we declare that number as 0 by default.
-                        userVariables[substring] = 0.0;
+                        if (!userVariables.ContainsKey(substring))
+                        {
+                            userVariables[substring] = 0.0;
+                        }
                         VariableNode temp = new VariableNode(substring);
 
                         this.postFixExpression.Push(temp);
