@@ -106,7 +106,7 @@ namespace CptS321
                 return this.cellValue;
             }
 
-            protected internal set
+            set
             {
                 if (this.cellValue == value)
                 {

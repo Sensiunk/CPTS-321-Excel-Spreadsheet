@@ -36,6 +36,8 @@ namespace Spreadsheet_Manjesh_Puram
             this.mainSpreadsheet = new CptS321.Spreadsheet(50, 26); // Make a spreadsheet of size 50 x 26
 
             this.mainSpreadsheet.CellPropertyChanged += this.RefreshPage; // Subscribe the whole spreadsheet to the RefreshPage
+            this.SpreadsheetGridView.CellBeginEdit += SpreadsheetGridView_CellBeginEdit;
+            this.SpreadsheetGridView.CellEndEdit += SpreadsheetGridView_CellEndEdit;
 
             this.DemoButton.Text = "Perform Demo"; // Change the name of the button
         }
@@ -151,14 +153,39 @@ namespace Spreadsheet_Manjesh_Puram
             currentCell.CellText = "=B" + (rowNumber + 1);
         }
 
-        private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        private void SpreadsheetGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            
+            int cellRow = e.RowIndex;
+            int cellColumn = e.ColumnIndex;
+
+            CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn);
+
+            if (currentCell != null)
+            {
+                this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = currentCell.CellText;
+            }
         }
 
-        private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void SpreadsheetGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            
+            int cellRow = e.RowIndex;
+            int cellColumn = e.ColumnIndex;
+
+            CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn);
+
+            if (currentCell != null)
+            {
+                try
+                {
+                    currentCell.CellText = this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value.ToString();
+                }
+                catch
+                {
+                    currentCell.CellText = "";
+                }
+
+                this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = currentCell.CellValue;
+            }
         }
     }
 }
