@@ -481,6 +481,18 @@ namespace CptS321
         public void CellSubscriber(SpreadsheetCell cell)
         {
             cell.PropertyChanged += this.CellChangeOccured;
+
+            if (this.UserVariables.ContainsKey(cell.IndexLocationName))
+            {
+                if (double.TryParse(cell.CellValue, out double num))
+                {
+                    this.userVariables[cell.IndexLocationName] = num;
+                }
+                else
+                {
+                    this.userVariables[cell.IndexLocationName] = 0.0;
+                }
+            }
         }
 
         private void CellChangeOccured(object sender, EventArgs e)
@@ -489,7 +501,19 @@ namespace CptS321
             {
                 NewCell cell = sender as NewCell;
 
-                // if (this.userVariables.ContainsKey(cell.In))
+                if (this.userVariables.ContainsKey(cell.IndexLocationName))
+                {
+                    if (double.TryParse(cell.CellValue, out double num))
+                    {
+                        this.userVariables[cell.IndexLocationName] = num;
+                    }
+                    else
+                    {
+                        this.userVariables[cell.IndexLocationName] = 0.0;
+                    }
+
+                    this.parentCell.CellValue = this.Evaluate().ToString();
+                }
             }
         }
 
