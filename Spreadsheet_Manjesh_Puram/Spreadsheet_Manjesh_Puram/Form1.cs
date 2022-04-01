@@ -102,7 +102,7 @@ namespace Spreadsheet_Manjesh_Puram
             for (int counter = 0; counter < 50; counter++)
             {
                 int randomRow = random.Next(0, 49);
-                int randomColumn = random.Next(0, 25);
+                int randomColumn = random.Next(0, 26);
 
                 this.RandomPlacement(randomRow, randomColumn);
             }
