@@ -187,6 +187,8 @@ namespace CptS321
             return this.expressionTree.Evaluate().ToString();
         }
 
+        // VVVVVV PROBABLY DONT NEED THIS ANYMORE SINCE WE MOVED TO THE MORE CONVENTIONAL PROPERTY CHANGED EVENT ARGS TYPE
+
         /// <summary>
         /// This is needed in order to invoke the property change.
         /// </summary>
@@ -263,6 +265,7 @@ namespace CptS321
                 }
             }
 
+            // Add the locations to the cell location dictionary
             int z = 0;
             for (int i = 65; i < 91; i++)
             {
@@ -442,6 +445,7 @@ namespace CptS321
         {
             get
             {
+                // Return the dictionary when we need it
                 return this.userVariables;
             }
         }
@@ -480,14 +484,19 @@ namespace CptS321
         /// <param name="cell"> Pass in the cell we want to subscribe. </param>
         public void CellSubscriber(SpreadsheetCell cell)
         {
+            // Subscribe the cell to the cell changed occured event handler
             cell.PropertyChanged += this.CellChangeOccured;
 
+            // Check to see if the variable is already defined
             if (this.UserVariables.ContainsKey(cell.IndexLocationName))
             {
+                // See if we can find a number
                 if (double.TryParse(cell.CellValue, out double num))
                 {
                     this.userVariables[cell.IndexLocationName] = num;
                 }
+
+                // If no number then assume its gonna be 0 for now
                 else
                 {
                     this.userVariables[cell.IndexLocationName] = 0.0;
@@ -495,23 +504,35 @@ namespace CptS321
             }
         }
 
+        /// <summary>
+        /// Runs with the event to see if the cell was changed and if it was changed the read the value inside.
+        /// </summary>
+        /// <param name="sender"> object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
         private void CellChangeOccured(object sender, EventArgs e)
         {
+            // If the sender is a cell then we know it got changed.
             if (sender.GetType() == typeof(NewCell))
             {
+                // Assign a cell as the sender
                 NewCell cell = sender as NewCell;
 
+                // Check to see if the variable is already defined
                 if (this.userVariables.ContainsKey(cell.IndexLocationName))
                 {
+                    // See if we can find a number
                     if (double.TryParse(cell.CellValue, out double num))
                     {
                         this.userVariables[cell.IndexLocationName] = num;
                     }
+
+                    // If no number then assume its gonna be 0 for now
                     else
                     {
                         this.userVariables[cell.IndexLocationName] = 0.0;
                     }
 
+                    // Evaluate the expression we fed it and assign it to we can see.
                     this.parentCell.CellValue = this.Evaluate().ToString();
                 }
             }
