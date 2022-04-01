@@ -150,5 +150,15 @@ namespace Spreadsheet_Manjesh_Puram
             CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(rowNumber, 0);
             currentCell.CellText = "=B" + (rowNumber + 1);
         }
+
+        private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            
+        }
+
+        private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            
+        }
     }
 }

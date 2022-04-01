@@ -53,5 +53,50 @@ namespace CptS321
         {
             Assert.AreEqual(this.testSpreadsheet.ColumnCount, 2);
         }
+
+        /// <summary>
+        /// Test case for the values to be returned from the spreadsheet class.
+        /// </summary>
+        [Test]
+        public void TestValues()
+        {
+            Assert.Pass();
+        }
+
+        /// <summary>
+        /// Test case for the values with addition to be returned from the spreadsheet class.
+        /// </summary>
+        [Test]
+        public void TestValuesWithAddition()
+        {
+            Assert.Pass();
+        }
+
+        /// <summary>
+        /// Test case for the values with subtraction to be returned from the spreadsheet class.
+        /// </summary>
+        [Test]
+        public void TestValuesWithSubtraction()
+        {
+            Assert.Pass();
+        }
+
+        /// <summary>
+        /// Test case for the values with multiplication to be returned from the spreadsheet class.
+        /// </summary>
+        [Test]
+        public void TestValuesWithMultiplication()
+        {
+            Assert.Pass();
+        }
+
+        /// <summary>
+        /// Test case for the values with division to be returned from the spreadsheet class.
+        /// </summary>
+        [Test]
+        public void TestValuesWithDivision()
+        {
+            Assert.Pass();
+        }
     }
 }
