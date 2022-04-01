@@ -322,6 +322,38 @@ namespace CptS321
                 cellExpressionTree.SetVariable(variableName, 0.0);
             }
         }
+
+        private void DefineLinkageBetweenCells(SpreadsheetCell linkingCell, string[] linkNeededCells)
+        {
+            foreach (string cell in linkNeededCells)
+            {
+                SpreadsheetCell addingCell = this.GetCell(cell);
+
+                this.linkageBetweenCells[addingCell] = new List<SpreadsheetCell>
+                {
+                    linkingCell,
+                };
+            }
+        }
+
+        private void DestroyLinkageBetweenCells(SpreadsheetCell currentCell)
+        {
+            foreach (List<SpreadsheetCell> linkingCells in this.linkageBetweenCells.Values)
+            {
+                if (linkingCells.Contains(currentCell))
+                {
+                    linkingCells.Remove(currentCell);
+                }
+            }
+        }
+
+        private void UpdateLinkage(SpreadsheetCell currentCell)
+        {
+            foreach (SpreadsheetCell linkCell in this.linkageBetweenCells[currentCell].ToArray())
+            {
+                this.UpdateLinkage(linkCell);
+            }
+        }
     }
 
     /// <summary>
