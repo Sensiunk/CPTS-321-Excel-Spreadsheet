@@ -16,6 +16,22 @@ namespace CptS321
     public abstract class SpreadsheetCell : INotifyPropertyChanged
     {
         /// <summary>
+        /// Creating an instance of a tree in each cell.
+        /// </summary>
+        private ExpressionTree expressionTree;
+
+        /// <summary>
+        /// Creating a dictionary that contains the locations of the cells such that when we need to find the cell
+        /// it becomes much easier and simplifies things.
+        /// </summary>
+        private Dictionary<int, string> cellLocation;
+
+        /// <summary>
+        /// Stores the user variables that end up getting passed into the cell.
+        /// </summary>
+        public Dictionary<string, double> userVariableNames;
+
+        /// <summary>
         /// Index of the row.
         /// </summary>
         private int rowIndex;
@@ -36,16 +52,30 @@ namespace CptS321
         private string cellValue;
 
         /// <summary>
+        /// Location of the specific cell.
+        /// </summary>
+        private string indexLocationName;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SpreadsheetCell"/> class.
         /// </summary>
         /// <param name="newRowIndex"> Uses the value passed in to set the value of the rowIndex. </param>
         /// <param name="newColumnIndex"> Uses the value passed in to set the value of the columnIndex. </param>
         public SpreadsheetCell(int newRowIndex, int newColumnIndex)
         {
+            this.cellLocation = new Dictionary<int, string>();
+            this.userVariableNames = new Dictionary<string, double>();
             this.rowIndex = newRowIndex;
             this.columnIndex = newColumnIndex;
             this.cellText = string.Empty;
             this.cellValue = string.Empty;
+
+            int j = 0;
+            for (int i = 65; i < 91; i++)
+            {
+                this.cellLocation[j] = ((char)i).ToString();
+                j++;
+            }
         }
 
         /// <summary>
@@ -122,6 +152,47 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Gets, storing the locations within the dictionary and returning the name of the location when we need it.
+        /// </summary>
+        public string IndexLocationName
+        {
+            get
+            {
+                // Returns the location of the cell in terms of Letter first then the row number.
+                return this.cellLocation[this.columnIndex].ToString() + (this.rowIndex + 1).ToString();
+            }
+        }
+
+        /// <summary>
+        /// Serves to subscribe the expression tree to the cell such that it can be changed using events.
+        /// </summary>
+        /// <param name="cell"> Takes in the cell as the parameter. </param>
+        public void SubscribeExpressionTreeToIndividualCell(SpreadsheetCell cell)
+        {
+            this.expressionTree.CellSubscriber(cell);
+        }
+
+        /// <summary>
+        /// Creates a new tree for the cell to work with.
+        /// </summary>
+        /// <param name="expressionString"> Takes in the string that is passed in. </param>
+        public void NewExpressionTreeInstance(string expressionString)
+        {
+            this.expressionTree = new ExpressionTree(expressionString);
+            this.userVariableNames = this.expressionTree.UserVariables;
+            this.expressionTree.parentCell = this;
+        }
+
+        /// <summary>
+        /// This function gets called when we need to evaluate the expression entered into the cell.
+        /// </summary>
+        /// <returns> Returns of the evaluated expression. </returns>
+        public string EvaluateExpression()
+        {
+            return this.expressionTree.Evaluate().ToString();
+        }
+
+        /// <summary>
         /// This is needed in order to invoke the property change.
         /// </summary>
         /// <param name="name"> Takes the name of the things being changed and broadcasts it. </param>
@@ -152,6 +223,8 @@ namespace CptS321
     /// </summary>
     public class Spreadsheet
     {
+        private Dictionary<string, int> cellLocation;
+
         /// <summary>
         /// Value that contains the number of columns in the spreadsheet.
         /// </summary>
@@ -174,27 +247,36 @@ namespace CptS321
         /// <param name="newColumn"> Construct with a column input. </param>
         public Spreadsheet(int newRow, int newColumn)
         {
+            this.cellLocation = new Dictionary<string, int>();
             this.spreadsheetRow = newRow;
             this.spreadsheetColumn = newColumn;
 
-            this.twoDArray = new SpreadsheetCell[newRow, newColumn];
+            this.twoDArray = new NewCell[newRow, newColumn];
 
             for (int i = 0; i < newRow; i++)
             {
                 for (int j = 0; j < newColumn; j++)
                 {
                     this.twoDArray[i, j] = new NewCell(i, j);
-                    this.twoDArray[i, j].CellText = string.Empty;
 
+                    // We are told not to initialize to empty string.
+                    // this.twoDArray[i, j].CellText = string.Empty;
                     this.twoDArray[i, j].PropertyChanged += this.RefreshCellValue;
                 }
+            }
+
+            int z = 0;
+            for (int i = 65; i < 91; i++)
+            {
+                this.cellLocation[((char)i).ToString()] = z;
+                z++;
             }
         }
 
         /// <summary>
         /// Event to fire when we have property change in the cell
         /// </summary>
-        public event PropertyChangedEventHandler CellPropertyChanged;
+        public event PropertyChangedEventHandler CellPropertyChanged = (sender, e) => { };
 
         /// <summary>
         /// Gets property for the ColumnCount.
@@ -237,26 +319,41 @@ namespace CptS321
         /// <param name="e"> PropertyChangedEvents e. </param>
         private void RefreshCellValue(object sender, PropertyChangedEventArgs e)
         {
-            // If we get the fire of CellText then we go into this statement.
-            if (e.PropertyName == "CellText")
+            NewCell cell = sender as NewCell;
+
+            Console.WriteLine(cell.IndexLocationName);
+
+            // If we get the fire of CellValue then we go into this statement.
+            if (e.PropertyName == "CellValue")
             {
-                // If the starting of the input is equal to = then we go into this.
-                if (((SpreadsheetCell)sender).CellText[0] == '=')
-                {
-                    string equalsSign = ((SpreadsheetCell)sender).CellText.Substring(0);
-                    int columnGrab = Convert.ToInt16(equalsSign[1]) - 'A';
-                    int rowGrab = Convert.ToInt16(equalsSign.Substring(2)) - 1;
-                    ((SpreadsheetCell)sender).CellValue = this.GetCell(rowGrab, columnGrab).CellValue;
-                }
-                else
-                {
-                    ((SpreadsheetCell)sender).CellValue = ((SpreadsheetCell)sender).CellText;
-                }
+                this.CellPropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(cell.RowIndex.ToString() + "," + cell.ColumnIndex.ToString() + "," + cell.CellValue));
             }
 
-            // Fire the CellRefresh call so that it can be changed in the form class.
-            this.CellPropertyChanged?.Invoke(sender, new PropertyChangedEventArgs("CellRefresh"));
+            // If the starting of the input is equal to = then we go into this.
+            if (cell.CellText[0] == '=')
+            {
+                /*string equalsSign = ((SpreadsheetCell)sender).CellText.Substring(0);
+                int columnGrab = Convert.ToInt16(equalsSign[1]) - 'A';
+                int rowGrab = Convert.ToInt16(equalsSign.Substring(2)) - 1;
+                ((SpreadsheetCell)sender).CellValue = this.GetCell(rowGrab, columnGrab).CellValue;*/
+                cell.NewExpressionTreeInstance(cell.CellText.Substring(1));
+                foreach (KeyValuePair<string, double> cellLocationIndexName in cell.userVariableNames.ToList())
+                {
+                    Console.WriteLine(cellLocationIndexName.Key);
+                    //cell.SubscribeExpressionTreeToIndividualCell(this.c)
+                }
+            }
+            else
+            {
+                ((SpreadsheetCell)sender).CellValue = ((SpreadsheetCell)sender).CellText;
+                this.CellPropertyChanged?.Invoke(sender, new PropertyChangedEventArgs("CellText"));
+            }
         }
+
+        /*public string GetText(string cellName)
+        {
+            return this.GetCell(Convert.ToInt32(cellName[2].ToString() - 1, this.cellLocation[cellName[1].ToString()]);
+        }*/
     }
 
     /// <summary>
@@ -267,12 +364,17 @@ namespace CptS321
         /// <summary>
         /// Dictionary that holds all the values for the variables.
         /// </summary>
-        private static Dictionary<string, double> userVariables;
+        private Dictionary<string, double> userVariables;
 
         /// <summary>
         /// Root of the expression tree.
         /// </summary>
         private BaseNode rootNode;
+
+        /// <summary>
+        /// This tree will be stored in this cell.
+        /// </summary>
+        public SpreadsheetCell parentCell;
 
         /// <summary>
         /// Stack that maintains the postFixExpression after being converted.
@@ -295,7 +397,7 @@ namespace CptS321
                 return;
             }
 
-            userVariables = new Dictionary<string, double>();
+            this.userVariables = new Dictionary<string, double>();
 
             this.Compile(expression);
 
@@ -317,13 +419,24 @@ namespace CptS321
         public string Expression { get; set; }
 
         /// <summary>
+        /// Gets, returns the dictionary that holds our variables.
+        /// </summary>
+        public Dictionary<string, double> UserVariables
+        {
+            get
+            {
+                return this.userVariables;
+            }
+        }
+
+        /// <summary>
         /// Sets the specified variable within the ExpressionTree variables dictionary.
         /// </summary>
         /// <param name="variableName"> Used to assign the variable name. </param>
         /// <param name="variableValue"> Used to assign the variable value. </param>
         public void SetVariable(string variableName, double variableValue)
         {
-            userVariables[variableName] = variableValue;
+            this.userVariables[variableName] = variableValue;
         }
 
         /// <summary>
@@ -341,6 +454,21 @@ namespace CptS321
             {
                 // If its not empty then we can evaluate.
                 return this.Evaluate(this.rootNode);
+            }
+        }
+
+        public void CellSubscriber(SpreadsheetCell cell)
+        {
+            cell.PropertyChanged += this.CellChangeOccured;
+        }
+
+        private void CellChangeOccured(object sender, EventArgs e)
+        {
+            if (sender.GetType() == typeof(NewCell))
+            {
+                NewCell cell = sender as NewCell;
+
+                //if (this.userVariables.ContainsKey(cell.In))
             }
         }
 
@@ -484,7 +612,7 @@ namespace CptS321
                     else
                     {
                         // If its not a number then we know its a variable and we declare that number as 0 by default.
-                        userVariables[substring] = 0.0;
+                        this.userVariables[substring] = 0.0;
                         VariableNode temp = new VariableNode(substring);
 
                         this.postFixExpression.Push(temp);
@@ -520,7 +648,7 @@ namespace CptS321
                 {
                     // If its a variable node then we do a look up in the dictionary and return the value in that location or 0 if it was never changed.
                     VariableNode tempInstance = (VariableNode)evalTree;
-                    return userVariables[tempInstance.VariableName];
+                    return this.userVariables[tempInstance.VariableName];
                 }
                 else if (evalTree is ConstantNumNode)
                 {

@@ -60,9 +60,9 @@ namespace Spreadsheet_Manjesh_Puram
             this.SpreadsheetGridView.Rows.Add(50);
 
             // Load all the number in the rows
-            for (int i = 1; i <= 50; i++)
+            for (int i = 0; i <= 49; i++)
             {
-                this.SpreadsheetGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
+                this.SpreadsheetGridView.Rows[i].HeaderCell.Value = (i + 1).ToString();
             }
         }
 
