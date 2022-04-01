@@ -16,6 +16,11 @@ namespace CptS321
     public abstract class SpreadsheetCell : INotifyPropertyChanged
     {
         /// <summary>
+        /// Stores the user variables that end up getting passed into the cell.
+        /// </summary>
+        public Dictionary<string, double> userVariableNames;
+
+        /// <summary>
         /// Creating an instance of a tree in each cell.
         /// </summary>
         private ExpressionTree expressionTree;
@@ -25,11 +30,6 @@ namespace CptS321
         /// it becomes much easier and simplifies things.
         /// </summary>
         private Dictionary<int, string> cellLocation;
-
-        /// <summary>
-        /// Stores the user variables that end up getting passed into the cell.
-        /// </summary>
-        public Dictionary<string, double> userVariableNames;
 
         /// <summary>
         /// Index of the row.
@@ -52,11 +52,6 @@ namespace CptS321
         private string cellValue;
 
         /// <summary>
-        /// Location of the specific cell.
-        /// </summary>
-        private string indexLocationName;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="SpreadsheetCell"/> class.
         /// </summary>
         /// <param name="newRowIndex"> Uses the value passed in to set the value of the rowIndex. </param>
@@ -74,7 +69,7 @@ namespace CptS321
             for (int i = 65; i < 91; i++)
             {
                 this.cellLocation[j] = ((char)i).ToString();
-                j++;
+                ++j;
             }
         }
 
@@ -120,7 +115,7 @@ namespace CptS321
                 {
                     this.cellText = value;
 
-                    this.OnPropertyChanged("CellText");
+                    this.PropertyChanged(this, new PropertyChangedEventArgs("CellText"));
                 }
             }
         }
@@ -136,7 +131,7 @@ namespace CptS321
                 return this.cellValue;
             }
 
-            protected internal set
+            set
             {
                 if (this.cellValue == value)
                 {
@@ -146,7 +141,7 @@ namespace CptS321
                 {
                     this.cellValue = value;
 
-                    this.OnPropertyChanged("CellValue");
+                    this.PropertyChanged(this, new PropertyChangedEventArgs("CellValue"));
                 }
             }
         }
@@ -313,20 +308,42 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Function implemented to return the cell at a location when fed in coordinates of where we want.
+        /// </summary>
+        /// <param name="coordinates"> We take in a coordinate and using that we are able to grab a Cell. </param>
+        /// <returns> Returns a value that gives us the cell at a certain location. </returns>
+        public SpreadsheetCell GetCellWithCoordinates(string coordinates)
+        {
+            int columnGrab = this.cellLocation[coordinates[0].ToString()];
+            int rowGrab = Convert.ToInt16(coordinates.Substring(1)) - 1;
+            return this.GetCell(rowGrab, columnGrab);
+        }
+
+        /// <summary>
+        /// This function extracts the text from a cell.
+        /// </summary>
+        /// <param name="cellName"> We are passed in the name of the cell. </param>
+        /// <returns> We return the text stored in a cells. </returns>
+        public string GetText(string cellName)
+        {
+            return this.GetCell(Convert.ToInt32(cellName[2].ToString()) - 1, this.cellLocation[cellName[1].ToString()]).CellText;
+        }
+
+        /// <summary>
         /// RefreshCellValue function to be fired when we get the CellText fire.
         /// </summary>
         /// <param name="sender"> Object sender. </param>
         /// <param name="e"> PropertyChangedEvents e. </param>
-        private void RefreshCellValue(object sender, PropertyChangedEventArgs e)
+        private void RefreshCellValue(object sender, EventArgs e)
         {
             NewCell cell = sender as NewCell;
 
-            Console.WriteLine(cell.IndexLocationName);
+            PropertyChangedEventArgs eve = e as PropertyChangedEventArgs;
 
             // If we get the fire of CellValue then we go into this statement.
-            if (e.PropertyName == "CellValue")
+            if (eve.PropertyName == "CellValue")
             {
-                this.CellPropertyChanged?.Invoke(sender, new PropertyChangedEventArgs(cell.RowIndex.ToString() + "," + cell.ColumnIndex.ToString() + "," + cell.CellValue));
+                this.CellPropertyChanged(this, new PropertyChangedEventArgs(cell.RowIndex.ToString() + "," + cell.ColumnIndex.ToString() + "," + cell.CellValue));
             }
 
             // If the starting of the input is equal to = then we go into this.
@@ -339,21 +356,18 @@ namespace CptS321
                 cell.NewExpressionTreeInstance(cell.CellText.Substring(1));
                 foreach (KeyValuePair<string, double> cellLocationIndexName in cell.userVariableNames.ToList())
                 {
-                    Console.WriteLine(cellLocationIndexName.Key);
-                    //cell.SubscribeExpressionTreeToIndividualCell(this.c)
+                    cell.SubscribeExpressionTreeToIndividualCell(this.GetCellWithCoordinates(cellLocationIndexName.Key));
                 }
+
+                cell.CellValue = cell.EvaluateExpression();
+                this.CellPropertyChanged(cell, new PropertyChangedEventArgs("CellText"));
             }
             else
             {
-                ((SpreadsheetCell)sender).CellValue = ((SpreadsheetCell)sender).CellText;
-                this.CellPropertyChanged?.Invoke(sender, new PropertyChangedEventArgs("CellText"));
+                cell.CellValue = cell.CellText;
+                this.CellPropertyChanged(this, new PropertyChangedEventArgs(cell.RowIndex.ToString() + "," + cell.ColumnIndex.ToString() + "," + cell.CellValue));
             }
         }
-
-        /*public string GetText(string cellName)
-        {
-            return this.GetCell(Convert.ToInt32(cellName[2].ToString() - 1, this.cellLocation[cellName[1].ToString()]);
-        }*/
     }
 
     /// <summary>
@@ -361,6 +375,11 @@ namespace CptS321
     /// </summary>
     public class ExpressionTree
     {
+        /// <summary>
+        /// This tree will be stored in this cell.
+        /// </summary>
+        public SpreadsheetCell parentCell;
+
         /// <summary>
         /// Dictionary that holds all the values for the variables.
         /// </summary>
@@ -370,11 +389,6 @@ namespace CptS321
         /// Root of the expression tree.
         /// </summary>
         private BaseNode rootNode;
-
-        /// <summary>
-        /// This tree will be stored in this cell.
-        /// </summary>
-        public SpreadsheetCell parentCell;
 
         /// <summary>
         /// Stack that maintains the postFixExpression after being converted.
@@ -457,6 +471,10 @@ namespace CptS321
             }
         }
 
+        /// <summary>
+        /// Function that subscribes the cell to the cell change occured event handler.
+        /// </summary>
+        /// <param name="cell"> Pass in the cell we want to subscribe. </param>
         public void CellSubscriber(SpreadsheetCell cell)
         {
             cell.PropertyChanged += this.CellChangeOccured;
@@ -468,7 +486,7 @@ namespace CptS321
             {
                 NewCell cell = sender as NewCell;
 
-                //if (this.userVariables.ContainsKey(cell.In))
+                // if (this.userVariables.ContainsKey(cell.In))
             }
         }
 

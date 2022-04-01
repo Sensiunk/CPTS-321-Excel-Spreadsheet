@@ -1,5 +1,5 @@
-﻿// <copyright file="Program.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+﻿// <copyright file="Program.cs" company="Manjesh Reddy Puram 11716685">
+// Copyright (c) Manjesh Reddy Puram 11716685. All rights reserved.
 // </copyright>
 
 namespace CptS321
