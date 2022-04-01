@@ -187,6 +187,11 @@ namespace CptS321
         private SpreadsheetCell[,] twoDArray;
 
         /// <summary>
+        /// This is our dictionary that holds the cell and what links it has so when we change one cell we can change others.
+        /// </summary>
+        private Dictionary<SpreadsheetCell, List<SpreadsheetCell>> linkageBetweenCells;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
         /// </summary>
         /// <param name="newRow"> Construct with a row input. </param>
@@ -195,6 +200,8 @@ namespace CptS321
         {
             this.spreadsheetRow = newRow;
             this.spreadsheetColumn = newColumn;
+
+            this.linkageBetweenCells = new Dictionary<SpreadsheetCell, List<SpreadsheetCell>>();
 
             this.twoDArray = new SpreadsheetCell[newRow, newColumn];
 
@@ -250,6 +257,23 @@ namespace CptS321
         }
 
         /// <summary>
+        /// This allows us to pass in the Cell's name and still have the same result and it allows us to overload the function.
+        /// </summary>
+        /// <param name="cellName"> Pass in the cell's location as a name. </param>
+        /// <returns> Returns the cell in the overloaded method. </returns>
+        public SpreadsheetCell GetCell(string cellName)
+        {
+            if (this.twoDArray[cellName[0] - 'A', Convert.ToInt32(cellName.Substring(1)) - 1] == null)
+            {
+                return null;
+            }
+            else
+            {
+                return this.twoDArray[cellName[0] - 'A', Convert.ToInt32(cellName.Substring(1)) - 1];
+            }
+        }
+
+        /// <summary>
         /// RefreshCellValue function to be fired when we get the CellText fire.
         /// </summary>
         /// <param name="sender"> Object sender. </param>
@@ -259,22 +283,44 @@ namespace CptS321
             // If we get the fire of CellText then we go into this statement.
             if (e.PropertyName == "CellText")
             {
-                // If the starting of the input is equal to = then we go into this.
-                if (((SpreadsheetCell)sender).CellText[0] == '=')
-                {
-                    string equalsSign = ((SpreadsheetCell)sender).CellText.Substring(0);
-                    int columnGrab = Convert.ToInt16(equalsSign[1]) - 'A';
-                    int rowGrab = Convert.ToInt16(equalsSign.Substring(2)) - 1;
-                    ((SpreadsheetCell)sender).CellValue = this.GetCell(rowGrab, columnGrab).CellValue;
-                }
-                else
-                {
-                    ((SpreadsheetCell)sender).CellValue = ((SpreadsheetCell)sender).CellText;
-                }
+                //// If the starting of the input is equal to = then we go into this.
+                //if (((SpreadsheetCell)sender).CellText[0] == '=')
+                //{
+                //    string equalsSign = ((SpreadsheetCell)sender).CellText.Substring(0);
+                //    int columnGrab = Convert.ToInt16(equalsSign[1]) - 'A';
+                //    int rowGrab = Convert.ToInt16(equalsSign.Substring(2)) - 1;
+                //    ((SpreadsheetCell)sender).CellValue = this.GetCell(rowGrab, columnGrab).CellValue;
+                //}
+                //else
+                //{
+                //    ((SpreadsheetCell)sender).CellValue = ((SpreadsheetCell)sender).CellText;
+                //}
+                this.RefreshCellValue((SpreadsheetCell)sender);
             }
 
             // Fire the CellRefresh call so that it can be changed in the form class.
-            this.CellPropertyChanged?.Invoke(sender, new PropertyChangedEventArgs("CellRefresh"));
+            this.CellPropertyChanged((SpreadsheetCell)sender, new PropertyChangedEventArgs("CellRefresh"));
+        }
+
+        private void RefreshCellValue(SpreadsheetCell currentCell)
+        {
+
+        }
+
+        private void CellVariableDeclaration(ExpressionTree cellExpressionTree, string variableName)
+        {
+            SpreadsheetCell targetCell = this.GetCell(variableName);
+
+            double number;
+
+            if (double.TryParse(targetCell.CellValue, out number))
+            {
+                cellExpressionTree.SetVariable(variableName, number);
+            }
+            else
+            {
+                cellExpressionTree.SetVariable(variableName, 0.0);
+            }
         }
     }
 
