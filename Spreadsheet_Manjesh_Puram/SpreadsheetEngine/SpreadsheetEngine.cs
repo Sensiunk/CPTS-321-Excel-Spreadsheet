@@ -218,6 +218,9 @@ namespace CptS321
     /// </summary>
     public class Spreadsheet
     {
+        /// <summary>
+        /// Dictionary that holds the locations of the cells.
+        /// </summary>
         private Dictionary<string, int> cellLocation;
 
         /// <summary>
