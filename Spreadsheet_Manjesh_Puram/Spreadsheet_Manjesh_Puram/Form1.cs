@@ -36,8 +36,9 @@ namespace Spreadsheet_Manjesh_Puram
             this.mainSpreadsheet = new CptS321.Spreadsheet(50, 26); // Make a spreadsheet of size 50 x 26
 
             this.mainSpreadsheet.CellPropertyChanged += this.RefreshPage; // Subscribe the whole spreadsheet to the RefreshPage
-            this.SpreadsheetGridView.CellBeginEdit += SpreadsheetGridView_CellBeginEdit;
-            this.SpreadsheetGridView.CellEndEdit += SpreadsheetGridView_CellEndEdit;
+
+            this.SpreadsheetGridView.CellBeginEdit += this.SpreadsheetGridView_CellBeginEdit; // Subscribe the GridView to the CellBeginEdit
+            this.SpreadsheetGridView.CellEndEdit += this.SpreadsheetGridView_CellEndEdit; // Subscribe the GridView to the CellEndEdit
 
             this.DemoButton.Text = "Perform Demo"; // Change the name of the button
         }
@@ -181,7 +182,7 @@ namespace Spreadsheet_Manjesh_Puram
                 }
                 catch
                 {
-                    currentCell.CellText = "";
+                    currentCell.CellText = string.Empty;
                 }
 
                 this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = currentCell.CellValue;

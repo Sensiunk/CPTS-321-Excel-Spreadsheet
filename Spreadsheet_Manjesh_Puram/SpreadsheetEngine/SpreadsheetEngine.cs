@@ -36,6 +36,11 @@ namespace CptS321
         private string cellValue;
 
         /// <summary>
+        /// Name of the cell.
+        /// </summary>
+        private string cellName;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SpreadsheetCell"/> class.
         /// </summary>
         /// <param name="newRowIndex"> Uses the value passed in to set the value of the rowIndex. </param>
@@ -46,6 +51,7 @@ namespace CptS321
             this.columnIndex = newColumnIndex;
             this.cellText = string.Empty;
             this.cellValue = string.Empty;
+            this.cellName = Convert.ToChar('A' + newColumnIndex) + (newRowIndex + 1).ToString();
         }
 
         /// <summary>
@@ -90,7 +96,7 @@ namespace CptS321
                 {
                     this.cellText = value;
 
-                    this.OnPropertyChanged("CellText");
+                    this.PropertyChanged(this, new PropertyChangedEventArgs("CellText"));
                 }
             }
         }
@@ -116,10 +122,23 @@ namespace CptS321
                 {
                     this.cellValue = value;
 
-                    this.OnPropertyChanged("CellValue");
+                    this.PropertyChanged(this, new PropertyChangedEventArgs("CellValue"));
                 }
             }
         }
+
+        /// <summary>
+        /// Gets the value of the cellName.
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return this.cellName;
+            }
+        }
+
+        // DON'T NEED THIS INVOKING METHOD SINCE WE CAN USER THE SIMPLER WAY.
 
         /// <summary>
         /// This is needed in order to invoke the property change.
