@@ -37,7 +37,10 @@ namespace Spreadsheet_Manjesh_Puram
 
             this.mainSpreadsheet.CellPropertyChanged += this.RefreshPage; // Subscribe the whole spreadsheet to the RefreshPage
 
-            this.DemoButton.Text = "Perform Demo"; // Change the name of the button
+            this.SpreadsheetGridView.CellBeginEdit += this.SpreadsheetGridView_CellBeginEdit; // Subscribe the GridView to the CellBeginEdit
+            this.SpreadsheetGridView.CellEndEdit += this.SpreadsheetGridView_CellEndEdit; // Subscribe the GridView to the CellEndEdit
+
+            this.DemoButton.Text = "Perform Demo - DON'T PRESS"; // Change the name of the button
         }
 
         /// <summary>
@@ -102,7 +105,7 @@ namespace Spreadsheet_Manjesh_Puram
             for (int counter = 0; counter < 50; counter++)
             {
                 int randomRow = random.Next(0, 49);
-                int randomColumn = random.Next(0, 25);
+                int randomColumn = random.Next(0, 26);
 
                 this.RandomPlacement(randomRow, randomColumn);
             }
@@ -149,6 +152,62 @@ namespace Spreadsheet_Manjesh_Puram
         {
             CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(rowNumber, 0);
             currentCell.CellText = "=B" + (rowNumber + 1);
+        }
+
+        /// <summary>
+        /// Function that gets subcribed to so that when we get into the cell end edit we know what to do.
+        /// </summary>
+        /// <param name="sender"> object sender. </param>
+        /// <param name="e"> DataGridViewCellCancelEventsArgs e. </param>
+        private void SpreadsheetGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            // Grabing the cellrow and cellcolumn from the event args.
+            int cellRow = e.RowIndex;
+            int cellColumn = e.ColumnIndex;
+
+            // Grab the cell that contains this details.
+            CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn);
+
+            // If the cell is not null then we all good!
+            if (currentCell != null)
+            {
+                // Set the value of the cell to our spreadsheets cell text.
+                this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = currentCell.CellText;
+            }
+        }
+
+        /// <summary>
+        /// Function that gets subcribed to so that when we get into the cell end edit we know what to do.
+        /// </summary>
+        /// <param name="sender"> object sender. </param>
+        /// <param name="e"> DataGridViewCellEventsArgs e. </param>
+        private void SpreadsheetGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            // Grabing the cellrow and cellcolumn from the event args.
+            int cellRow = e.RowIndex;
+            int cellColumn = e.ColumnIndex;
+
+            // Grab the cell that contains this details.
+            CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn);
+
+            // If the cell is not null then we all good!
+            if (currentCell != null)
+            {
+                // Attend to grab the string.
+                try
+                {
+                    currentCell.CellText = this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value.ToString();
+                }
+
+                // If we aren't successful then set the text to blank.
+                catch
+                {
+                    currentCell.CellText = string.Empty;
+                }
+
+                // Set the value of the cell to our spreadsheets cell value.
+                this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = currentCell.CellValue;
+            }
         }
     }
 }
