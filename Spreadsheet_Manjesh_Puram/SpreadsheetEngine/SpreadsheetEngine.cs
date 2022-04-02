@@ -263,13 +263,13 @@ namespace CptS321
         /// <returns> Returns the cell in the overloaded method. </returns>
         public SpreadsheetCell GetCell(string cellName)
         {
-            if (this.twoDArray[cellName[0] - 'A', Convert.ToInt32(cellName.Substring(1)) - 1] == null)
+            if (this.twoDArray[Convert.ToInt32(cellName.Substring(1)) - 1, cellName[0] - 'A'] == null)
             {
                 return null;
             }
             else
             {
-                return this.twoDArray[cellName[0] - 'A', Convert.ToInt32(cellName.Substring(1)) - 1];
+                return this.twoDArray[Convert.ToInt32(cellName.Substring(1)) - 1, cellName[0] - 'A'];
             }
         }
 
@@ -357,10 +357,8 @@ namespace CptS321
             {
                 SpreadsheetCell addingCell = this.GetCell(cell);
 
-                this.linkageBetweenCells[addingCell] = new List<SpreadsheetCell>
-                {
-                    linkingCell,
-                };
+                this.linkageBetweenCells[addingCell] = new List<SpreadsheetCell>();
+                this.linkageBetweenCells[addingCell].Add(linkingCell);
             }
         }
 
