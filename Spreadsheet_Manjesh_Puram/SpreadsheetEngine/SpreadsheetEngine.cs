@@ -310,6 +310,7 @@ namespace CptS321
                 expressionTree.Evaluate();
 
                 string[] variableNames = expressionTree.GetVariable();
+                Array.Reverse(variableNames);
 
                 foreach (string variable in variableNames)
                 {
@@ -344,7 +345,7 @@ namespace CptS321
 
             if (this.linkageBetweenCells.ContainsKey(currentCell))
             {
-                this.RefreshCellValue(currentCell);
+                this.UpdateLinkage(currentCell);
             }
 
             // Fire the CellRefresh call so that it can be changed in the form class.
@@ -377,7 +378,7 @@ namespace CptS321
         {
             foreach (SpreadsheetCell linkCell in this.linkageBetweenCells[currentCell].ToArray())
             {
-                this.UpdateLinkage(linkCell);
+                this.RefreshCellValue(linkCell);
             }
         }
     }
@@ -406,6 +407,8 @@ namespace CptS321
         /// Stack that actively maintains the operator while being converted.
         /// </summary>
         private Stack<BaseNode> operatorStack = new Stack<BaseNode>();
+
+        private List<string> variablesInExpression = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
@@ -453,7 +456,7 @@ namespace CptS321
         /// <returns> Returns the list of keys. </returns>
         public string[] GetVariable()
         {
-            return userVariables.Keys.ToArray();
+            return this.variablesInExpression.ToArray();
         }
 
         /// <summary>
@@ -619,7 +622,7 @@ namespace CptS321
                             userVariables[substring] = 0.0;
                         }
                         VariableNode temp = new VariableNode(substring);
-
+                        this.variablesInExpression.Add(substring);
                         this.postFixExpression.Push(temp);
                     }
                 }
