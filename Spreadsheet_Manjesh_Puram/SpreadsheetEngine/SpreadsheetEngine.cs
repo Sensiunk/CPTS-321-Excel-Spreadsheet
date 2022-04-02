@@ -287,43 +287,58 @@ namespace CptS321
             }
         }
 
+        /// <summary>
+        /// New implementation of the Refresh Cell Value function that handles the event changing.
+        /// </summary>
+        /// <param name="currentCell"> Takes in the cell that we need to modify. </param>
         private void RefreshCellValue(SpreadsheetCell currentCell)
         {
             this.DestroyLinkageBetweenCells(currentCell);
 
+            // Checks if the value in the cell is empty and if so then leave it as empty.
             if (currentCell.CellText == string.Empty || currentCell.CellText == null)
             {
+                // Set cell to empty string if we dont modify.
                 currentCell.CellValue = string.Empty;
             }
 
             // If the starting of the input is equal to = then we go into this.
             else if (currentCell.CellText[0] == '=')
             {
-                //string equalsSign = currentCell.CellText.Substring(0);
-                //int columnGrab = Convert.ToInt16(equalsSign[1]) - 'A';
-                //int rowGrab = Convert.ToInt16(equalsSign.Substring(2)) - 1;
-                //currentCell.CellValue = this.GetCell(rowGrab, columnGrab).CellValue;
-
+                // string equalsSign = currentCell.CellText.Substring(0);
+                // int columnGrab = Convert.ToInt16(equalsSign[1]) - 'A';
+                // int rowGrab = Convert.ToInt16(equalsSign.Substring(2)) - 1;
+                // currentCell.CellValue = this.GetCell(rowGrab, columnGrab).CellValue;
                 string expression = currentCell.CellText.Substring(1);
 
+                // Create new expression tree using the substring
                 ExpressionTree expressionTree = new ExpressionTree(expression);
+
+                // Evaluate such that we populate values.
                 expressionTree.Evaluate();
 
+                // Grab all the value that we found from the expression and reverse it.
                 string[] variableNames = expressionTree.GetVariable();
                 Array.Reverse(variableNames);
 
+                // Set the variables in the expression tree to the values that are known to us.
                 foreach (string variable in variableNames)
                 {
+                    // Get the cell that we are referencing to.
                     double number = 0.0;
                     SpreadsheetCell valueNeededCell = this.GetCell(variable);
 
+                    // Grab the value at that location.
                     double.TryParse(valueNeededCell.CellValue, out number);
 
+                    // Let it be known that the cell has that value.
                     expressionTree.SetVariable(variable, number);
                 }
 
+                // Set the value of the cell to the evaluated value from the expression.
                 currentCell.CellValue = expressionTree.Evaluate().ToString();
 
+                // Bring back the link for the cell.
                 this.DefineLinkageBetweenCells(currentCell, variableNames);
             }
             else
@@ -331,26 +346,29 @@ namespace CptS321
                 double number;
                 if (double.TryParse(currentCell.CellText, out number))
                 {
+                    // Create new expression tree using the substring
                     ExpressionTree expressionTree = new ExpressionTree(currentCell.CellText);
 
-                    string[] variableNames = expressionTree.GetVariable();
-                    Array.Reverse(variableNames);
-
+                    // string[] variableNames = expressionTree.GetVariable();
+                    // Array.Reverse(variableNames);
                     number = expressionTree.Evaluate();
                     expressionTree.SetVariable(currentCell.Name, number);
 
                     currentCell.CellValue = number.ToString();
 
-                    this.DefineLinkageBetweenCells(currentCell, variableNames);
+                    // this.DefineLinkageBetweenCells(currentCell, variableNames);
                 }
                 else
                 {
+                    // If we are unsuccessful then just set the cell text to the value
                     currentCell.CellValue = currentCell.CellText;
                 }
             }
 
+            // Checks to see if there are other cells that depend on this one.
             if (this.linkageBetweenCells.ContainsKey(currentCell))
             {
+                // If we find a link then go back through and update all links.
                 this.UpdateLinkage(currentCell);
             }
 
@@ -358,32 +376,50 @@ namespace CptS321
             this.CellPropertyChanged(currentCell, new PropertyChangedEventArgs("CellRefresh"));
         }
 
+        /// <summary>
+        /// This function is in place in order to add locality to the cells for them to know what other cells it depends on.
+        /// </summary>
+        /// <param name="linkingCell"> Represents the cell that needs to be linked. </param>
+        /// <param name="linkNeededCells"> Represents all the cells that are related to the linking cell. </param>
         private void DefineLinkageBetweenCells(SpreadsheetCell linkingCell, string[] linkNeededCells)
         {
+            // We run through each cell in the list
             foreach (string cell in linkNeededCells)
             {
+                // Using the knowledge of which cells we need to link we grab that cell.
                 SpreadsheetCell addingCell = this.GetCell(cell);
 
+                // Add the cells to a list of cells that pertains to cell at hand.
                 this.linkageBetweenCells[addingCell] = new List<SpreadsheetCell>();
                 this.linkageBetweenCells[addingCell].Add(linkingCell);
             }
         }
 
+        /// <summary>
+        /// This function serves the purpose of removeing the link between the cells prior.
+        /// </summary>
+        /// <param name="currentCell"> We use this cell to be removed from the linking chain. </param>
         private void DestroyLinkageBetweenCells(SpreadsheetCell currentCell)
         {
+            // We check all the values for any instance of calling this cell and remove it.
             foreach (List<SpreadsheetCell> linkingCells in this.linkageBetweenCells.Values)
             {
+                // Check to see if the cell is in the list of cells.
                 if (linkingCells.Contains(currentCell))
                 {
+                    // Remove the cell from the list.
                     linkingCells.Remove(currentCell);
                 }
             }
         }
 
+        // Function serves the purpose to be used for when a cell changes and we need to have knowledge about the links another cell might have.
         private void UpdateLinkage(SpreadsheetCell currentCell)
         {
+            // We iterate through the list of cells to address those cells that need updating.
             foreach (SpreadsheetCell linkCell in this.linkageBetweenCells[currentCell].ToArray())
             {
+                // Call back on the function with the cell value.
                 this.RefreshCellValue(linkCell);
             }
         }
@@ -414,6 +450,9 @@ namespace CptS321
         /// </summary>
         private Stack<BaseNode> operatorStack = new Stack<BaseNode>();
 
+        /// <summary>
+        /// List that holds all the variables that were encountered while traversing the expression.
+        /// </summary>
         private List<string> variablesInExpression;
 
         /// <summary>
@@ -629,7 +668,10 @@ namespace CptS321
                         {
                             userVariables[substring] = 0.0;
                         }
+
                         VariableNode temp = new VariableNode(substring);
+
+                        // Push the variables into the list so we know that a variables was found here.
                         this.variablesInExpression.Add(substring);
                         this.postFixExpression.Push(temp);
                     }
