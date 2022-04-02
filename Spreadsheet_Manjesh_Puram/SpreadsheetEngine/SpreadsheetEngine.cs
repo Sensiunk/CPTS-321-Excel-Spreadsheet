@@ -344,7 +344,7 @@ namespace CptS321
 
             if (this.linkageBetweenCells.ContainsKey(currentCell))
             {
-                this.UpdateLinkage(currentCell);
+                this.RefreshCellValue(currentCell);
             }
 
             // Fire the CellRefresh call so that it can be changed in the form class.
