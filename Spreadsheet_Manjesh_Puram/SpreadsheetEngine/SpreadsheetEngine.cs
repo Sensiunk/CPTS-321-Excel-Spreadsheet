@@ -332,10 +332,16 @@ namespace CptS321
                 if (double.TryParse(currentCell.CellText, out number))
                 {
                     ExpressionTree expressionTree = new ExpressionTree(currentCell.CellText);
+
+                    string[] variableNames = expressionTree.GetVariable();
+                    Array.Reverse(variableNames);
+
                     number = expressionTree.Evaluate();
                     expressionTree.SetVariable(currentCell.Name, number);
 
                     currentCell.CellValue = number.ToString();
+
+                    this.DefineLinkageBetweenCells(currentCell, variableNames);
                 }
                 else
                 {
@@ -408,7 +414,7 @@ namespace CptS321
         /// </summary>
         private Stack<BaseNode> operatorStack = new Stack<BaseNode>();
 
-        private List<string> variablesInExpression = new List<string>();
+        private List<string> variablesInExpression;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
@@ -420,6 +426,8 @@ namespace CptS321
             {
                 return;
             }
+
+            this.variablesInExpression = new List<string>();
 
             this.Compile(expression);
 
