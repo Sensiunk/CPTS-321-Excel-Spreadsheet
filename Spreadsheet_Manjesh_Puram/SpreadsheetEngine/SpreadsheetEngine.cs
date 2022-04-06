@@ -41,6 +41,11 @@ namespace CptS321
         private string cellName;
 
         /// <summary>
+        /// Create an expression tree for each cell
+        /// </summary>
+        private ExpressionTree expTree;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SpreadsheetCell"/> class.
         /// </summary>
         /// <param name="newRowIndex"> Uses the value passed in to set the value of the rowIndex. </param>
@@ -52,12 +57,24 @@ namespace CptS321
             this.cellText = string.Empty;
             this.cellValue = string.Empty;
             this.cellName = Convert.ToChar('A' + newColumnIndex) + (newRowIndex + 1).ToString();
+            this.expTree = new ExpressionTree(string.Empty);
         }
 
         /// <summary>
         /// This is the property changed manager.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
+
+        /// <summary>
+        /// Gets, returns the expression tree when we need access to it.
+        /// </summary>
+        public ExpressionTree ExpTree
+        {
+            get
+            {
+                return this.expTree;
+            }
+        }
 
         /// <summary>
         /// Gets the rowIndex number.
@@ -88,11 +105,7 @@ namespace CptS321
 
             set
             {
-                if (this.cellText == value)
-                {
-                    return;
-                }
-                else
+                if (this.cellText != value)
                 {
                     this.cellText = value;
 
@@ -112,13 +125,9 @@ namespace CptS321
                 return this.cellValue;
             }
 
-            set
+            protected internal set
             {
-                if (this.cellValue == value)
-                {
-                    return;
-                }
-                else
+                if (this.cellValue != value)
                 {
                     this.cellValue = value;
 
@@ -138,15 +147,14 @@ namespace CptS321
             }
         }
 
-        // DON'T NEED THIS INVOKING METHOD SINCE WE CAN USER THE SIMPLER WAY.
-
         /// <summary>
-        /// This is needed in order to invoke the property change.
+        /// Property changed event handler.
         /// </summary>
-        /// <param name="name"> Takes the name of the things being changed and broadcasts it. </param>
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> PropertyChangedEventArgs e. </param>
+        public void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(e.PropertyName));
         }
     }
 
@@ -187,11 +195,6 @@ namespace CptS321
         private SpreadsheetCell[,] twoDArray;
 
         /// <summary>
-        /// This is our dictionary that holds the cell and what links it has so when we change one cell we can change others.
-        /// </summary>
-        private Dictionary<SpreadsheetCell, List<SpreadsheetCell>> linkageBetweenCells;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
         /// </summary>
         /// <param name="newRow"> Construct with a row input. </param>
@@ -200,8 +203,6 @@ namespace CptS321
         {
             this.spreadsheetRow = newRow;
             this.spreadsheetColumn = newColumn;
-
-            this.linkageBetweenCells = new Dictionary<SpreadsheetCell, List<SpreadsheetCell>>();
 
             this.twoDArray = new SpreadsheetCell[newRow, newColumn];
 
@@ -274,6 +275,49 @@ namespace CptS321
         }
 
         /// <summary>
+        /// This allows us to grab the values stored in the cells expression tree and either subscribes to that cell again or not.
+        /// </summary>
+        /// <param name="cell"> Cell that was modified. </param>
+        /// <param name="expression"> Expression that is passed in. </param>
+        /// <param name="subscribe"> Value to tell if we need to subscribe or unsubscribe. </param>
+        private void SubscriptionToCell(SpreadsheetCell cell, string expression, bool subscribe)
+        {
+            // Setter method gets called which evaluates the tree and restores the variables it found into a list.
+            cell.ExpTree.Expression = expression;
+            List<string> references = cell.ExpTree.GetVariable();
+
+            // Iterates through the list of variabels found
+            foreach (string cellName in references)
+            {
+                // If we are passed in the prompt to subscribe then we set the variables name to a value for lookup later
+                if (subscribe == true)
+                {
+                    SpreadsheetCell valueNeeded = this.GetCell(cellName);
+                    double.TryParse(valueNeeded.CellValue, out double number);
+                    cell.ExpTree.SetVariable(cellName, number);
+                }
+
+                // Get the cell from looking up its cell name
+                SpreadsheetCell referenceCell = this.GetCell(cellName);
+
+                // If it's still null then we don't want to do anything but if not then we want to either subscribe or unsubscribe.
+                if (referenceCell != null)
+                {
+                    if (subscribe == true)
+                    {
+                        // Subcribe the cell to the cell's property changed event.
+                        referenceCell.PropertyChanged += cell.OnPropertyChanged;
+                    }
+                    else
+                    {
+                        // Unsubscribe the cell to the cell's property changed event.
+                        referenceCell.PropertyChanged -= cell.OnPropertyChanged;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// RefreshCellValue function to be fired when we get the CellText fire.
         /// </summary>
         /// <param name="sender"> Object sender. </param>
@@ -283,145 +327,47 @@ namespace CptS321
             // If we get the fire of CellText then we go into this statement.
             if (e.PropertyName == "CellText")
             {
+                // Convert the sender to a cell and pass it into the overloaded function.
                 this.RefreshCellValue((SpreadsheetCell)sender);
             }
         }
 
         /// <summary>
-        /// New implementation of the Refresh Cell Value function that handles the event changing.
+        /// Overloaded method that handles when a cell should either subscribe or unsubscribe.
         /// </summary>
-        /// <param name="currentCell"> Takes in the cell that we need to modify. </param>
+        /// <param name="currentCell"> Takes in teh cell that changed. </param>
         private void RefreshCellValue(SpreadsheetCell currentCell)
         {
-            this.DestroyLinkageBetweenCells(currentCell);
-
-            // Checks if the value in the cell is empty and if so then leave it as empty.
-            if (currentCell.CellText == string.Empty || currentCell.CellText == null)
+            // Check if the value is an expression since it starts with =
+            if (currentCell.CellText[0] == '=')
             {
-                // Set cell to empty string if we dont modify.
-                currentCell.CellValue = string.Empty;
-            }
+                // Get the coordinates of the cell
+                int row = currentCell.RowIndex;
+                int column = currentCell.ColumnIndex;
 
-            // If the starting of the input is equal to = then we go into this.
-            else if (currentCell.CellText[0] == '=')
-            {
-                // string equalsSign = currentCell.CellText.Substring(0);
-                // int columnGrab = Convert.ToInt16(equalsSign[1]) - 'A';
-                // int rowGrab = Convert.ToInt16(equalsSign.Substring(2)) - 1;
-                // currentCell.CellValue = this.GetCell(rowGrab, columnGrab).CellValue;
-                string expression = currentCell.CellText.Substring(1);
-
-                // Create new expression tree using the substring
-                ExpressionTree expressionTree = new ExpressionTree(expression);
-
-                // Evaluate such that we populate values.
-                expressionTree.Evaluate();
-
-                // Grab all the value that we found from the expression and reverse it.
-                string[] variableNames = expressionTree.GetVariable();
-                Array.Reverse(variableNames);
-
-                // Set the variables in the expression tree to the values that are known to us.
-                foreach (string variable in variableNames)
+                // Check if the cell has been modfied before.
+                if (currentCell.ExpTree.Expression != string.Empty)
                 {
-                    // Get the cell that we are referencing to.
-                    double number = 0.0;
-                    SpreadsheetCell valueNeededCell = this.GetCell(variable);
-
-                    // Grab the value at that location.
-                    double.TryParse(valueNeededCell.CellValue, out number);
-
-                    // Let it be known that the cell has that value.
-                    expressionTree.SetVariable(variable, number);
+                    // If it's been modified before then we know that it should be unsubscribed.
+                    this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression, false);
                 }
 
-                // Set the value of the cell to the evaluated value from the expression.
-                currentCell.CellValue = expressionTree.Evaluate().ToString();
+                // Go through and subscribe the values in the new expression.
+                this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression = currentCell.CellText.Substring(1), true);
 
-                // Bring back the link for the cell.
-                this.DefineLinkageBetweenCells(currentCell, variableNames);
+                // Set the value to the value from the expression tree.
+                currentCell.CellValue = this.twoDArray[row, column].CellValue = currentCell.ExpTree.Evaluate().ToString();
             }
             else
             {
-                double number;
-                if (double.TryParse(currentCell.CellText, out number))
-                {
-                    // Create new expression tree using the substring
-                    ExpressionTree expressionTree = new ExpressionTree(currentCell.CellText);
-
-                    // string[] variableNames = expressionTree.GetVariable();
-                    // Array.Reverse(variableNames);
-                    number = expressionTree.Evaluate();
-                    expressionTree.SetVariable(currentCell.Name, number);
-
-                    currentCell.CellValue = number.ToString();
-
-                    // this.DefineLinkageBetweenCells(currentCell, variableNames);
-                }
-                else
-                {
-                    // If we are unsuccessful then just set the cell text to the value
-                    currentCell.CellValue = currentCell.CellText;
-                }
-            }
-
-            // Checks to see if there are other cells that depend on this one.
-            if (this.linkageBetweenCells.ContainsKey(currentCell))
-            {
-                // If we find a link then go back through and update all links.
-                this.UpdateLinkage(currentCell);
+                // This case handles when the cell is set to a number.
+                currentCell.CellValue = currentCell.CellText;
+                double.TryParse(currentCell.CellValue, out double number);
+                currentCell.ExpTree.SetVariable(currentCell.Name, number);
             }
 
             // Fire the CellRefresh call so that it can be changed in the form class.
             this.CellPropertyChanged(currentCell, new PropertyChangedEventArgs("CellRefresh"));
-        }
-
-        /// <summary>
-        /// This function is in place in order to add locality to the cells for them to know what other cells it depends on.
-        /// </summary>
-        /// <param name="linkingCell"> Represents the cell that needs to be linked. </param>
-        /// <param name="linkNeededCells"> Represents all the cells that are related to the linking cell. </param>
-        private void DefineLinkageBetweenCells(SpreadsheetCell linkingCell, string[] linkNeededCells)
-        {
-            // We run through each cell in the list
-            foreach (string cell in linkNeededCells)
-            {
-                // Using the knowledge of which cells we need to link we grab that cell.
-                SpreadsheetCell addingCell = this.GetCell(cell);
-
-                // Add the cells to a list of cells that pertains to cell at hand.
-                this.linkageBetweenCells[addingCell] = new List<SpreadsheetCell>();
-                this.linkageBetweenCells[addingCell].Add(linkingCell);
-            }
-        }
-
-        /// <summary>
-        /// This function serves the purpose of removeing the link between the cells prior.
-        /// </summary>
-        /// <param name="currentCell"> We use this cell to be removed from the linking chain. </param>
-        private void DestroyLinkageBetweenCells(SpreadsheetCell currentCell)
-        {
-            // We check all the values for any instance of calling this cell and remove it.
-            foreach (List<SpreadsheetCell> linkingCells in this.linkageBetweenCells.Values)
-            {
-                // Check to see if the cell is in the list of cells.
-                if (linkingCells.Contains(currentCell))
-                {
-                    // Remove the cell from the list.
-                    linkingCells.Remove(currentCell);
-                }
-            }
-        }
-
-        // Function serves the purpose to be used for when a cell changes and we need to have knowledge about the links another cell might have.
-        private void UpdateLinkage(SpreadsheetCell currentCell)
-        {
-            // We iterate through the list of cells to address those cells that need updating.
-            foreach (SpreadsheetCell linkCell in this.linkageBetweenCells[currentCell].ToArray())
-            {
-                // Call back on the function with the cell value.
-                this.RefreshCellValue(linkCell);
-            }
         }
     }
 
@@ -456,36 +402,53 @@ namespace CptS321
         private List<string> variablesInExpression;
 
         /// <summary>
+        /// Keep a local copy of the expression.
+        /// </summary>
+        private string expression;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
         /// </summary>
         /// <param name="expression"> Used to construct the tree from what ever expression is fed in. </param>
         public ExpressionTree(string expression)
         {
-            if (expression.Length == 0)
-            {
-                return;
-            }
-
             this.variablesInExpression = new List<string>();
 
+            // When initialized compile with a empty string.
             this.Compile(expression);
 
-            while (this.operatorStack.Count > 0)
-            {
-                this.postFixExpression.Push(this.operatorStack.Pop());
-            }
-
-            this.rootNode = this.postFixExpression.Pop();
-
-            this.rootNode = this.CompileTree(this.rootNode);
-
-            this.Expression = expression;
+            // Set that string to empty incase we need it for later.
+            this.expression = expression;
         }
 
         /// <summary>
         /// Gets or sets, this holds the value of the expression.
         /// </summary>
-        public string Expression { get; set; }
+        public string Expression
+        {
+            // Returns the expression when needed.
+            get
+            {
+                return this.expression;
+            }
+
+            // Compile with the new expression being set to the expression and compile the tree such that we
+            // re-evaluate the tree and also grab the values in the expression at the same time.
+            set
+            {
+                this.Compile(value);
+
+                while (this.operatorStack.Count > 0)
+                {
+                    this.postFixExpression.Push(this.operatorStack.Pop());
+                }
+
+                this.rootNode = this.CompileTreeHelper();
+
+                // Again, set the local expression to the value being set to it.
+                this.expression = value;
+            }
+        }
 
         /// <summary>
         /// Sets the specified variable within the ExpressionTree variables dictionary.
@@ -501,9 +464,9 @@ namespace CptS321
         /// Utilized in the spreadsheet class.
         /// </summary>
         /// <returns> Returns the list of keys. </returns>
-        public string[] GetVariable()
+        public List<string> GetVariable()
         {
-            return this.variablesInExpression.ToArray();
+            return this.variablesInExpression;
         }
 
         /// <summary>
@@ -525,20 +488,76 @@ namespace CptS321
         }
 
         /// <summary>
-        /// This recursively calls the compile tree function that builds from the stack.
+        /// Checks whether or not we need to compile the tree if the string we passed in is legitimate.
         /// </summary>
-        /// <param name="currentNode"> The current node from the stack that is passed in. </param>
-        /// <returns> Returns the node for the tree. </returns>
-        private BaseNode CompileTree(BaseNode currentNode)
+        /// <returns> Returns the root node of the tree after building. </returns>
+        private BaseNode CompileTreeHelper()
         {
-            if (currentNode is BinaryOperatorNode)
+            if (string.IsNullOrEmpty(this.Expression))
             {
-                BinaryOperatorNode tempNode = (BinaryOperatorNode)currentNode;
-                tempNode.LeftNode = this.CompileTree(this.postFixExpression.Pop());
-                tempNode.RightNode = this.CompileTree(this.postFixExpression.Pop());
+                return null;
             }
 
-            return currentNode;
+            // Set the new node as the root and return it.
+            BaseNode newNode = this.CompileTree();
+
+            return newNode;
+        }
+
+        /// <summary>
+        /// This iterates from a stack and builds iteratively to save from stack overflow.
+        /// </summary>
+        /// <returns> Returns the root node if the tree. </returns>
+        private BaseNode CompileTree()
+        {
+            // Takes our postfix stack and reverses it to better work on it.
+            Stack<BaseNode> reversedStack = new Stack<BaseNode>();
+
+            // Iterate through the whole postfix expression stack and pop it onto our reversed stack.
+            while (this.postFixExpression.Count > 0)
+            {
+                reversedStack.Push(this.postFixExpression.Pop());
+            }
+
+            // Serves as our stack to represent the tree
+            Stack<BaseNode> builtTreeStack = new Stack<BaseNode>();
+
+            // Node that is created for the purpose of comparing.
+            BaseNode tempNode;
+
+            // Iterate until the reversed stack is empty.
+            while (reversedStack.Count > 0)
+            {
+                // Set the tempNode to the node at the top of the reversed stack
+                tempNode = reversedStack.Pop();
+
+                // Do a check to see if it is a constant.
+                if (tempNode is ConstantNumNode newConstantNumNode)
+                {
+                    builtTreeStack.Push(newConstantNumNode);
+                }
+
+                // Do a check to see if it is a variable.
+                if (tempNode is VariableNode newVariableNode)
+                {
+                    builtTreeStack.Push(newVariableNode);
+                }
+
+                // Do a check to see if it is a binary operator.
+                if (tempNode is BinaryOperatorNode newBinaryOperatorNode)
+                {
+                    if (newBinaryOperatorNode != null)
+                    {
+                        newBinaryOperatorNode.RightNode = builtTreeStack.Pop();
+                        newBinaryOperatorNode.LeftNode = builtTreeStack.Pop();
+
+                        builtTreeStack.Push(newBinaryOperatorNode);
+                    }
+                }
+            }
+
+            // Return the root since it will be on the top.
+            return builtTreeStack.Pop();
         }
 
         /// <summary>
@@ -550,6 +569,7 @@ namespace CptS321
             string substring = string.Empty;
             int indexOfOperatorLocation = 0;
             double number = 0.0;
+            this.variablesInExpression = new List<string>();
 
             // If there is no expression being fed in the return 0
             if (userExpression.Length == 0)
