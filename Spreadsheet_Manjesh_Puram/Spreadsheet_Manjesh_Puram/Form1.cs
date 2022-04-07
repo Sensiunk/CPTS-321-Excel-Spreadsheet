@@ -90,6 +90,20 @@ namespace Spreadsheet_Manjesh_Puram
                     this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = refreshCell.CellValue;
                 }
             }
+            else if (e.PropertyName == "CellColorChanged")
+            {
+                CptS321.SpreadsheetCell refreshCell = (CptS321.SpreadsheetCell)sender;
+
+                // If the refreshCell isn't null then we go into the condition and set the values
+                if (refreshCell != null)
+                {
+                    int cellRow = refreshCell.RowIndex;
+                    int cellColumn = refreshCell.ColumnIndex;
+
+                    // Refreshes the item in that certain spot in the Spreadsheet Grid View
+                    this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Style.BackColor = Color.FromArgb((int)refreshCell.BGColor);
+                }
+            }
         }
 
         /// <summary>
@@ -207,6 +221,63 @@ namespace Spreadsheet_Manjesh_Puram
 
                 // Set the value of the cell to our spreadsheets cell value.
                 this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = currentCell.CellValue;
+            }
+        }
+
+        private void CellToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void EditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// Menu strip button that holds the ability to change colors of the cell.
+        /// </summary>
+        /// <param name="sender"> object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
+        private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.SpreadsheetGridView.SelectedCells.Count >= 1)
+            {
+                ColorDialog myDialog = new ColorDialog();
+
+                // Keeps the user from selecting a custom color.
+                myDialog.AllowFullOpen = false;
+
+                // Allows the user to get help. (The default is false.)
+                myDialog.ShowHelp = true;
+
+                // Sets the initial color select to the current text color.
+                myDialog.Color = this.SpreadsheetGridView.SelectedCells[0].Style.BackColor;
+
+                // Update the text box color if the user clicks OK
+                if (myDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Iterates up until the amount of cells selected.
+                    for (int index = 0; index < this.SpreadsheetGridView.SelectedCells.Count; index++)
+                    {
+                        // Grabs the cells rows and columns and sets them to a variable we can use.
+                        int cellRow = this.SpreadsheetGridView.SelectedCells[index].RowIndex;
+                        int cellColumn = this.SpreadsheetGridView.SelectedCells[index].ColumnIndex;
+
+                        // Use the values we got and pull up the cell at that location.
+                        CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn);
+
+                        // Set the values which will trigger the event.
+                        currentCell.BGColor = (uint)((myDialog.Color.A << 24) | (myDialog.Color.R << 16) |
+                                (myDialog.Color.G << 8) | (myDialog.Color.B << 0));
+                    }
+                }
             }
         }
     }

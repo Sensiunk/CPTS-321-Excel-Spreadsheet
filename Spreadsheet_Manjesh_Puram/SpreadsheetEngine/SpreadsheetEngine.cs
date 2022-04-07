@@ -41,9 +41,15 @@ namespace CptS321
         private string cellName;
 
         /// <summary>
-        /// Create an expression tree for each cell
+        /// Create an expression tree for each cell.
         /// </summary>
         private ExpressionTree expTree;
+
+        /// <summary>
+        /// Represents the color of the cell.
+        /// Defaulted to white.
+        /// </summary>
+        private uint bgcolor = 0xFFFFFFFF;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpreadsheetCell"/> class.
@@ -133,6 +139,30 @@ namespace CptS321
 
                     this.PropertyChanged(this, new PropertyChangedEventArgs("CellValue"));
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the bgcolor.
+        /// Sets the color if only the color is different.
+        /// </summary>
+        public uint BGColor
+        {
+            get
+            {
+                return this.bgcolor;
+            }
+
+            set
+            {
+                if (this.bgcolor == value)
+                {
+                    return;
+                }
+
+                this.bgcolor = value;
+
+                this.PropertyChanged(this, new PropertyChangedEventArgs("Color"));
             }
         }
 
@@ -329,6 +359,13 @@ namespace CptS321
             {
                 // Convert the sender to a cell and pass it into the overloaded function.
                 this.RefreshCellValue((SpreadsheetCell)sender);
+            }
+
+            // If we get the fire of Color then we go into this statement.
+            else if (e.PropertyName == "Color")
+            {
+                // Call the Cell Color Changed Property Changed event.
+                this.CellPropertyChanged((SpreadsheetCell)sender, new PropertyChangedEventArgs("CellColorChanged"));
             }
         }
 
