@@ -336,6 +336,9 @@ namespace CptS321
 
             this.twoDArray = new SpreadsheetCell[newRow, newColumn];
 
+            this.undos = new Stack<UndoRedoCollection>();
+            this.redos = new Stack<UndoRedoCollection>();
+
             for (int i = 0; i < newRow; i++)
             {
                 for (int j = 0; j < newColumn; j++)
@@ -367,6 +370,56 @@ namespace CptS321
         public int RowCount
         {
             get { return this.spreadsheetRow; }
+        }
+
+        /// <summary>
+        /// Used when we need to know the size of the stack and choose whether we should make it clickable or not.
+        /// </summary>
+        /// <returns> Returns the size of the stack. </returns>
+        public int UndoStackCount()
+        {
+            return this.undos.Count();
+        }
+
+        /// <summary>
+        /// Used when we need to know the size of the stack and choose whether we should make it clickable or not.
+        /// </summary>
+        /// <returns> Returns the size of the stack. </returns>
+        public int RedoStackCount()
+        {
+            return this.redos.Count();
+        }
+
+        /// <summary>
+        /// Grabs the messages of the change status. If there is a change in the text then undo text is done but if its change in color then undo color is done.
+        /// </summary>
+        /// <returns> Returns the message that needs to be shown. </returns>
+        public string UndoStackMessage()
+        {
+            if (this.UndoStackCount() > 0)
+            {
+                return this.undos.Peek().ButtonMessage;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Grabs the messages of the change status. If there is a change in the text then redo text is done but if its change in color then redo color is done.
+        /// </summary>
+        /// <returns> Returns the message that needs to be shown. </returns>
+        public string RedoStackMessage()
+        {
+            if (this.RedoStackCount() > 0)
+            {
+                return this.redos.Peek().ButtonMessage;
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
         /// <summary>
