@@ -83,19 +83,35 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Gets the rowIndex number.
+        /// Gets or sets the rowIndex number.
         /// </summary>
         public int RowIndex
         {
-            get { return this.rowIndex; }
+            get
+            {
+                return this.rowIndex;
+            }
+
+            set
+            {
+                this.rowIndex = value;
+            }
         }
 
         /// <summary>
-        /// Gets the columnIndex number.
+        /// Gets or sets the columnIndex number.
         /// </summary>
         public int ColumnIndex
         {
-            get { return this.columnIndex; }
+            get
+            {
+                return this.columnIndex;
+            }
+
+            set
+            {
+                this.columnIndex = value;
+            }
         }
 
         /// <summary>
@@ -178,6 +194,21 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Function that duplicates our cell so that we have a copy of it when we pass it into the stack.
+        /// </summary>
+        /// <returns> Returns the cell that was copy with the information in this cell. </returns>
+        public SpreadsheetCell DuplicateCurrentCell()
+        {
+            // Making an new instance of the cell which was originally declared as a NewCell
+            SpreadsheetCell duplicate = new NewCell(this.RowIndex, this.ColumnIndex)
+            {
+                CellText = this.CellText, RowIndex = this.RowIndex, ColumnIndex = this.ColumnIndex, BGColor = this.BGColor,
+            };
+
+            return duplicate;
+        }
+
+        /// <summary>
         /// Property changed event handler.
         /// </summary>
         /// <param name="sender"> Object sender. </param>
@@ -205,6 +236,13 @@ namespace CptS321
     }
 
     /// <summary>
+    /// Class that holds the cells and methods to support the operation of undoing and redoing.
+    /// </summary>
+    public class UndoRedo
+    {
+    }
+
+    /// <summary>
     /// Public class of the Spreadsheet.
     /// </summary>
     public class Spreadsheet
@@ -223,6 +261,16 @@ namespace CptS321
         /// Our 2D array that holds the values that correlate with the spreadsheet grid view.
         /// </summary>
         private SpreadsheetCell[,] twoDArray;
+
+        /// <summary>
+        /// Stack that will hold the cells that could be undo'd.
+        /// </summary>
+        private Stack<UndoRedo> undos;
+
+        /// <summary>
+        /// Stack that will hold the cells that could be redo'd.
+        /// </summary>
+        private Stack<UndoRedo> redos;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
