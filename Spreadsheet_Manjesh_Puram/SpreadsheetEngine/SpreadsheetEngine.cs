@@ -423,6 +423,25 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Adds the ability to add commands throguh public functions.
+        /// </summary>
+        /// <param name="undoCell"> Cell that we are passing into the stack. </param>
+        /// <param name="changeMessage"> Message to denote whether it was a change in text or color. </param>
+        public void AddUndo(SpreadsheetCell undoCell, string changeMessage)
+        {
+            this.undos.Push(new UndoRedoCollection(undoCell, changeMessage));
+        }
+
+        /// <summary>
+        /// Since the information will be stored when we create the undo, this will hold the information of the change message.
+        /// </summary>
+        /// <param name="redoCell"> Popped from the undo stack incase we need to redo. </param>
+        public void AddRedo(UndoRedoCollection redoCell)
+        {
+            this.redos.Push(redoCell);
+        }
+
+        /// <summary>
         /// GetCell function that returns a SpreadsheetCell so it can retrieve the values from that cell.
         /// </summary>
         /// <param name="inputRow"> InputRow takes the location of that index. </param>
