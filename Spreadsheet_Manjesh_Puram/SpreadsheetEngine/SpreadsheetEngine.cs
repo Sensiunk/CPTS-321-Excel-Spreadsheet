@@ -238,8 +238,60 @@ namespace CptS321
     /// <summary>
     /// Class that holds the cells and methods to support the operation of undoing and redoing.
     /// </summary>
-    public class UndoRedo
+    public class UndoRedoCollection
     {
+        SpreadsheetCell retiredCell;
+
+        private string buttonMessage;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UndoRedoCollection"/> class.
+        /// Function takes in the cell that was changed and whether it was a text or color and whether it was redo or undo since we support both.
+        /// </summary>
+        /// <param name="actionCell"> The cell that changed. </param>
+        /// <param name="changeMessage"> The message about the details of what happened. </param>
+        public UndoRedoCollection(SpreadsheetCell actionCell, string changeMessage)
+        {
+            this.retiredCell = actionCell;
+            this.buttonMessage = changeMessage;
+        }
+
+        /// <summary>
+        ///  Gets or sets the buttonMessage when called on.
+        /// </summary>
+        public string ButtonMessage
+        {
+            // Return the message we stored.
+            get
+            {
+                return this.buttonMessage;
+            }
+
+            // Set the value of the message passed in.
+            set
+            {
+                this.buttonMessage = value;
+            }
+        }
+
+        /// <summary>
+        /// Function that is called on with a reference of the cell that is in the stack, then gets the old values assigned to it.
+        /// </summary>
+        /// <param name="operatingCell"> Reference of the cell that needs to be filled in with the information stored in the retiredCell. </param>
+        public void FeedBackValue(ref SpreadsheetCell operatingCell)
+        {
+            operatingCell.CellText = this.retiredCell.CellText;
+            operatingCell.BGColor = this.retiredCell.BGColor;
+        }
+
+        /// <summary>
+        /// Retuns a tuple with the location of where this cell is located for lookup purposes.
+        /// </summary>
+        /// <returns> Returns a tuple with the coordinates of the cell we stored. </returns>
+        public Tuple<int, int> CoordinateValues()
+        {
+            return new Tuple<int, int>(this.retiredCell.RowIndex, this.retiredCell.ColumnIndex);
+        }
     }
 
     /// <summary>
@@ -265,12 +317,12 @@ namespace CptS321
         /// <summary>
         /// Stack that will hold the cells that could be undo'd.
         /// </summary>
-        private Stack<UndoRedo> undos;
+        private Stack<UndoRedoCollection> undos;
 
         /// <summary>
         /// Stack that will hold the cells that could be redo'd.
         /// </summary>
-        private Stack<UndoRedo> redos;
+        private Stack<UndoRedoCollection> redos;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
