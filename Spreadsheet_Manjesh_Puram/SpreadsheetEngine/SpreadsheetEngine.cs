@@ -275,6 +275,24 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Used to get the rowIndex.
+        /// </summary>
+        /// <returns> Returns the rowIndex. </returns>
+        public int GetRowIndex()
+        {
+            return this.retiredCell.RowIndex;
+        }
+
+        /// <summary>
+        /// Used to get the columnIndex.
+        /// </summary>
+        /// <returns> Returns the columnIndex. </returns>
+        public int GetColumnIndex()
+        {
+            return this.retiredCell.ColumnIndex;
+        }
+
+        /// <summary>
         /// Function that is called on with a reference of the cell that is in the stack, then gets the old values assigned to it.
         /// </summary>
         /// <param name="operatingCell"> Reference of the cell that needs to be filled in with the information stored in the retiredCell. </param>
@@ -282,15 +300,6 @@ namespace CptS321
         {
             operatingCell.CellText = this.retiredCell.CellText;
             operatingCell.BGColor = this.retiredCell.BGColor;
-        }
-
-        /// <summary>
-        /// Retuns a tuple with the location of where this cell is located for lookup purposes.
-        /// </summary>
-        /// <returns> Returns a tuple with the coordinates of the cell we stored. </returns>
-        public Tuple<int, int> CoordinateValues()
-        {
-            return new Tuple<int, int>(this.retiredCell.RowIndex, this.retiredCell.ColumnIndex);
         }
     }
 
@@ -456,6 +465,39 @@ namespace CptS321
             else
             {
                 return this.twoDArray[inputRow, inputColumn];
+            }
+        }
+
+        /// <summary>
+        /// Function pops the top value of the undo stack and retuns the value to pass it back into the redoStack.
+        /// </summary>
+        /// <returns> Returns information to be added to the redoStack after. </returns>
+        public UndoRedoCollection FeedBackValueForUndo()
+        {
+            if (this.UndoStackCount() >= 1)
+            {
+                UndoRedoCollection undoCell = this.undos.Pop();
+                int rowIndex = undoCell.GetRowIndex();
+                int columnIndex = undoCell.GetColumnIndex();
+                UndoRedoCollection redoCell = new UndoRedoCollection(this.GetCell(rowIndex, columnIndex).DuplicateCurrentCell(), undoCell.ButtonMessage);
+
+                return redoCell;
+            }
+
+            return null;
+        }
+
+        public void FeedBackValueForRedo()
+        {
+            if (this.RedoStackCount() >= 1)
+            {
+                UndoRedoCollection redoCell = this.redos.Pop();
+                int rowIndex = redoCell.GetRowIndex();
+                int columnIndex = redoCell.GetColumnIndex();
+
+                SpreadsheetCell manipulateCell = this.GetCell(rowIndex, columnIndex);
+
+                redoCell.FeedBackValue(ref manipulateCell);
             }
         }
 

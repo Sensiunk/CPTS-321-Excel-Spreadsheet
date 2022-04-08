@@ -41,6 +41,9 @@ namespace Spreadsheet_Manjesh_Puram
             this.SpreadsheetGridView.CellEndEdit += this.SpreadsheetGridView_CellEndEdit; // Subscribe the GridView to the CellEndEdit
 
             this.DemoButton.Text = "Perform Demo - DON'T PRESS"; // Change the name of the button
+
+            this.undoToolStripMenuItem.Enabled = false;
+            this.redoToolStripMenuItem.Enabled = false;
         }
 
         /// <summary>
@@ -203,6 +206,11 @@ namespace Spreadsheet_Manjesh_Puram
 
             // Grab the cell that contains this details.
             CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn);
+            CptS321.SpreadsheetCell copyCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn).DuplicateCurrentCell();
+            this.mainSpreadsheet.AddUndo(copyCell, "Change in Text");
+
+            this.undoToolStripMenuItem.Enabled = true;
+            this.undoToolStripMenuItem.Text = "Undo " + this.mainSpreadsheet.UndoStackMessage();
 
             // If the cell is not null then we all good!
             if (currentCell != null)
@@ -269,6 +277,12 @@ namespace Spreadsheet_Manjesh_Puram
                         // Grabs the cells rows and columns and sets them to a variable we can use.
                         int cellRow = this.SpreadsheetGridView.SelectedCells[index].RowIndex;
                         int cellColumn = this.SpreadsheetGridView.SelectedCells[index].ColumnIndex;
+
+                        CptS321.SpreadsheetCell copyCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn).DuplicateCurrentCell();
+                        this.mainSpreadsheet.AddUndo(copyCell, "Change in Color");
+
+                        this.undoToolStripMenuItem.Enabled = true;
+                        this.undoToolStripMenuItem.Text = "Undo " + this.mainSpreadsheet.UndoStackMessage();
 
                         // Use the values we got and pull up the cell at that location.
                         CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn);
