@@ -43,7 +43,10 @@ namespace Spreadsheet_Manjesh_Puram
             this.DemoButton.Text = "Perform Demo - DON'T PRESS"; // Change the name of the button
 
             this.undoToolStripMenuItem.Enabled = false;
+            this.undoToolStripMenuItem.Text = "Undo Not Available";
+
             this.redoToolStripMenuItem.Enabled = false;
+            this.redoToolStripMenuItem.Text = "Redo Not Available";
         }
 
         /// <summary>
@@ -206,6 +209,7 @@ namespace Spreadsheet_Manjesh_Puram
 
             // Grab the cell that contains this details.
             CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn);
+
             CptS321.SpreadsheetCell copyCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn).DuplicateCurrentCell();
             this.mainSpreadsheet.AddUndo(copyCell, "Change in Text");
 
@@ -242,10 +246,50 @@ namespace Spreadsheet_Manjesh_Puram
 
         private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            CptS321.UndoRedoCollection undoCell = this.mainSpreadsheet.FeedBackValueForUndo();
+            if (undoCell != null)
+            {
+                this.mainSpreadsheet.AddRedo(undoCell.RetiredCell, undoCell.ButtonMessage);
+                this.redoToolStripMenuItem.Enabled = true;
+                this.redoToolStripMenuItem.Text = "Redo " + this.mainSpreadsheet.RedoStackMessage();
+            }
+
+            this.undoToolStripMenuItem.Enabled = true;
+            this.undoToolStripMenuItem.Text = "Undo " + this.mainSpreadsheet.UndoStackMessage();
+
+            if (this.mainSpreadsheet.UndoStackCount() == 0)
+            {
+                this.undoToolStripMenuItem.Enabled = false;
+                this.redoToolStripMenuItem.Text = "Undo Not Available";
+            }
+            else
+            {
+                this.undoToolStripMenuItem.Enabled = true;
+            }
         }
 
         private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            CptS321.UndoRedoCollection undoCell = this.mainSpreadsheet.FeedBackValueForRedo();
+            if (undoCell != null)
+            {
+                this.mainSpreadsheet.AddUndo(undoCell.RetiredCell, undoCell.ButtonMessage);
+                this.undoToolStripMenuItem.Enabled = true;
+                this.undoToolStripMenuItem.Text = "Undo " + this.mainSpreadsheet.UndoStackMessage();
+            }
+
+            this.redoToolStripMenuItem.Enabled = true;
+            this.redoToolStripMenuItem.Text = "Redo " + this.mainSpreadsheet.RedoStackMessage();
+
+            if (this.mainSpreadsheet.RedoStackCount() == 0)
+            {
+                this.redoToolStripMenuItem.Enabled = false;
+                this.redoToolStripMenuItem.Text = "Redo Not Available";
+            }
+            else
+            {
+                this.redoToolStripMenuItem.Enabled = true;
+            }
         }
 
         /// <summary>

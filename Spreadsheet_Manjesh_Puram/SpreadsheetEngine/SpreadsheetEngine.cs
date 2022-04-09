@@ -72,13 +72,18 @@ namespace CptS321
         public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
 
         /// <summary>
-        /// Gets, returns the expression tree when we need access to it.
+        /// Gets or sets, returns the expression tree when we need access to it.
         /// </summary>
         public ExpressionTree ExpTree
         {
             get
             {
                 return this.expTree;
+            }
+
+            set
+            {
+                this.expTree = value;
             }
         }
 
@@ -202,7 +207,11 @@ namespace CptS321
             // Making an new instance of the cell which was originally declared as a NewCell
             SpreadsheetCell duplicate = new NewCell(this.RowIndex, this.ColumnIndex)
             {
-                CellText = this.CellText, RowIndex = this.RowIndex, ColumnIndex = this.ColumnIndex, BGColor = this.BGColor,
+                CellText = this.CellText,
+                RowIndex = this.RowIndex,
+                ColumnIndex = this.ColumnIndex,
+                BGColor = this.BGColor,
+                ExpTree = this.expTree,
             };
 
             return duplicate;
@@ -240,7 +249,7 @@ namespace CptS321
     /// </summary>
     public class UndoRedoCollection
     {
-        SpreadsheetCell retiredCell;
+        private SpreadsheetCell retiredCell;
 
         private string buttonMessage;
 
@@ -254,6 +263,14 @@ namespace CptS321
         {
             this.retiredCell = actionCell;
             this.buttonMessage = changeMessage;
+        }
+
+        public SpreadsheetCell RetiredCell
+        {
+            get
+            {
+                return this.retiredCell;
+            }
         }
 
         /// <summary>
@@ -445,9 +462,9 @@ namespace CptS321
         /// Since the information will be stored when we create the undo, this will hold the information of the change message.
         /// </summary>
         /// <param name="redoCell"> Popped from the undo stack incase we need to redo. </param>
-        public void AddRedo(UndoRedoCollection redoCell)
+        public void AddRedo(SpreadsheetCell undoCell, string changeMessage)
         {
-            this.redos.Push(redoCell);
+            this.redos.Push(new UndoRedoCollection(undoCell, changeMessage));
         }
 
         /// <summary>
@@ -479,7 +496,10 @@ namespace CptS321
                 UndoRedoCollection undoCell = this.undos.Pop();
                 int rowIndex = undoCell.GetRowIndex();
                 int columnIndex = undoCell.GetColumnIndex();
-                UndoRedoCollection redoCell = new UndoRedoCollection(this.GetCell(rowIndex, columnIndex).DuplicateCurrentCell(), undoCell.ButtonMessage);
+                UndoRedoCollection redoCell = new UndoRedoCollection(this.twoDArray[rowIndex, columnIndex].DuplicateCurrentCell(), undoCell.ButtonMessage);
+
+                //SpreadsheetCell cell = this.GetCell(rowIndex, columnIndex);
+                undoCell.FeedBackValue(ref this.twoDArray[rowIndex, columnIndex]);
 
                 return redoCell;
             }
@@ -487,7 +507,7 @@ namespace CptS321
             return null;
         }
 
-        public void FeedBackValueForRedo()
+        public UndoRedoCollection FeedBackValueForRedo()
         {
             if (this.RedoStackCount() >= 1)
             {
@@ -495,10 +515,18 @@ namespace CptS321
                 int rowIndex = redoCell.GetRowIndex();
                 int columnIndex = redoCell.GetColumnIndex();
 
-                SpreadsheetCell manipulateCell = this.GetCell(rowIndex, columnIndex);
 
-                redoCell.FeedBackValue(ref manipulateCell);
+                UndoRedoCollection undoCell = new UndoRedoCollection(this.twoDArray[rowIndex, columnIndex].DuplicateCurrentCell(), redoCell.ButtonMessage);
+                redoCell.FeedBackValue(ref this.twoDArray[rowIndex, columnIndex]);
+
+                //if (redoCell != null)
+                //{
+                //    this.AddUndo(redoCell.RetiredCell, redoCell.ButtonMessage);
+                //}
+                return undoCell;
             }
+
+            return null;
         }
 
         /// <summary>
@@ -590,7 +618,7 @@ namespace CptS321
         private void RefreshCellValue(SpreadsheetCell currentCell)
         {
             // Check if the value is an expression since it starts with =
-            if (currentCell.CellText[0] == '=')
+            if (currentCell != null && currentCell.CellText.StartsWith("="))
             {
                 // Get the coordinates of the cell
                 int row = currentCell.RowIndex;
