@@ -214,6 +214,7 @@ namespace CptS321
                 ExpTree = this.expTree,
             };
 
+            // Returns the cell of the value we had prior to change.
             return duplicate;
         }
 
@@ -265,6 +266,9 @@ namespace CptS321
             this.buttonMessage = changeMessage;
         }
 
+        /// <summary>
+        /// Gets old cell that we store.
+        /// </summary>
         public SpreadsheetCell RetiredCell
         {
             get
@@ -351,6 +355,16 @@ namespace CptS321
         private Stack<UndoRedoCollection> redos;
 
         /// <summary>
+        /// Stack that holds the amount of boxes that need color changes when doing Undo.
+        /// </summary>
+        private Stack<int> colorCounterForUndo;
+
+        /// <summary>
+        /// Stack that holds the amount of boxes that need color changes when doing Redo.
+        /// </summary>
+        private Stack<int> colorCounterForRedo;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
         /// </summary>
         /// <param name="newRow"> Construct with a row input. </param>
@@ -362,8 +376,13 @@ namespace CptS321
 
             this.twoDArray = new SpreadsheetCell[newRow, newColumn];
 
+            // Set the undo and redo stack to contain UndoRedoCollection values.
             this.undos = new Stack<UndoRedoCollection>();
             this.redos = new Stack<UndoRedoCollection>();
+
+            // Set the undo and redo counter for the color to int values.
+            this.ColorCounterForUndo = new Stack<int>();
+            this.ColorCounterForRedo = new Stack<int>();
 
             for (int i = 0; i < newRow; i++)
             {
@@ -399,6 +418,16 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Gets or sets, used to calculate how many times we would need to change the color.
+        /// </summary>
+        public Stack<int> ColorCounterForRedo { get => this.colorCounterForRedo; set => this.colorCounterForRedo = value; }
+
+        /// <summary>
+        /// Gets or sets, used to calculate how many times we would need to change the color.
+        /// </summary>
+        public Stack<int> ColorCounterForUndo { get => this.colorCounterForUndo; set => this.colorCounterForUndo = value; }
+
+        /// <summary>
         /// Used when we need to know the size of the stack and choose whether we should make it clickable or not.
         /// </summary>
         /// <returns> Returns the size of the stack. </returns>
@@ -422,12 +451,15 @@ namespace CptS321
         /// <returns> Returns the message that needs to be shown. </returns>
         public string UndoStackMessage()
         {
+            // If the stack even has anything in it.
             if (this.UndoStackCount() > 0)
             {
+                // Will be either Undo Change in Text or Undo Change in Color.
                 return this.undos.Peek().ButtonMessage;
             }
             else
             {
+                // Not sure how we would even get here but in the failsafe.
                 return string.Empty;
             }
         }
@@ -438,12 +470,15 @@ namespace CptS321
         /// <returns> Returns the message that needs to be shown. </returns>
         public string RedoStackMessage()
         {
+            // If the stack even has anything in it.
             if (this.RedoStackCount() > 0)
             {
+                // Will be either Redo Change in Text or Redo Change in Color.
                 return this.redos.Peek().ButtonMessage;
             }
             else
             {
+                // Not sure how we would even get here but in the failsafe.
                 return string.Empty;
             }
         }
@@ -455,15 +490,18 @@ namespace CptS321
         /// <param name="changeMessage"> Message to denote whether it was a change in text or color. </param>
         public void AddUndo(SpreadsheetCell undoCell, string changeMessage)
         {
+            // Push on the new value.
             this.undos.Push(new UndoRedoCollection(undoCell, changeMessage));
         }
 
         /// <summary>
         /// Since the information will be stored when we create the undo, this will hold the information of the change message.
         /// </summary>
-        /// <param name="redoCell"> Popped from the undo stack incase we need to redo. </param>
+        /// <param name="undoCell"> Cell that we are passing into the stack. </param>
+        /// <param name="changeMessage"> Message to denote whether it was a change in text or color. </param>
         public void AddRedo(SpreadsheetCell undoCell, string changeMessage)
         {
+            // Push on the new value.
             this.redos.Push(new UndoRedoCollection(undoCell, changeMessage));
         }
 
@@ -491,41 +529,57 @@ namespace CptS321
         /// <returns> Returns information to be added to the redoStack after. </returns>
         public UndoRedoCollection FeedBackValueForUndo()
         {
+            // Check if the undo stack has something in it.
             if (this.UndoStackCount() >= 1)
             {
+                // Pop the value from the undo stack.
                 UndoRedoCollection undoCell = this.undos.Pop();
+
+                // Grab the row and column from the popped cell.
                 int rowIndex = undoCell.GetRowIndex();
                 int columnIndex = undoCell.GetColumnIndex();
+
+                // Set the cell to a duplicate with the message.
                 UndoRedoCollection redoCell = new UndoRedoCollection(this.twoDArray[rowIndex, columnIndex].DuplicateCurrentCell(), undoCell.ButtonMessage);
 
-                //SpreadsheetCell cell = this.GetCell(rowIndex, columnIndex);
+                // Change the value at that location.
                 undoCell.FeedBackValue(ref this.twoDArray[rowIndex, columnIndex]);
 
+                // Return the value we set.
                 return redoCell;
             }
 
+            // If the stack is empty and we somehow manage to get here then return null as a failsafe.
             return null;
         }
 
+        /// <summary>
+        /// Function pops the top value of the redo stack and retuns the value to pass it back into the undoStack.
+        /// </summary>
+        /// <returns> Returns information to be added to the undoStack after. </returns>
         public UndoRedoCollection FeedBackValueForRedo()
         {
+            // Check if the redo stack has something in it.
             if (this.RedoStackCount() >= 1)
             {
+                // Pop the value from the redo stack.
                 UndoRedoCollection redoCell = this.redos.Pop();
+
+                // Grab the row and column from the popped cell.
                 int rowIndex = redoCell.GetRowIndex();
                 int columnIndex = redoCell.GetColumnIndex();
 
-
+                // Set the cell to a duplicate with the message.
                 UndoRedoCollection undoCell = new UndoRedoCollection(this.twoDArray[rowIndex, columnIndex].DuplicateCurrentCell(), redoCell.ButtonMessage);
+
+                // Change the value at that location.
                 redoCell.FeedBackValue(ref this.twoDArray[rowIndex, columnIndex]);
 
-                //if (redoCell != null)
-                //{
-                //    this.AddUndo(redoCell.RetiredCell, redoCell.ButtonMessage);
-                //}
+                // Return the value we set.
                 return undoCell;
             }
 
+            // If the stack is empty and we somehow manage to get here then return null as a failsafe.
             return null;
         }
 
