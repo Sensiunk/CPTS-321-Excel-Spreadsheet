@@ -25,6 +25,16 @@ namespace Spreadsheet_Manjesh_Puram
         private CptS321.Spreadsheet mainSpreadsheet;
 
         /// <summary>
+        /// Stack that holds the amount of boxes that need color changes when doing Undo.
+        /// </summary>
+        private Stack<int> colorCounterForUndo;
+
+        /// <summary>
+        /// Stack that holds the amount of boxes that need color changes when doing Redo.
+        /// </summary>
+        private Stack<int> colorCounterForRedo;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Form1"/> class.
         /// </summary>
         public Form1()
@@ -47,6 +57,9 @@ namespace Spreadsheet_Manjesh_Puram
 
             this.redoToolStripMenuItem.Enabled = false;
             this.redoToolStripMenuItem.Text = "Redo Not Available";
+
+            this.colorCounterForUndo = new Stack<int>();
+            this.colorCounterForRedo = new Stack<int>();
         }
 
         /// <summary>
@@ -244,7 +257,29 @@ namespace Spreadsheet_Manjesh_Puram
         {
         }
 
+        /// <summary>
+        /// Method to allow the undo button to work.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
         private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.undoToolStripMenuItem.Text == "Undo Change in Color")
+            {
+                int numberOfTimes = this.colorCounterForUndo.Pop();
+                this.colorCounterForRedo.Push(numberOfTimes);
+                for (int counter = 1; counter <= numberOfTimes; counter++)
+                {
+                    this.UndoSupplement();
+                }
+            }
+            else
+            {
+                this.UndoSupplement();
+            }
+        }
+
+        private void UndoSupplement()
         {
             CptS321.UndoRedoCollection undoCell = this.mainSpreadsheet.FeedBackValueForUndo();
             if (undoCell != null)
@@ -260,7 +295,7 @@ namespace Spreadsheet_Manjesh_Puram
             if (this.mainSpreadsheet.UndoStackCount() == 0)
             {
                 this.undoToolStripMenuItem.Enabled = false;
-                this.redoToolStripMenuItem.Text = "Undo Not Available";
+                this.undoToolStripMenuItem.Text = "Undo Not Available";
             }
             else
             {
@@ -268,9 +303,32 @@ namespace Spreadsheet_Manjesh_Puram
             }
         }
 
+        /// <summary>
+        /// Method to allow the redo button to work.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
         private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (this.redoToolStripMenuItem.Text == "Redo Change in Color")
+            {
+                int numberOfTimes = this.colorCounterForRedo.Pop();
+                this.colorCounterForUndo.Push(numberOfTimes);
+                for (int counter = 1; counter <= numberOfTimes; counter++)
+                {
+                    this.RedoSupplement();
+                }
+            }
+            else
+            {
+                this.RedoSupplement();
+            }
+        }
+
+        private void RedoSupplement()
+        {
             CptS321.UndoRedoCollection undoCell = this.mainSpreadsheet.FeedBackValueForRedo();
+
             if (undoCell != null)
             {
                 this.mainSpreadsheet.AddUndo(undoCell.RetiredCell, undoCell.ButtonMessage);
@@ -315,6 +373,8 @@ namespace Spreadsheet_Manjesh_Puram
                 // Update the text box color if the user clicks OK
                 if (myDialog.ShowDialog() == DialogResult.OK)
                 {
+                    this.colorCounterForUndo.Push(this.SpreadsheetGridView.SelectedCells.Count);
+                    Console.WriteLine("Amount of cells = " + this.SpreadsheetGridView.SelectedCells.Count);
                     // Iterates up until the amount of cells selected.
                     for (int index = 0; index < this.SpreadsheetGridView.SelectedCells.Count; index++)
                     {
@@ -337,6 +397,11 @@ namespace Spreadsheet_Manjesh_Puram
                     }
                 }
             }
+        }
+
+        private void ExitProgramToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Windows.Forms.Application.Exit();
         }
     }
 }
