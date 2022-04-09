@@ -41,6 +41,14 @@ namespace Spreadsheet_Manjesh_Puram
             this.SpreadsheetGridView.CellEndEdit += this.SpreadsheetGridView_CellEndEdit; // Subscribe the GridView to the CellEndEdit
 
             this.DemoButton.Text = "Perform Demo - DON'T PRESS"; // Change the name of the button
+
+            // Set the default of the undo button.
+            this.undoToolStripMenuItem.Enabled = false;
+            this.undoToolStripMenuItem.Text = "Undo Not Available";
+
+            // Set the default of the redo button.
+            this.redoToolStripMenuItem.Enabled = false;
+            this.redoToolStripMenuItem.Text = "Redo Not Available";
         }
 
         /// <summary>
@@ -88,6 +96,20 @@ namespace Spreadsheet_Manjesh_Puram
 
                     // Refreshes the item in that certain spot in the Spreadsheet Grid View
                     this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = refreshCell.CellValue;
+                }
+            }
+            else if (e.PropertyName == "CellColorChanged")
+            {
+                CptS321.SpreadsheetCell refreshCell = (CptS321.SpreadsheetCell)sender;
+
+                // If the refreshCell isn't null then we go into the condition and set the values
+                if (refreshCell != null)
+                {
+                    int cellRow = refreshCell.RowIndex;
+                    int cellColumn = refreshCell.ColumnIndex;
+
+                    // Refreshes the item in that certain spot in the Spreadsheet Grid View
+                    this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Style.BackColor = Color.FromArgb((int)refreshCell.BGColor);
                 }
             }
         }
@@ -190,10 +212,20 @@ namespace Spreadsheet_Manjesh_Puram
             // Grab the cell that contains this details.
             CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn);
 
+            // Gets a copy of the cell and sets it to copy cell.
+            CptS321.SpreadsheetCell copyCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn).DuplicateCurrentCell();
+
+            // Add the cell with the message that the text changed.
+            this.mainSpreadsheet.AddUndo(copyCell, "Change in Text");
+
+            // Enable the undo button and set what could be changed in the text field.
+            this.undoToolStripMenuItem.Enabled = true;
+            this.undoToolStripMenuItem.Text = "Undo " + this.mainSpreadsheet.UndoStackMessage();
+
             // If the cell is not null then we all good!
             if (currentCell != null)
             {
-                // Attend to grab the string.
+                // Attempt to grab the string.
                 try
                 {
                     currentCell.CellText = this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value.ToString();
@@ -208,6 +240,213 @@ namespace Spreadsheet_Manjesh_Puram
                 // Set the value of the cell to our spreadsheets cell value.
                 this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = currentCell.CellValue;
             }
+        }
+
+        /// <summary>
+        /// Menu strip button that holds the ability to change colors of the cell.
+        /// </summary>
+        /// <param name="sender"> object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
+        private void ChangeBackgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.SpreadsheetGridView.SelectedCells.Count >= 1)
+            {
+                ColorDialog myDialog = new ColorDialog();
+
+                // Keeps the user from selecting a custom color.
+                myDialog.AllowFullOpen = false;
+
+                // Allows the user to get help. (The default is false.)
+                myDialog.ShowHelp = true;
+
+                // Sets the initial color select to the current text color.
+                myDialog.Color = this.SpreadsheetGridView.SelectedCells[0].Style.BackColor;
+
+                // Update the text box color if the user clicks OK
+                if (myDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Push the number of cells that were highlighted to be changed.
+                    this.mainSpreadsheet.ColorCounterForUndo.Push(this.SpreadsheetGridView.SelectedCells.Count);
+
+                    // Iterates up until the amount of cells selected.
+                    for (int index = 0; index < this.SpreadsheetGridView.SelectedCells.Count; index++)
+                    {
+                        // Grabs the cells rows and columns and sets them to a variable we can use.
+                        int cellRow = this.SpreadsheetGridView.SelectedCells[index].RowIndex;
+                        int cellColumn = this.SpreadsheetGridView.SelectedCells[index].ColumnIndex;
+
+                        // Gets a copy of the cell and sets it to copy cell.
+                        CptS321.SpreadsheetCell copyCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn).DuplicateCurrentCell();
+
+                        // Add the cell with the message that the color changed.
+                        this.mainSpreadsheet.AddUndo(copyCell, "Change in Color");
+
+                        // Enable the undo button and set what could be changed in the text field.
+                        this.undoToolStripMenuItem.Enabled = true;
+                        this.undoToolStripMenuItem.Text = "Undo " + this.mainSpreadsheet.UndoStackMessage();
+
+                        // Use the values we got and pull up the cell at that location.
+                        CptS321.SpreadsheetCell currentCell = this.mainSpreadsheet.GetCell(cellRow, cellColumn);
+
+                        // Set the values which will trigger the event.
+                        currentCell.BGColor = (uint)((myDialog.Color.A << 24) | (myDialog.Color.R << 16) |
+                                (myDialog.Color.G << 8) | (myDialog.Color.B << 0));
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// I can't really get rid of this or the program will complain.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
+        private void CellToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// I can't really get rid of this or the program will complain.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
+        private void EditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// Method to allow the undo button to work.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
+        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Check if next option in the undo line is the color.
+            if (this.undoToolStripMenuItem.Text == "Undo Change in Color")
+            {
+                // If the next change is color then we push the number of iterations off of the stack.
+                int numberOfTimes = this.mainSpreadsheet.ColorCounterForUndo.Pop();
+
+                // Since we popped off the undo stack we need to let the redo stack know as well.
+                this.mainSpreadsheet.ColorCounterForRedo.Push(numberOfTimes);
+
+                // Change the color X amount of times depending on when it was first created.
+                for (int counter = 1; counter <= numberOfTimes; counter++)
+                {
+                    // Call our helper each time.
+                    this.UndoSupplement();
+                }
+            }
+            else
+            {
+                // Call our helper function.
+                this.UndoSupplement();
+            }
+        }
+
+        /// <summary>
+        /// Function that serves the purpose of helping the undo button.
+        /// </summary>
+        private void UndoSupplement()
+        {
+            // Get the cell that is about to be undo'd
+            CptS321.UndoRedoCollection undoCell = this.mainSpreadsheet.FeedBackValueForUndo();
+
+            // If the cell is not null then we can add it to the redostack
+            if (undoCell != null)
+            {
+                this.mainSpreadsheet.AddRedo(undoCell.RetiredCell, undoCell.ButtonMessage);
+                this.redoToolStripMenuItem.Enabled = true;
+                this.redoToolStripMenuItem.Text = "Redo " + this.mainSpreadsheet.RedoStackMessage();
+            }
+
+            // Since we added to the redo we know that we can undo that.
+            this.undoToolStripMenuItem.Enabled = true;
+            this.undoToolStripMenuItem.Text = "Undo " + this.mainSpreadsheet.UndoStackMessage();
+
+            // Check if the stack is empty
+            if (this.mainSpreadsheet.UndoStackCount() == 0)
+            {
+                // If it is indeed empty then disable the button and tell the user its not available.
+                this.undoToolStripMenuItem.Enabled = false;
+                this.undoToolStripMenuItem.Text = "Undo Not Available";
+            }
+            else
+            {
+                // The stack isn't empty so we can enable it.
+                this.undoToolStripMenuItem.Enabled = true;
+            }
+        }
+
+        /// <summary>
+        /// Method to allow the redo button to work.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
+        private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Check if next option in the redo line is the color.
+            if (this.redoToolStripMenuItem.Text == "Redo Change in Color")
+            {
+                // If the next change is color then we push the number of iterations off of the stack.
+                int numberOfTimes = this.mainSpreadsheet.ColorCounterForRedo.Pop();
+
+                // Since we popped off the undo stack we need to let the redo stack know as well.
+                this.mainSpreadsheet.ColorCounterForUndo.Push(numberOfTimes);
+
+                // Change the color X amount of times depending on when it was first created.
+                for (int counter = 1; counter <= numberOfTimes; counter++)
+                {
+                    // Call our helper each time.
+                    this.RedoSupplement();
+                }
+            }
+            else
+            {
+                // Call our helper function.
+                this.RedoSupplement();
+            }
+        }
+
+        private void RedoSupplement()
+        {
+            // Get the cell that is about to be redo'd
+            CptS321.UndoRedoCollection undoCell = this.mainSpreadsheet.FeedBackValueForRedo();
+
+            // If the cell is not null then we can add it to the undostack
+            if (undoCell != null)
+            {
+                this.mainSpreadsheet.AddUndo(undoCell.RetiredCell, undoCell.ButtonMessage);
+                this.undoToolStripMenuItem.Enabled = true;
+                this.undoToolStripMenuItem.Text = "Undo " + this.mainSpreadsheet.UndoStackMessage();
+            }
+
+            // Since we added to the undo we know that we can redo that.
+            this.redoToolStripMenuItem.Enabled = true;
+            this.redoToolStripMenuItem.Text = "Redo " + this.mainSpreadsheet.RedoStackMessage();
+
+            // Check if the stack is empty
+            if (this.mainSpreadsheet.RedoStackCount() == 0)
+            {
+                // If it is indeed empty then disable the button and tell the user its not available.
+                this.redoToolStripMenuItem.Enabled = false;
+                this.redoToolStripMenuItem.Text = "Redo Not Available";
+            }
+            else
+            {
+                // The stack isn't empty so we can enable it.
+                this.redoToolStripMenuItem.Enabled = true;
+            }
+        }
+
+        /// <summary>
+        /// Extra function to allow me to close the program properly and return code 0.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
+        private void ExitProgramToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Windows.Forms.Application.Exit();
         }
     }
 }
