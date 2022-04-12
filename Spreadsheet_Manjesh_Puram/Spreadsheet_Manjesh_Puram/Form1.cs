@@ -9,6 +9,7 @@ namespace Spreadsheet_Manjesh_Puram
     using System.ComponentModel;
     using System.Data;
     using System.Drawing;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -464,6 +465,20 @@ namespace Spreadsheet_Manjesh_Puram
         /// <param name="e"> EventArgs e. </param>
         private void LoadFromXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            openFileDialog.Title = "Identify which XML file you would like to use.";
+            openFileDialog.InitialDirectory = @"c:\";
+            openFileDialog.Filter = "XML Files (*.xml)|*.xml";
+            openFileDialog.FilterIndex = 2;
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = openFileDialog.FileName;
+
+                Stream fileStream = openFileDialog.OpenFile();
+            }
         }
 
         /// <summary>
@@ -473,15 +488,15 @@ namespace Spreadsheet_Manjesh_Puram
         /// <param name="e"> EventArgs e. </param>
         private void SaveToXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Easy way to tell if there is nothing to save.
-            if (this.undoToolStripMenuItem.Text == "Undo Not Available")
-            {
-                this.saveToXMLToolStripMenuItem.Enabled = false;
-            }
-            else
-            {
-                this.saveToXMLToolStripMenuItem.Enabled = true;
-            }
+            //// Easy way to tell if there is nothing to save.
+            //if (this.undoToolStripMenuItem.Text == "Undo Not Available")
+            //{
+            //    this.saveToXMLToolStripMenuItem.Enabled = false;
+            //}
+            //else
+            //{
+            //    this.saveToXMLToolStripMenuItem.Enabled = true;
+            //}
         }
     }
 }
