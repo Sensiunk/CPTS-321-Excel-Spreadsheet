@@ -448,5 +448,23 @@ namespace Spreadsheet_Manjesh_Puram
         {
             System.Windows.Forms.Application.Exit();
         }
+
+        /// <summary>
+        /// Function to handle the loading from an XML file to import into our spreadsheet.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
+        private void LoadFromXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// Function to handle the saving to an XML file for export of our spreadsheet.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
+        private void SaveToXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
     }
 }

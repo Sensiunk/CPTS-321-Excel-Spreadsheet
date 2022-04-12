@@ -115,5 +115,25 @@ namespace CptS321
         {
             Assert.Pass();
         }
+
+        /// <summary>
+        /// Test to see if I am able to open a file XML.
+        /// Not sure if this will work but I am adding a test case for TDD purposes.
+        /// </summary>
+        [Test]
+        public void TestOpeningXMLFile()
+        {
+            Assert.Pass();
+        }
+
+        /// <summary>
+        /// Test to see if I am able to close a file XML.
+        /// Not sure if this will work but I am adding a test case for TDD purposes.
+        /// </summary>
+        [Test]
+        public void TestClosingXMLFile()
+        {
+            Assert.Pass();
+        }
     }
 }
