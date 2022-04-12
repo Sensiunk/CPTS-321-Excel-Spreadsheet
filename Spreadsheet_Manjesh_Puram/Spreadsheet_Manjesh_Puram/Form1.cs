@@ -49,6 +49,14 @@ namespace Spreadsheet_Manjesh_Puram
             // Set the default of the redo button.
             this.redoToolStripMenuItem.Enabled = false;
             this.redoToolStripMenuItem.Text = "Redo Not Available";
+
+            // Set the default of the loadFromXMLFile button.
+            this.loadFromXMLToolStripMenuItem.Enabled = true;
+            this.loadFromXMLToolStripMenuItem.Text = "Load from XML File";
+
+            // Set the default of the saveToXMLFile button.
+            this.saveToXMLToolStripMenuItem.Enabled = false;
+            this.saveToXMLToolStripMenuItem.Text = "Save to XML File";
         }
 
         /// <summary>
@@ -465,6 +473,15 @@ namespace Spreadsheet_Manjesh_Puram
         /// <param name="e"> EventArgs e. </param>
         private void SaveToXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Easy way to tell if there is nothing to save.
+            if (this.undoToolStripMenuItem.Text == "Undo Not Available")
+            {
+                this.saveToXMLToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                this.saveToXMLToolStripMenuItem.Enabled = true;
+            }
         }
     }
 }
