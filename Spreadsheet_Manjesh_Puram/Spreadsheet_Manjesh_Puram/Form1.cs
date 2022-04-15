@@ -121,6 +121,23 @@ namespace Spreadsheet_Manjesh_Puram
                     this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Style.BackColor = Color.FromArgb((int)refreshCell.BGColor);
                 }
             }
+            else if (e.PropertyName == "Cell")
+            {
+                CptS321.SpreadsheetCell refreshCell = (CptS321.SpreadsheetCell)sender;
+
+                // If the refreshCell isn't null then we go into the condition and set the values
+                if (refreshCell != null)
+                {
+                    int cellRow = refreshCell.RowIndex;
+                    int cellColumn = refreshCell.ColumnIndex;
+
+                    // Refreshes the item in that certain spot in the Spreadsheet Grid View
+                    this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = refreshCell.CellValue;
+
+                    // Refreshes the item in that certain spot in the Spreadsheet Grid View
+                    this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Style.BackColor = Color.FromArgb((int)refreshCell.BGColor);
+                }
+            }
         }
 
         /// <summary>
@@ -476,8 +493,35 @@ namespace Spreadsheet_Manjesh_Puram
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string fileName = openFileDialog.FileName;
+                Console.WriteLine(fileName);
+
+                while (this.mainSpreadsheet.UndoStackCount() != 0)
+                {
+                    this.UndoSupplement();
+                }
+
+                this.mainSpreadsheet.ClearUndoRedo();
+
+                this.redoToolStripMenuItem.Enabled = false;
+                this.redoToolStripMenuItem.Text = "Redo Not Available";
 
                 Stream fileStream = openFileDialog.OpenFile();
+
+                this.mainSpreadsheet.LoadXMLFileIntoCells(fileStream);
+            }
+        }
+
+        private void ClearSpreadsheet()
+        {
+            // loop through every cell in the spreadsheet
+            for (int i = 0; i < this.mainSpreadsheet.RowCount; i++)
+            {
+                for (int j = 0; j < this.mainSpreadsheet.ColumnCount; j++)
+                {
+                    // clear every cell
+                    CptS321.SpreadsheetCell cellToUpdate = this.mainSpreadsheet.GetCell(i, j);
+                    cellToUpdate.Clear();
+                }
             }
         }
 

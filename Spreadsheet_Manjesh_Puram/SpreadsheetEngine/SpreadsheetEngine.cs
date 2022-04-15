@@ -7,8 +7,11 @@ namespace CptS321
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.IO;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Xml;
+    using System.Xml.Linq;
 
     /// <summary>
     /// Abstract class of the Spreadsheet cell.
@@ -196,6 +199,29 @@ namespace CptS321
             {
                 return this.cellName;
             }
+        }
+
+        public void Clear()
+        {
+            this.CellText = string.Empty;
+            this.CellValue = string.Empty;
+            this.BGColor = 0;
+        }
+
+        /// <summary>
+        /// Helpful function that serves the purpose of checking if we need to save this cell or not.
+        /// </summary>
+        /// <returns> Returns true if there is something in this cell that isn't the default. </returns>
+        private bool IsFilledIn()
+        {
+            // This means that there is atleast one change.
+            if (this.CellText.Length > 0 || this.BGColor != 0xFFFFFFFF)
+            {
+                return true;
+            }
+
+            // This means that there isn't any change.
+            return false;
         }
 
         /// <summary>
@@ -598,6 +624,193 @@ namespace CptS321
             {
                 return this.twoDArray[Convert.ToInt32(cellName.Substring(1)) - 1, cellName[0] - 'A'];
             }
+        }
+
+        /// <summary>
+        /// Function to help copy the information from the newXMLCell to the our current cell.
+        /// </summary>
+        /// <param name="oldCell"> Reference to the oldCell (The one we have right now). </param>
+        /// <param name="newCell"> Information from the cell coming from the XML file. </param>
+        private void CopyAssistant(ref SpreadsheetCell oldCell, SpreadsheetCell newCell)
+        {
+            // Takes the incoming text and color and set it to our current cell which will trigger our events.
+            oldCell.CellText = newCell.CellText;
+            oldCell.BGColor = newCell.BGColor;
+        }
+
+        private SpreadsheetCell MakeCellWithXML(string cellName)
+        {
+            int rowIndex;
+            if (int.TryParse(cellName.Substring(1), out rowIndex))
+            {
+                int colIndex = (int)cellName[0] - 65;
+                NewCell newCell = new NewCell(rowIndex - 1, colIndex);
+                return newCell;
+            }
+
+            return null;
+        }
+
+        public void ClearUndoRedo()
+        {
+            this.undos.Clear();
+            this.redos.Clear();
+        }
+
+        public void LoadXMLFileIntoCells(Stream stream)
+        {
+            for (int i = 0; i < this.RowCount; i++)
+            {
+                for (int j = 0; j < this.ColumnCount; j++)
+                {
+                    this.twoDArray[i, j] = new NewCell(i, j);
+                    this.twoDArray[i, j].CellText = string.Empty;
+
+                    this.twoDArray[i, j].PropertyChanged += this.RefreshCellValue;
+                }
+            }
+
+            XmlTextReader reader = new XmlTextReader(stream);
+
+            string cellName = string.Empty;
+            string cellText = string.Empty;
+            uint cellColor = 0xFFFFFFFF;
+
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.Element && reader.Name == "cell")
+                {
+                    if (reader.HasAttributes)
+                    {
+                        cellName = reader.GetAttribute("name");
+                        Console.WriteLine("Cell text = " + cellName);
+                    }
+                }
+
+                if (reader.NodeType == XmlNodeType.Element && reader.Name == "text")
+                {
+                    cellText = reader.ReadElementContentAsString();
+                    Console.WriteLine("Cell text = " + cellText);
+                }
+
+                if (reader.NodeType == XmlNodeType.Element && reader.Name == "bgcolor")
+                {
+                    cellColor = Convert.ToUInt32(reader.ReadElementContentAsString(), 16);
+                    Console.WriteLine("Cell color = " + cellColor);
+                }
+
+                if (reader.NodeType == XmlNodeType.EndElement && reader.Name == "cell")
+                {
+                    if (cellName != string.Empty)
+                    {
+                        SpreadsheetCell newCell = this.MakeCellWithXML(cellName);
+
+                        if (cellText != string.Empty)
+                        {
+                            newCell.CellText = cellText;
+                        }
+
+                        if (cellColor != 0xFFFFFFFF)
+                        {
+                            newCell.BGColor = cellColor;
+                        }
+
+                        this.CopyAssistant(ref this.twoDArray[newCell.RowIndex, newCell.ColumnIndex], newCell);
+
+                        this.CellPropertyChanged(this.twoDArray[newCell.RowIndex, newCell.ColumnIndex], new PropertyChangedEventArgs("Cell"));
+                    }
+
+                    cellName = string.Empty;
+                    cellText = string.Empty;
+                    cellColor = 0xFFFFFFFF;
+                }
+            }
+
+            //XmlDocument doc = new XmlDocument();
+            //doc.Load(stream);
+
+            //XmlNode cellInXML1 = doc.SelectSingleNode("/spreadsheet/cell/name");
+            //string cellName = cellInXML1.InnerText;
+            //XmlNode cellInXML2 = doc.SelectSingleNode("/spreadsheet/cell/text");
+            //string cellText = cellInXML2.InnerText;
+            //XmlNode cellInXML3 = doc.SelectSingleNode("/spreadsheet/cell/bgcolor");
+            //string cellColor = cellInXML3.InnerText;
+            //XmlNodeList oldChildren = doc.DocumentElement.ChildNodes;
+            //XmlNodeList cells = doc.SelectNodes("/spreadsheet/cell");
+            //Console.WriteLine(cellName);
+            //Console.WriteLine(cellText);
+            //Console.WriteLine(cellColor);
+
+
+
+            //XmlReaderSettings settings = new XmlReaderSettings();
+            //settings.Async = false;
+
+            //// Help provided from Microsoft Docs
+            //// https://docs.microsoft.com/en-us/troubleshoot/developer/visualstudio/csharp/general/read-xml-data-from-url
+            //using (var fileStream = XmlReader.Create(stream, settings))
+            //{
+            //    while (reader.Read())
+            //    {
+            //        switch (reader.NodeType)
+            //        {
+            //            case XmlNodeType.Element:
+            //                Console.WriteLine("Start Element {0}", reader.Name);
+            //                if (reader.Name == "cell")
+            //                {
+            //                    string cellName = reader.GetAttribute("name");
+            //                    SpreadsheetCell newCell = this.MakeCellWithXML(cellName);
+            //                    newCell.CellText = reader.GetAttribute("text");
+            //                    newCell.BGColor = Convert.ToUInt32(reader.GetAttribute("bgcolor"));
+            //                    this.CopyAssistant(ref this.twoDArray[newCell.RowIndex, newCell.ColumnIndex], newCell);
+            //                    this.CellPropertyChanged(this.GetCell(newCell.RowIndex, newCell.ColumnIndex), new PropertyChangedEventArgs("Cell"));
+            //                }
+
+            //                break;
+
+            //            case XmlNodeType.Text:
+            //                Console.WriteLine("Text Node: {0}", reader.Value);
+            //                break;
+
+            //            case XmlNodeType.EndElement:
+            //                Console.WriteLine("End Element {0}", reader.Name);
+            //                break;
+
+            //            default:
+            //                Console.WriteLine("Other node {0} with value {1}", reader.NodeType, reader.Value);
+            //                break;
+            //        }
+            //    }
+            //}
+
+            //// load up the XML files from the infile
+            //XDocument xmlFile = XDocument.Load(stream);
+
+            //// loop through the cell tags in the XML file
+            //foreach (XElement tag in xmlFile.Root.Elements("cell"))
+            //{
+            //    // get the cell into memory
+            //    SpreadsheetCell cellFromXML = this.GetCell(tag.Element("name").Value);
+
+            //    // load the properties of the cell based on the
+            //    // values of the XML tags
+            //    // check for a valid text element
+            //    if (tag.Element("text") != null)
+            //    {
+            //        // load the cell's text
+            //        cellFromXML.CellText = tag.Element("text").Value.ToString();
+            //    }
+
+            //    // check for a valid background color element
+            //    if (tag.Element("backgroundColor") != null)
+            //    {
+            //        // convert the string to a uint for the background color
+            //        uint xmlColor = Convert.ToUInt32(tag.Element("backgroundColor").Value.ToString());
+
+            //        // load the cell's background color
+            //        cellFromXML.BGColor = xmlColor;
+            //    }
+            //}
         }
 
         /// <summary>
