@@ -39,6 +39,9 @@ namespace Spreadsheet_Manjesh_Puram
             this.cellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeBackgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitProgramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadFromXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.SpreadsheetGridView)).BeginInit();
             this.menuStrip2.SuspendLayout();
             this.SuspendLayout();
@@ -76,7 +79,8 @@ namespace Spreadsheet_Manjesh_Puram
             this.menuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.editToolStripMenuItem,
             this.cellToolStripMenuItem,
-            this.exitProgramToolStripMenuItem});
+            this.exitProgramToolStripMenuItem,
+            this.fileToolStripMenuItem});
             this.menuStrip2.Location = new System.Drawing.Point(0, 0);
             this.menuStrip2.Name = "menuStrip2";
             this.menuStrip2.Size = new System.Drawing.Size(2889, 24);
@@ -130,6 +134,29 @@ namespace Spreadsheet_Manjesh_Puram
             this.exitProgramToolStripMenuItem.Text = "Exit Program";
             this.exitProgramToolStripMenuItem.Click += new System.EventHandler(this.ExitProgramToolStripMenuItem_Click);
             // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadFromXMLToolStripMenuItem,
+            this.saveToXMLToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // loadFromXMLToolStripMenuItem
+            // 
+            this.loadFromXMLToolStripMenuItem.Name = "loadFromXMLToolStripMenuItem";
+            this.loadFromXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadFromXMLToolStripMenuItem.Text = "Load from XML";
+            this.loadFromXMLToolStripMenuItem.Click += new System.EventHandler(this.LoadFromXMLToolStripMenuItem_Click);
+            // 
+            // saveToXMLToolStripMenuItem
+            // 
+            this.saveToXMLToolStripMenuItem.Name = "saveToXMLToolStripMenuItem";
+            this.saveToXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToXMLToolStripMenuItem.Text = "Save to XML";
+            this.saveToXMLToolStripMenuItem.Click += new System.EventHandler(this.SaveToXMLToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -163,6 +190,9 @@ namespace Spreadsheet_Manjesh_Puram
         private System.Windows.Forms.ToolStripMenuItem cellToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changeBackgroundColorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitProgramToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadFromXMLToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToXMLToolStripMenuItem;
     }
 }
 

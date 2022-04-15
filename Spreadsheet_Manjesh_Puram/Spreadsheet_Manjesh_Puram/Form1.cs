@@ -9,6 +9,7 @@ namespace Spreadsheet_Manjesh_Puram
     using System.ComponentModel;
     using System.Data;
     using System.Drawing;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -49,6 +50,14 @@ namespace Spreadsheet_Manjesh_Puram
             // Set the default of the redo button.
             this.redoToolStripMenuItem.Enabled = false;
             this.redoToolStripMenuItem.Text = "Redo Not Available";
+
+            // Set the default of the loadFromXMLFile button.
+            this.loadFromXMLToolStripMenuItem.Enabled = true;
+            this.loadFromXMLToolStripMenuItem.Text = "Load from XML File";
+
+            // Set the default of the saveToXMLFile button.
+            this.saveToXMLToolStripMenuItem.Enabled = true;
+            this.saveToXMLToolStripMenuItem.Text = "Save to XML File";
         }
 
         /// <summary>
@@ -107,6 +116,23 @@ namespace Spreadsheet_Manjesh_Puram
                 {
                     int cellRow = refreshCell.RowIndex;
                     int cellColumn = refreshCell.ColumnIndex;
+
+                    // Refreshes the item in that certain spot in the Spreadsheet Grid View
+                    this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Style.BackColor = Color.FromArgb((int)refreshCell.BGColor);
+                }
+            }
+            else if (e.PropertyName == "Cell")
+            {
+                CptS321.SpreadsheetCell refreshCell = (CptS321.SpreadsheetCell)sender;
+
+                // If the refreshCell isn't null then we go into the condition and set the values
+                if (refreshCell != null)
+                {
+                    int cellRow = refreshCell.RowIndex;
+                    int cellColumn = refreshCell.ColumnIndex;
+
+                    // Refreshes the item in that certain spot in the Spreadsheet Grid View
+                    this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Value = refreshCell.CellValue;
 
                     // Refreshes the item in that certain spot in the Spreadsheet Grid View
                     this.SpreadsheetGridView.Rows[cellRow].Cells[cellColumn].Style.BackColor = Color.FromArgb((int)refreshCell.BGColor);
@@ -447,6 +473,78 @@ namespace Spreadsheet_Manjesh_Puram
         private void ExitProgramToolStripMenuItem_Click(object sender, EventArgs e)
         {
             System.Windows.Forms.Application.Exit();
+        }
+
+        /// <summary>
+        /// Function to handle the loading from an XML file to import into our spreadsheet.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
+        private void LoadFromXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // Locks in the presets we want.
+            openFileDialog.Title = "Identify which XML file you would like to use.";
+            openFileDialog.InitialDirectory = @"c:\";
+            openFileDialog.Filter = "XML Files (*.xml)|*.xml";
+            openFileDialog.FilterIndex = 2;
+            openFileDialog.RestoreDirectory = true;
+
+            // Checks if we were able to open
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = openFileDialog.FileName;
+                Console.WriteLine(fileName);
+
+                // Makes the spreadsheet by clearing all entries.
+                while (this.mainSpreadsheet.UndoStackCount() != 0)
+                {
+                    this.UndoSupplement();
+                }
+
+                // Sets the redo to disabled so we can't click on it by accident.
+                this.redoToolStripMenuItem.Enabled = false;
+                this.redoToolStripMenuItem.Text = "Redo Not Available";
+
+                Stream fileStream = openFileDialog.OpenFile();
+
+                // Runs the loading with the file we got.
+                this.mainSpreadsheet.LoadXMLFileIntoCells(fileStream);
+            }
+        }
+
+        /// <summary>
+        /// Function to handle the saving to an XML file for export of our spreadsheet.
+        /// </summary>
+        /// <param name="sender"> Object sender. </param>
+        /// <param name="e"> EventArgs e. </param>
+        private void SaveToXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Stream fileStream;
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            // Defaults the location and the accepted files.
+            saveFileDialog.Title = "Identify which XML file you would like to use.";
+            saveFileDialog.InitialDirectory = @"c:\";
+            saveFileDialog.Filter = "XML Files (*.xml)|*.xml";
+
+            // Checks if we were able open
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                if ((fileStream = saveFileDialog.OpenFile()) != null)
+                {
+                    // TESTING PURPOSES
+                    string fileName = saveFileDialog.FileName;
+                    Console.WriteLine(fileName);
+
+                    // Runs the saving with the file we got.
+                    this.mainSpreadsheet.SaveCellsIntoXMLFile(fileStream);
+
+                    // Close the file.
+                    fileStream.Close();
+                }
+            }
         }
     }
 }
