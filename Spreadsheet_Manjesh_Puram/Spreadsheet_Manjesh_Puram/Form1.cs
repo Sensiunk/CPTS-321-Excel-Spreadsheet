@@ -56,7 +56,7 @@ namespace Spreadsheet_Manjesh_Puram
             this.loadFromXMLToolStripMenuItem.Text = "Load from XML File";
 
             // Set the default of the saveToXMLFile button.
-            this.saveToXMLToolStripMenuItem.Enabled = false;
+            this.saveToXMLToolStripMenuItem.Enabled = true;
             this.saveToXMLToolStripMenuItem.Text = "Save to XML File";
         }
 
@@ -500,28 +500,12 @@ namespace Spreadsheet_Manjesh_Puram
                     this.UndoSupplement();
                 }
 
-                this.mainSpreadsheet.ClearUndoRedo();
-
                 this.redoToolStripMenuItem.Enabled = false;
                 this.redoToolStripMenuItem.Text = "Redo Not Available";
 
                 Stream fileStream = openFileDialog.OpenFile();
 
                 this.mainSpreadsheet.LoadXMLFileIntoCells(fileStream);
-            }
-        }
-
-        private void ClearSpreadsheet()
-        {
-            // loop through every cell in the spreadsheet
-            for (int i = 0; i < this.mainSpreadsheet.RowCount; i++)
-            {
-                for (int j = 0; j < this.mainSpreadsheet.ColumnCount; j++)
-                {
-                    // clear every cell
-                    CptS321.SpreadsheetCell cellToUpdate = this.mainSpreadsheet.GetCell(i, j);
-                    cellToUpdate.Clear();
-                }
             }
         }
 
@@ -532,15 +516,25 @@ namespace Spreadsheet_Manjesh_Puram
         /// <param name="e"> EventArgs e. </param>
         private void SaveToXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //// Easy way to tell if there is nothing to save.
-            //if (this.undoToolStripMenuItem.Text == "Undo Not Available")
-            //{
-            //    this.saveToXMLToolStripMenuItem.Enabled = false;
-            //}
-            //else
-            //{
-            //    this.saveToXMLToolStripMenuItem.Enabled = true;
-            //}
+            Stream fileStream;
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            saveFileDialog.Title = "Identify which XML file you would like to use.";
+            saveFileDialog.InitialDirectory = @"c:\";
+            saveFileDialog.Filter = "XML Files (*.xml)|*.xml";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                if ((fileStream = saveFileDialog.OpenFile()) != null)
+                {
+                    string fileName = saveFileDialog.FileName;
+                    Console.WriteLine(fileName);
+
+                    this.mainSpreadsheet.SaveCellsIntoXMLFile(fileStream);
+
+                    fileStream.Close();
+                }
+            }
         }
     }
 }
