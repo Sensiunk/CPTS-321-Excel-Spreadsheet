@@ -484,27 +484,32 @@ namespace Spreadsheet_Manjesh_Puram
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
+            // Locks in the presets we want.
             openFileDialog.Title = "Identify which XML file you would like to use.";
             openFileDialog.InitialDirectory = @"c:\";
             openFileDialog.Filter = "XML Files (*.xml)|*.xml";
             openFileDialog.FilterIndex = 2;
             openFileDialog.RestoreDirectory = true;
 
+            // Checks if we were able to open
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string fileName = openFileDialog.FileName;
                 Console.WriteLine(fileName);
 
+                // Makes the spreadsheet by clearing all entries.
                 while (this.mainSpreadsheet.UndoStackCount() != 0)
                 {
                     this.UndoSupplement();
                 }
 
+                // Sets the redo to disabled so we can't click on it by accident.
                 this.redoToolStripMenuItem.Enabled = false;
                 this.redoToolStripMenuItem.Text = "Redo Not Available";
 
                 Stream fileStream = openFileDialog.OpenFile();
 
+                // Runs the loading with the file we got.
                 this.mainSpreadsheet.LoadXMLFileIntoCells(fileStream);
             }
         }
@@ -519,19 +524,24 @@ namespace Spreadsheet_Manjesh_Puram
             Stream fileStream;
             SaveFileDialog saveFileDialog = new SaveFileDialog();
 
+            // Defaults the location and the accepted files.
             saveFileDialog.Title = "Identify which XML file you would like to use.";
             saveFileDialog.InitialDirectory = @"c:\";
             saveFileDialog.Filter = "XML Files (*.xml)|*.xml";
 
+            // Checks if we were able open
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 if ((fileStream = saveFileDialog.OpenFile()) != null)
                 {
+                    // TESTING PURPOSES
                     string fileName = saveFileDialog.FileName;
                     Console.WriteLine(fileName);
 
+                    // Runs the saving with the file we got.
                     this.mainSpreadsheet.SaveCellsIntoXMLFile(fileStream);
 
+                    // Close the file.
                     fileStream.Close();
                 }
             }

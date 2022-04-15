@@ -638,29 +638,45 @@ namespace CptS321
             oldCell.BGColor = newCell.BGColor;
         }
 
+        /// <summary>
+        /// Makes a new cell based on the cell needed and returns the cell at that location.
+        /// </summary>
+        /// <param name="cellName"> Coordinates with the cell we need to work with. </param>
+        /// <returns> Returns the cell at the specified location. </returns>
         private SpreadsheetCell MakeCellWithXML(string cellName)
         {
+            // Parse out the row and then get the letter based on the first character.
             int rowIndex;
             if (int.TryParse(cellName.Substring(1), out rowIndex))
             {
                 int colIndex = (int)cellName[0] - 65;
                 NewCell newCell = new NewCell(rowIndex - 1, colIndex);
+
                 return newCell;
             }
 
             return null;
         }
 
+        /// <summary>
+        /// Function sole purpose is to clear the undo and redo stacks.
+        /// </summary>
         public void ClearUndoRedo()
         {
             this.undos.Clear();
             this.redos.Clear();
         }
 
+        /// <summary>
+        /// Takes the input file and reads through all the lines to parse out the data and make the cells based on that.
+        /// </summary>
+        /// <param name="stream"> Take in the file selected. </param>
         public void LoadXMLFileIntoCells(Stream stream)
         {
+            // Clear the stacks before any changes are made.
             this.ClearUndoRedo();
 
+            // For each slot, update the cell and add it to the refreshcellvalue event.
             for (int i = 0; i < this.RowCount; i++)
             {
                 for (int j = 0; j < this.ColumnCount; j++)
@@ -672,14 +688,17 @@ namespace CptS321
                 }
             }
 
+            // Opens the reader and sets defaults.
             XmlTextReader reader = new XmlTextReader(stream);
 
             string cellName = string.Empty;
             string cellText = string.Empty;
             uint cellColor = 0xFFFFFFFF;
 
+            // Read until the end.
             while (reader.Read())
             {
+                // If the element is a cell then read it in and grab the name of the cell.
                 if (reader.NodeType == XmlNodeType.Element && reader.Name == "cell")
                 {
                     if (reader.HasAttributes)
@@ -689,39 +708,49 @@ namespace CptS321
                     }
                 }
 
+                // If the element is a text then read the text in.
                 if (reader.NodeType == XmlNodeType.Element && reader.Name == "text")
                 {
                     cellText = reader.ReadElementContentAsString();
                     Console.WriteLine("Cell text = " + cellText);
                 }
 
+                // If the element is a color then read the color in.
                 if (reader.NodeType == XmlNodeType.Element && reader.Name == "bgcolor")
                 {
                     cellColor = Convert.ToUInt32(reader.ReadElementContentAsString(), 16);
                     Console.WriteLine("Cell color = " + cellColor);
                 }
 
+                // Once we hit the end of the cell we gather all the data and build the cell based on the information.
                 if (reader.NodeType == XmlNodeType.EndElement && reader.Name == "cell")
                 {
+                    // If the name retreived is empty then don't do anything
                     if (cellName != string.Empty)
                     {
+                        // Make the cell with the name
                         SpreadsheetCell newCell = this.MakeCellWithXML(cellName);
 
+                        // Set the text if we found a value for it.
                         if (cellText != string.Empty)
                         {
                             newCell.CellText = cellText;
                         }
 
+                        // Set the color if we found a value for it.
                         if (cellColor != 0xFFFFFFFF)
                         {
                             newCell.BGColor = cellColor;
                         }
 
+                        // Transfer the cell we modified into the our spreadsheet
                         this.CopyAssistant(ref this.twoDArray[newCell.RowIndex, newCell.ColumnIndex], newCell);
 
+                        // Let the system know that we changed the cell.
                         this.CellPropertyChanged(this.twoDArray[newCell.RowIndex, newCell.ColumnIndex], new PropertyChangedEventArgs("Cell"));
                     }
 
+                    // Reset to default for next iteration.
                     cellName = string.Empty;
                     cellText = string.Empty;
                     cellColor = 0xFFFFFFFF;
@@ -729,22 +758,30 @@ namespace CptS321
             }
         }
 
+        /// <summary>
+        /// Function takes the information within the spreadsheet and stores it into the file.
+        /// </summary>
+        /// <param name="stream"> Takes the file that we need to write into. </param>
         public void SaveCellsIntoXMLFile (Stream stream)
         {
             XmlTextWriter writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8);
 
+            // Format needed or else it will write it all into one line.
             writer.Formatting = Formatting.Indented;
 
+            // Start writing into the document.
             writer.WriteStartDocument();
 
             writer.WriteComment("Creating an XML file using C#");
 
+            // Serves as to let us know that we are writing into a spreadsheet.
             writer.WriteStartElement("Spreadsheet");
 
             for (int i = 0; i < this.RowCount; i++)
             {
                 for (int j = 0; j < this.ColumnCount; j++)
                 {
+                    // For each value in the spreadsheet we check if has a change and if so then we write.
                     if (this.twoDArray[i, j].IsFilledIn())
                     {
                         writer.WriteStartElement("cell");
@@ -756,6 +793,7 @@ namespace CptS321
                 }
             }
 
+            // Endings to finish off the file.
             writer.WriteEndElement();
             writer.WriteEndDocument();
             writer.Flush();
