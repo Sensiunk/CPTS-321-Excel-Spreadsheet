@@ -874,10 +874,10 @@ namespace CptS321
                     int row = currentCell.RowIndex;
                     int column = currentCell.ColumnIndex;
 
-                    // Sets the value to "Error"
-                    currentCell.CellValue = "Error";
+                    // Sets the value to "!(Bad Reference)"
+                    currentCell.CellValue = "!(Bad Reference)";
 
-                    // Set the display to show the "Error" message
+                    // Set the display to show the "!(Bad Reference)" message
                     this.twoDArray[row, column].CellValue = currentCell.CellValue;
                 }
                 else

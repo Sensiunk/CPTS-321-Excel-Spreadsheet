@@ -137,5 +137,27 @@ namespace CptS321
         {
             Assert.Pass();
         }
+
+        /// <summary>
+        /// Test to see if I am able to set the row to a value greater than 50.
+        /// Not sure if this will work but I am adding a test case for TDD purposes.
+        /// I'M NOT SURE IF I NEED TO RUN A TEST SINCE WE DONT NEED TO TEST THE GUI.
+        /// </summary>
+        [Test]
+        public void TestRowGreaterThan50()
+        {
+            Assert.Pass();
+        }
+
+        /// <summary>
+        /// Test to see if I am able to throw an error if we try to refer to ourself.
+        /// Not sure if this will work but I am adding a test case for TDD purposes.
+        /// I'M NOT SURE IF I NEED TO RUN A TEST SINCE WE DONT NEED TO TEST THE GUI.
+        /// </summary>
+        [Test]
+        public void TestSelfReference()
+        {
+            Assert.Pass();
+        }
     }
 }
