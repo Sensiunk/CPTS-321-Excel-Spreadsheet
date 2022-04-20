@@ -201,13 +201,6 @@ namespace CptS321
             }
         }
 
-        public void Clear()
-        {
-            this.CellText = string.Empty;
-            this.CellValue = string.Empty;
-            this.BGColor = 0;
-        }
-
         /// <summary>
         /// Helpful function that serves the purpose of checking if we need to save this cell or not.
         /// </summary>
@@ -627,38 +620,6 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Function to help copy the information from the newXMLCell to the our current cell.
-        /// </summary>
-        /// <param name="oldCell"> Reference to the oldCell (The one we have right now). </param>
-        /// <param name="newCell"> Information from the cell coming from the XML file. </param>
-        private void CopyAssistant(ref SpreadsheetCell oldCell, SpreadsheetCell newCell)
-        {
-            // Takes the incoming text and color and set it to our current cell which will trigger our events.
-            oldCell.CellText = newCell.CellText;
-            oldCell.BGColor = newCell.BGColor;
-        }
-
-        /// <summary>
-        /// Makes a new cell based on the cell needed and returns the cell at that location.
-        /// </summary>
-        /// <param name="cellName"> Coordinates with the cell we need to work with. </param>
-        /// <returns> Returns the cell at the specified location. </returns>
-        private SpreadsheetCell MakeCellWithXML(string cellName)
-        {
-            // Parse out the row and then get the letter based on the first character.
-            int rowIndex;
-            if (int.TryParse(cellName.Substring(1), out rowIndex))
-            {
-                int colIndex = (int)cellName[0] - 65;
-                NewCell newCell = new NewCell(rowIndex - 1, colIndex);
-
-                return newCell;
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// Function sole purpose is to clear the undo and redo stacks.
         /// </summary>
         public void ClearUndoRedo()
@@ -762,7 +723,7 @@ namespace CptS321
         /// Function takes the information within the spreadsheet and stores it into the file.
         /// </summary>
         /// <param name="stream"> Takes the file that we need to write into. </param>
-        public void SaveCellsIntoXMLFile (Stream stream)
+        public void SaveCellsIntoXMLFile(Stream stream)
         {
             XmlTextWriter writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8);
 
@@ -798,6 +759,38 @@ namespace CptS321
             writer.WriteEndDocument();
             writer.Flush();
             writer.Close();
+        }
+
+        /// <summary>
+        /// Function to help copy the information from the newXMLCell to the our current cell.
+        /// </summary>
+        /// <param name="oldCell"> Reference to the oldCell (The one we have right now). </param>
+        /// <param name="newCell"> Information from the cell coming from the XML file. </param>
+        private void CopyAssistant(ref SpreadsheetCell oldCell, SpreadsheetCell newCell)
+        {
+            // Takes the incoming text and color and set it to our current cell which will trigger our events.
+            oldCell.CellText = newCell.CellText;
+            oldCell.BGColor = newCell.BGColor;
+        }
+
+        /// <summary>
+        /// Makes a new cell based on the cell needed and returns the cell at that location.
+        /// </summary>
+        /// <param name="cellName"> Coordinates with the cell we need to work with. </param>
+        /// <returns> Returns the cell at the specified location. </returns>
+        private SpreadsheetCell MakeCellWithXML(string cellName)
+        {
+            // Parse out the row and then get the letter based on the first character.
+            int rowIndex;
+            if (int.TryParse(cellName.Substring(1), out rowIndex))
+            {
+                int colIndex = (int)cellName[0] - 65;
+                NewCell newCell = new NewCell(rowIndex - 1, colIndex);
+
+                return newCell;
+            }
+
+            return null;
         }
 
         /// <summary>
