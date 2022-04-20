@@ -867,22 +867,38 @@ namespace CptS321
             // Check if the value is an expression since it starts with =
             if (currentCell != null && currentCell.CellText.StartsWith("="))
             {
-                // Get the coordinates of the cell
-                int row = currentCell.RowIndex;
-                int column = currentCell.ColumnIndex;
-
-                // Check if the cell has been modfied before.
-                if (currentCell.ExpTree.Expression != string.Empty)
+                double.TryParse(currentCell.CellText.Substring(2), out double number);
+                if (number > 50)
                 {
-                    // If it's been modified before then we know that it should be unsubscribed.
-                    this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression, false);
+                    // Get the coordinates of the cell
+                    int row = currentCell.RowIndex;
+                    int column = currentCell.ColumnIndex;
+
+                    // Sets the value to "Error"
+                    currentCell.CellValue = "Error";
+
+                    // Set the display to show the "Error" message
+                    this.twoDArray[row, column].CellValue = currentCell.CellValue;
                 }
+                else
+                {
+                    // Get the coordinates of the cell
+                    int row = currentCell.RowIndex;
+                    int column = currentCell.ColumnIndex;
 
-                // Go through and subscribe the values in the new expression.
-                this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression = currentCell.CellText.Substring(1), true);
+                    // Check if the cell has been modfied before.
+                    if (currentCell.ExpTree.Expression != string.Empty)
+                    {
+                        // If it's been modified before then we know that it should be unsubscribed.
+                        this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression, false);
+                    }
 
-                // Set the value to the value from the expression tree.
-                currentCell.CellValue = this.twoDArray[row, column].CellValue = currentCell.ExpTree.Evaluate().ToString();
+                    // Go through and subscribe the values in the new expression.
+                    this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression = currentCell.CellText.Substring(1), true);
+
+                    // Set the value to the value from the expression tree.
+                    currentCell.CellValue = this.twoDArray[row, column].CellValue = currentCell.ExpTree.Evaluate().ToString();
+                }
             }
             else
             {
