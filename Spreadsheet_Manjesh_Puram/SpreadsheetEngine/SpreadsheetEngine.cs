@@ -886,18 +886,44 @@ namespace CptS321
                     int row = currentCell.RowIndex;
                     int column = currentCell.ColumnIndex;
 
-                    // Check if the cell has been modfied before.
-                    if (currentCell.ExpTree.Expression != string.Empty)
+                    // Sets the string
+                    currentCell.ExpTree.Expression = currentCell.CellText.Substring(1);
+
+                    List<string> variablesInExpression = currentCell.ExpTree.GetVariable();
+
+                    if (variablesInExpression.Contains(currentCell.Name))
                     {
-                        // If it's been modified before then we know that it should be unsubscribed.
-                        this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression, false);
+                        // Sets the value to "!(Self Reference)"
+                        currentCell.CellValue = "!(Self Reference)";
+
+                        // Set the display to show the "!(Self Reference)" message
+                        this.twoDArray[row, column].CellValue = currentCell.CellValue;
+
+                        //for (int i = 0; i < variablesInExpression.Count; i++)
+                        //{
+                        //    Console.WriteLine(variablesInExpression[i]);
+                        //}
                     }
+                    else
+                    {
+                        // Check if the cell has been modfied before.
+                        if (currentCell.ExpTree.Expression != string.Empty)
+                        {
+                            // If it's been modified before then we know that it should be unsubscribed.
+                            this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression, false);
+                        }
 
-                    // Go through and subscribe the values in the new expression.
-                    this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression = currentCell.CellText.Substring(1), true);
+                        // Go through and subscribe the values in the new expression.
+                        this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression = currentCell.CellText.Substring(1), true);
 
-                    // Set the value to the value from the expression tree.
-                    currentCell.CellValue = this.twoDArray[row, column].CellValue = currentCell.ExpTree.Evaluate().ToString();
+                        // Set the value to the value from the expression tree.
+                        currentCell.CellValue = this.twoDArray[row, column].CellValue = currentCell.ExpTree.Evaluate().ToString();
+
+                        //for (int i = 0; i < variablesInExpression.Count; i++)
+                        //{
+                        //    Console.WriteLine(variablesInExpression[i]);
+                        //}
+                    }
                 }
             }
             else
