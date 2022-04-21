@@ -836,6 +836,23 @@ namespace CptS321
             }
         }
 
+        private bool CircularReferenceHelper(string referenceCellName, SpreadsheetCell currentCell)
+        {
+            foreach (string cell in currentCell.ExpTree.GetVariable())
+            {
+                if (this.GetCell(cell).Name == referenceCellName)
+                {
+                    return true;
+                }
+                else
+                {
+                    return this.CircularReferenceHelper(referenceCellName, this.GetCell(cell));
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// RefreshCellValue function to be fired when we get the CellText fire.
         /// </summary>
@@ -867,30 +884,34 @@ namespace CptS321
             // Check if the value is an expression since it starts with =
             if (currentCell != null && currentCell.CellText.StartsWith("="))
             {
-                double.TryParse(currentCell.CellText.Substring(2), out double number);
-                if (number > 50)
+                // Get the coordinates of the cell
+                int row = currentCell.RowIndex;
+                int column = currentCell.ColumnIndex;
+
+                bool noNeed = false;
+
+                // Sets the string
+                currentCell.ExpTree.Expression = currentCell.CellText.Substring(1);
+
+                List<string> variablesInExpression = currentCell.ExpTree.GetVariable();
+
+                foreach (string cell in variablesInExpression)
                 {
-                    // Get the coordinates of the cell
-                    int row = currentCell.RowIndex;
-                    int column = currentCell.ColumnIndex;
+                    double.TryParse(cell.Substring(1), out double number);
+                    if (char.IsLetter(currentCell.CellText[2]) || number > 50)
+                    {
+                        // Sets the value to "!(Bad Reference)"
+                        currentCell.CellValue = "!(Bad Reference)";
 
-                    // Sets the value to "!(Bad Reference)"
-                    currentCell.CellValue = "!(Bad Reference)";
+                        // Set the display to show the "!(Bad Reference)" message
+                        this.twoDArray[row, column].CellValue = currentCell.CellValue;
 
-                    // Set the display to show the "!(Bad Reference)" message
-                    this.twoDArray[row, column].CellValue = currentCell.CellValue;
+                        noNeed = true;
+                    }
                 }
-                else
+
+                if (!noNeed)
                 {
-                    // Get the coordinates of the cell
-                    int row = currentCell.RowIndex;
-                    int column = currentCell.ColumnIndex;
-
-                    // Sets the string
-                    currentCell.ExpTree.Expression = currentCell.CellText.Substring(1);
-
-                    List<string> variablesInExpression = currentCell.ExpTree.GetVariable();
-
                     if (variablesInExpression.Contains(currentCell.Name))
                     {
                         // Sets the value to "!(Self Reference)"
@@ -903,6 +924,14 @@ namespace CptS321
                         //{
                         //    Console.WriteLine(variablesInExpression[i]);
                         //}
+                    }
+                    else if (this.CircularReferenceHelper(currentCell.Name, currentCell))
+                    {
+                        // Sets the value to "!(Self Reference)"
+                        currentCell.CellValue = "!(Circular Reference)";
+
+                        // Set the display to show the "!(Self Reference)" message
+                        this.twoDArray[row, column].CellValue = currentCell.CellValue;
                     }
                     else
                     {
