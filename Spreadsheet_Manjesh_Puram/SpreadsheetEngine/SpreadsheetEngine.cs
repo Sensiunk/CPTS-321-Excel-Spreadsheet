@@ -898,7 +898,7 @@ namespace CptS321
                 foreach (string cell in variablesInExpression)
                 {
                     double.TryParse(cell.Substring(1), out double number);
-                    if (char.IsLetter(currentCell.CellText[2]) || number > 50)
+                    if (char.IsLetter(cell[1]) || number > 50)
                     {
                         // Sets the value to "!(Bad Reference)"
                         currentCell.CellValue = "!(Bad Reference)";
