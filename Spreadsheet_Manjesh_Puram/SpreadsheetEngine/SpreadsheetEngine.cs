@@ -201,13 +201,6 @@ namespace CptS321
             }
         }
 
-        public void Clear()
-        {
-            this.CellText = string.Empty;
-            this.CellValue = string.Empty;
-            this.BGColor = 0;
-        }
-
         /// <summary>
         /// Helpful function that serves the purpose of checking if we need to save this cell or not.
         /// </summary>
@@ -627,38 +620,6 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Function to help copy the information from the newXMLCell to the our current cell.
-        /// </summary>
-        /// <param name="oldCell"> Reference to the oldCell (The one we have right now). </param>
-        /// <param name="newCell"> Information from the cell coming from the XML file. </param>
-        private void CopyAssistant(ref SpreadsheetCell oldCell, SpreadsheetCell newCell)
-        {
-            // Takes the incoming text and color and set it to our current cell which will trigger our events.
-            oldCell.CellText = newCell.CellText;
-            oldCell.BGColor = newCell.BGColor;
-        }
-
-        /// <summary>
-        /// Makes a new cell based on the cell needed and returns the cell at that location.
-        /// </summary>
-        /// <param name="cellName"> Coordinates with the cell we need to work with. </param>
-        /// <returns> Returns the cell at the specified location. </returns>
-        private SpreadsheetCell MakeCellWithXML(string cellName)
-        {
-            // Parse out the row and then get the letter based on the first character.
-            int rowIndex;
-            if (int.TryParse(cellName.Substring(1), out rowIndex))
-            {
-                int colIndex = (int)cellName[0] - 65;
-                NewCell newCell = new NewCell(rowIndex - 1, colIndex);
-
-                return newCell;
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// Function sole purpose is to clear the undo and redo stacks.
         /// </summary>
         public void ClearUndoRedo()
@@ -762,7 +723,7 @@ namespace CptS321
         /// Function takes the information within the spreadsheet and stores it into the file.
         /// </summary>
         /// <param name="stream"> Takes the file that we need to write into. </param>
-        public void SaveCellsIntoXMLFile (Stream stream)
+        public void SaveCellsIntoXMLFile(Stream stream)
         {
             XmlTextWriter writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8);
 
@@ -798,6 +759,38 @@ namespace CptS321
             writer.WriteEndDocument();
             writer.Flush();
             writer.Close();
+        }
+
+        /// <summary>
+        /// Function to help copy the information from the newXMLCell to the our current cell.
+        /// </summary>
+        /// <param name="oldCell"> Reference to the oldCell (The one we have right now). </param>
+        /// <param name="newCell"> Information from the cell coming from the XML file. </param>
+        private void CopyAssistant(ref SpreadsheetCell oldCell, SpreadsheetCell newCell)
+        {
+            // Takes the incoming text and color and set it to our current cell which will trigger our events.
+            oldCell.CellText = newCell.CellText;
+            oldCell.BGColor = newCell.BGColor;
+        }
+
+        /// <summary>
+        /// Makes a new cell based on the cell needed and returns the cell at that location.
+        /// </summary>
+        /// <param name="cellName"> Coordinates with the cell we need to work with. </param>
+        /// <returns> Returns the cell at the specified location. </returns>
+        private SpreadsheetCell MakeCellWithXML(string cellName)
+        {
+            // Parse out the row and then get the letter based on the first character.
+            int rowIndex;
+            if (int.TryParse(cellName.Substring(1), out rowIndex))
+            {
+                int colIndex = (int)cellName[0] - 65;
+                NewCell newCell = new NewCell(rowIndex - 1, colIndex);
+
+                return newCell;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -844,6 +837,29 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Function recursively calls until we find a match.
+        /// </summary>
+        /// <param name="referenceCellName"> Name we need to match. </param>
+        /// <param name="currentCell"> Needed for the expression tree variable list. </param>
+        /// <returns> If we don't get a match then we return false. </returns>
+        private bool CircularReferenceHelper(string referenceCellName, SpreadsheetCell currentCell)
+        {
+            foreach (string cell in currentCell.ExpTree.GetVariable())
+            {
+                if (this.GetCell(cell).Name == referenceCellName)
+                {
+                    return true;
+                }
+                else
+                {
+                    return this.CircularReferenceHelper(referenceCellName, this.GetCell(cell));
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// RefreshCellValue function to be fired when we get the CellText fire.
         /// </summary>
         /// <param name="sender"> Object sender. </param>
@@ -878,18 +894,72 @@ namespace CptS321
                 int row = currentCell.RowIndex;
                 int column = currentCell.ColumnIndex;
 
-                // Check if the cell has been modfied before.
-                if (currentCell.ExpTree.Expression != string.Empty)
+                bool noNeed = false;
+
+                // Sets the string
+                currentCell.ExpTree.Expression = currentCell.CellText.Substring(1);
+
+                List<string> variablesInExpression = currentCell.ExpTree.GetVariable();
+
+                foreach (string cell in variablesInExpression)
                 {
-                    // If it's been modified before then we know that it should be unsubscribed.
-                    this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression, false);
+                    double.TryParse(cell.Substring(1), out double number);
+                    if (char.IsLetter(cell[1]) || number > 50)
+                    {
+                        // Sets the value to "!(Bad Reference)"
+                        currentCell.CellValue = "!(Bad Reference)";
+
+                        // Set the display to show the "!(Bad Reference)" message
+                        this.twoDArray[row, column].CellValue = currentCell.CellValue;
+
+                        noNeed = true;
+                    }
                 }
 
-                // Go through and subscribe the values in the new expression.
-                this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression = currentCell.CellText.Substring(1), true);
+                if (!noNeed)
+                {
+                    if (variablesInExpression.Contains(currentCell.Name))
+                    {
+                        // Sets the value to "!(Self Reference)"
+                        currentCell.CellValue = "!(Self Reference)";
 
-                // Set the value to the value from the expression tree.
-                currentCell.CellValue = this.twoDArray[row, column].CellValue = currentCell.ExpTree.Evaluate().ToString();
+                        // Set the display to show the "!(Self Reference)" message
+                        this.twoDArray[row, column].CellValue = currentCell.CellValue;
+
+                        // for (int i = 0; i < variablesInExpression.Count; i++)
+                        // {
+                        //    Console.WriteLine(variablesInExpression[i]);
+                        // }
+                    }
+                    else if (this.CircularReferenceHelper(currentCell.Name, currentCell))
+                    {
+                        // Sets the value to "!(Self Reference)"
+                        currentCell.CellValue = "!(Circular Reference)";
+
+                        // Set the display to show the "!(Self Reference)" message
+                        this.twoDArray[row, column].CellValue = currentCell.CellValue;
+                    }
+                    else
+                    {
+                        // Check if the cell has been modfied before.
+                        if (currentCell.ExpTree.Expression != string.Empty)
+                        {
+                            // If it's been modified before then we know that it should be unsubscribed.
+                            this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression, false);
+                        }
+
+                        // Go through and subscribe the values in the new expression.
+                        this.SubscriptionToCell(currentCell, currentCell.ExpTree.Expression = currentCell.CellText.Substring(1), true);
+
+                        // Set the value to the value from the expression tree.
+                        currentCell.CellValue = this.twoDArray[row, column].CellValue = currentCell.ExpTree.Evaluate().ToString();
+
+                        // for (int i = 0; i < variablesInExpression.Count; i++)
+                        // {
+                        //    Console.WriteLine(variablesInExpression[i]);
+                        // }
+                    }
+                }
             }
             else
             {
