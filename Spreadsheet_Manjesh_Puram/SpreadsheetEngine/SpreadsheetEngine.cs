@@ -836,6 +836,12 @@ namespace CptS321
             }
         }
 
+        /// <summary>
+        /// Function recursively calls until we find a match.
+        /// </summary>
+        /// <param name="referenceCellName"> Name we need to match. </param>
+        /// <param name="currentCell"> Needed for the expression tree variable list. </param>
+        /// <returns> If we don't get a match then we return false. </returns>
         private bool CircularReferenceHelper(string referenceCellName, SpreadsheetCell currentCell)
         {
             foreach (string cell in currentCell.ExpTree.GetVariable())
@@ -920,10 +926,10 @@ namespace CptS321
                         // Set the display to show the "!(Self Reference)" message
                         this.twoDArray[row, column].CellValue = currentCell.CellValue;
 
-                        //for (int i = 0; i < variablesInExpression.Count; i++)
-                        //{
+                        // for (int i = 0; i < variablesInExpression.Count; i++)
+                        // {
                         //    Console.WriteLine(variablesInExpression[i]);
-                        //}
+                        // }
                     }
                     else if (this.CircularReferenceHelper(currentCell.Name, currentCell))
                     {
@@ -948,10 +954,10 @@ namespace CptS321
                         // Set the value to the value from the expression tree.
                         currentCell.CellValue = this.twoDArray[row, column].CellValue = currentCell.ExpTree.Evaluate().ToString();
 
-                        //for (int i = 0; i < variablesInExpression.Count; i++)
-                        //{
+                        // for (int i = 0; i < variablesInExpression.Count; i++)
+                        // {
                         //    Console.WriteLine(variablesInExpression[i]);
-                        //}
+                        // }
                     }
                 }
             }
